@@ -1517,7 +1517,8 @@ document.addEventListener('keydown', function(event) {
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
+      // Repository නම සහිත නිවැරදි Path එක
+      navigator.serviceWorker.register('/LAKSHAN-LYRICS/sw.js')
         .then(reg => console.log('Service Worker Registered!', reg))
         .catch(err => console.log('Service Worker Error', err));
     });
