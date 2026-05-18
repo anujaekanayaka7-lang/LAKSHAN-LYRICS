@@ -1516,9 +1516,12 @@ document.addEventListener('keydown', function(event) {
 </script>  
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker Registered'));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker Registered!', reg))
+        .catch(err => console.log('Service Worker Error', err));
+    });
   }
-</script>  
+</script>
 </body>  
 </html>
