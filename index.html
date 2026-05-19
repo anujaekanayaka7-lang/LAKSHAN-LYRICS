@@ -1171,31 +1171,41 @@ function handleCategorySelection(checkbox) {
   document.getElementById('categoryDropdown').classList.remove('active');
 }
  
-function renderSongs(){  
+function renderSongs() {  
  const grid = document.getElementById('songsGrid');  
  const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();  
- const artistVal = window.selectedArtistFilter;  
+ if(!grid) return;  
    
- let filtered = (currentFilter === 'All') ? window.songs : window.songs.filter(s => s.category && s.category.includes(currentFilter));  
- if(artistVal !== 'All') filtered = filtered.filter(s => s.artist === artistVal);  
+ let filtered = window.songs;  
  
- if(searchVal) {
-     const artistMatch = s.artist && s.artist.split('/').some(part => part.trim().toLowerCase().startsWith(searchVal));
-    
-    filtered = filtered.filter(s => {
-      const titleLower = s.title ? s.title.toLowerCase() : '';
-      const lyricsLower = s.lyrics ? s.lyrics.toLowerCase() : '';
-      const artistLower = s.artist ? s.artist.toLowerCase() : '';
-      
-      // පරිශීලකයා ටයිප් කරන සියලුම වචන සින්දුවේ Title, Artist හෝ Lyrics වල අඩංගුදැයි බැලීම
-      return searchWords.every(word => 
-        titleLower.includes(word) || 
-        lyricsLower.includes(word) || 
-        artistLower.includes(word)
-      );
-    });
-  }
+ // 1. Category අනුව පෙරීම
+ if(currentFilter !== 'All') {  
+ filtered = filtered.filter(s => s.category && s.category.includes(currentFilter));  
+ }  
  
+ // 2. Artist Filter Dropdown එක අනුව පෙරීම (Duet සින්දු වෙන වෙනම හඳුනා ගනී)
+ if(window.selectedArtistFilter !== 'All') {  
+ filtered = filtered.filter(s => {
+   if(!s.artist) return false;
+   // සින්දුවේ සිටින සියලුම Artist ලා ඇල ඉරෙන් වෙන් කර වත්මන් Artist ට සමානදැයි බලයි
+   return s.artist.split('/').map(p => p.trim().toLowerCase()).includes(window.selectedArtistFilter.toLowerCase());
+ });  
+ }  
+ 
+ // 3. Search බාර් එකේ ටයිප් කරන විට සෙවීම (Duet සින්දු ද ඇතුළුව)
+ if(searchVal) {  
+ filtered = filtered.filter(s => {  
+ const titleMatch = s.title && s.title.toLowerCase().includes(searchVal);  
+ const lyricsMatch = s.lyrics && s.lyrics.toLowerCase().includes(searchVal);  
+ 
+ // Duet සින්දුවක ඕනෑම Artist කෙනෙකුගේ නමක කොටසක් සෙව්වද එය ගැලපේ
+ const artistMatch = s.artist && s.artist.toLowerCase().includes(searchVal);  
+ 
+ return titleMatch || lyricsMatch || artistMatch;  
+ });  
+ }  
+ 
+ // තිරය මත සින්දු පෙන්වීම
  if(filtered.length === 0) {  
  grid.innerHTML = `  
  <div class="no-results">  
@@ -1206,9 +1216,11 @@ function renderSongs(){
  } else {  
  grid.innerHTML = '';  
  filtered.forEach(song => {  
- const div = document.createElement('div'); div.className = 'song-card';  
+ const div = document.createElement('div');  
+ div.className = 'song-card';  
  div.innerHTML = `<strong>${song.title}</strong><small style="color:#64748b">${song.artist}</small>`;  
- div.onclick = () => openLyrics(song.id); grid.appendChild(div);  
+ div.onclick = () => openLyrics(song.id);  
+ grid.appendChild(div);  
  });  
  }  
  renderCategoryBar();  
