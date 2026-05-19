@@ -1089,25 +1089,38 @@ function extractDynamicMetadata() {
 }
 
 function filterArtistSuggestions() {
-  document.getElementById("categoryDropdown").classList.remove("active");
-  const inputVal = document.getElementById('songArtist').value.toLowerCase().trim();
-  const listContainer = document.getElementById('artistSuggestChecklist');
-  
-  if(!inputVal) {
-    document.getElementById("artistSuggestWrapper").classList.remove("active");
-    return;
-  }
-  
-  const filtered = window.allArtistsList.filter(a => a.toLowerCase().includes(inputVal));
-  if(filtered.length === 0) {
-    listContainer.innerHTML = `<div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">"${document.getElementById('songArtist').value}" will be added as a new artist.</div>`;
-  } else {
-    listContainer.innerHTML = filtered.map(a => `
-      <div class="category-item" onclick="selectArtistSuggestion('${a.replace(/'/g, "\\'")}')"><span>${a}</span></div>
-    `).join('');
-  }
-  document.getElementById("artistSuggestWrapper").classList.add("add");
-  document.getElementById("artistSuggestWrapper").classList.add("active");
+ document.getElementById("categoryDropdown").classList.remove("active");
+ const inputVal = document.getElementById('songArtist').value.toLowerCase().trim();
+ const listContainer = document.getElementById('artistSuggestChecklist');
+ 
+ if(!inputVal) {
+   document.getElementById("artistSuggestWrapper").classList.remove("active");
+   return;
+ }
+ 
+ // ⚡ මෙතැන 'includes' වෙනුවට 'startsWith' යොදා අකුරු පිළිවෙලටම ඇති අය පමණක් පෙරන්න
+ const filtered = window.allArtistsList.filter(a => a.toLowerCase().startsWith(inputVal));
+ 
+ if(filtered.length === 0) {
+   listContainer.innerHTML = `<div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">No artists found.</div>`;
+   document.getElementById("artistSuggestWrapper").classList.add("active");
+   return;
+ }
+ 
+ listContainer.innerHTML = '';
+ filtered.forEach(artistName => {
+   const div = document.createElement('div');
+   div.className = 'artist-option-item';
+   div.innerText = artistName;
+   div.onclick = () => {
+     document.getElementById('songArtist').value = artistName;
+     document.getElementById("artistSuggestWrapper").classList.remove("active");
+     // Auto Title Generator එකක් ඇත්නම් එය ක්‍රියාත්මක කිරීමට
+     if(typeof window.triggerAutoTitle === 'function') window.triggerAutoTitle();
+   };
+   listContainer.appendChild(div);
+ });
+ document.getElementById("artistSuggestWrapper").classList.add("active");
 }
 
 function selectArtistSuggestion(name) {
