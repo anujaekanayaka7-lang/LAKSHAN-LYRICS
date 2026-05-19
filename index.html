@@ -1499,6 +1499,37 @@ window.onload = () => {
  initCategoryChecklist();
 };  
 
+// Lyrics ටයිප් කරද්දී මුල් වචන 3 Title එකට Auto වැටීමේ කේතය
+document.getElementById('songLyrics').addEventListener('input', function() {
+  const titleField = document.getElementById('songTitle');
+  
+  // පරිශීලකයා දැනටමත් අතින් Title එකක් ටයිප් කරලා නැත්නම් පමණක් මෙය ක්‍රියාත්මක වේ
+  if (titleField.value.trim() === "" || this.dataset.autoTitle === "true" || titleField.value === this.dataset.lastAutoTitle) {
+    
+    // Lyrics වල ඇති හිස්තැන් (Spaces) සහ පේළි බිඳීම් (New lines) ඉවත් කර වචන වෙන් කරගන්න
+    const words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+    
+    if (words.length > 0) {
+      // මුල් වචන 3 පමණක් ලබාගෙන එකතු කරන්න
+      const autoTitle = words.slice(0, 3).join(' ');
+      
+      titleField.value = autoTitle;
+      this.dataset.autoTitle = "true";     // Auto වැටුණු එකක් බව සලකුණු කිරීමට
+      this.dataset.lastAutoTitle = autoTitle; // අවසන් වරට වැටුණු Title එක මතක තබා ගැනීමට
+    } else {
+      titleField.value = "";
+    }
+  }
+});
+
+// පරිශීලකයා අතින් Title එකක් ටයිප් කලහොත් Auto වැටීම නතර කිරීමට
+document.getElementById('songTitle').addEventListener('input', function() {
+  const lyricsField = document.getElementById('songLyrics');
+  if (this.value !== lyricsField.dataset.lastAutoTitle) {
+    lyricsField.dataset.autoTitle = "false"; // Auto වැටීම නවත්වයි
+  }
+});
+
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Enter') {
     const activeElem = document.activeElement;
