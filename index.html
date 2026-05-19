@@ -1082,45 +1082,68 @@ function toggleDropdown() {
   document.getElementById("categoryDropdown").classList.toggle("active");
 } 
 
-function extractDynamicMetadata() {
-  const dbArtists = [...new Set(window.songs.map(s => s.artist))].filter(a => a).sort();
-  window.allArtistsList = dbArtists;
-  updateArtistDropdownOptions();
+function extractDynamicMetadata() {  
+  const artistsSet = new Set();
+  window.songs.forEach(s => {
+    if (s.artist) {
+      // ⚡ සින්දුවේ Artist ගේ නම ඇල ඉරෙන් (/) වෙන් කර වෙන වෙනම ලිස්ට් එකට දමයි
+      s.artist.split('/').forEach(part => {
+        if(part.trim()) artistsSet.add(part.trim());
+      });
+    }
+  });
+  window.allArtistsList = Array.from(artistsSet).filter(a => a).sort((a, b) => a.localeCompare(b));  
+  updateArtistDropdownOptions();  
 }
 
 function filterArtistSuggestions() {
- document.getElementById("categoryDropdown").classList.remove("active");
- const inputVal = document.getElementById('songArtist').value.toLowerCase().trim();
- const listContainer = document.getElementById('artistSuggestChecklist');
- 
- if(!inputVal) {
-   document.getElementById("artistSuggestWrapper").classList.remove("active");
-   return;
- }
- 
- // ⚡ මෙතැන 'includes' වෙනුවට 'startsWith' යොදා අකුරු පිළිවෙලටම ඇති අය පමණක් පෙරන්න
- const filtered = window.allArtistsList.filter(a => a.toLowerCase().startsWith(inputVal));
- 
- if(filtered.length === 0) {
-   listContainer.innerHTML = `<div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">No artists found.</div>`;
-   document.getElementById("artistSuggestWrapper").classList.add("active");
-   return;
- }
- 
- listContainer.innerHTML = '';
- filtered.forEach(artistName => {
-   const div = document.createElement('div');
-   div.className = 'artist-option-item';
-   div.innerText = artistName;
-   div.onclick = () => {
-     document.getElementById('songArtist').value = artistName;
-     document.getElementById("artistSuggestWrapper").classList.remove("active");
-     // Auto Title Generator එකක් ඇත්නම් එය ක්‍රියාත්මක කිරීමට
-     if(typeof window.triggerAutoTitle === 'function') window.triggerAutoTitle();
-   };
-   listContainer.appendChild(div);
- });
- document.getElementById("artistSuggestWrapper").classList.add("active");
+  document.getElementById("categoryDropdown").classList.remove("active");
+  const inputField = document.getElementById('songArtist');
+  const inputVal = inputField.value;
+  const listContainer = document.getElementById('artistSuggestChecklist');
+  
+  if (!inputVal.trim()) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  // ඇල ඉරෙන් (/) වෙන් කර අවසානයටම ටයිප් කරන කොටස පමණක් ලබා ගැනීම
+  const parts = inputVal.split('/');
+  const currentTypingWord = parts[parts.length - 1].trim().toLowerCase();
+  
+  if (!currentTypingWord) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  // අකුරු ගැලපෙන Artists ලා සෙවීම
+  const filtered = window.allArtistsList.filter(a => a.toLowerCase().startsWith(currentTypingWord));
+  
+  if (filtered.length === 0) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  document.getElementById("artistSuggestWrapper").classList.add("active");
+  listContainer.innerHTML = '';
+  
+  filtered.forEach(artist => {
+    const div = document.createElement('div');
+    div.className = 'category-item'; 
+    div.style.padding = '10px 15px';
+    div.innerText = artist;
+    
+    div.onclick = function() {
+      // 🛑 ස්වයංක්‍රීයව ඇල ඉර වැටීම නතර කර නම පමණක් එකතු කිරීම:
+      parts[parts.length - 1] = " " + artist;
+      inputField.value = parts.join(' / ').replace(/\s+/g, ' ').trim();
+      
+      document.getElementById("artistSuggestWrapper").classList.remove("active");
+      inputField.focus();
+    };
+    
+    listContainer.appendChild(div);
+  });
 }
 
 function selectArtistSuggestion(name) {
@@ -1157,14 +1180,21 @@ function renderSongs(){
  if(artistVal !== 'All') filtered = filtered.filter(s => s.artist === artistVal);  
  
  if(searchVal) {
-   filtered = filtered.filter(s => {
-     const titleMatch = s.title && s.title.toLowerCase().includes(searchVal);
-     const lyricsMatch = s.lyrics && s.lyrics.toLowerCase().includes(searchVal);
-     const artistMatch = s.artist && s.artist.toLowerCase().startsWith(searchVal);
-     
-     return titleMatch || lyricsMatch || artistMatch;
-   });
- }  
+     const artistMatch = s.artist && s.artist.split('/').some(part => part.trim().toLowerCase().startsWith(searchVal));
+    
+    filtered = filtered.filter(s => {
+      const titleLower = s.title ? s.title.toLowerCase() : '';
+      const lyricsLower = s.lyrics ? s.lyrics.toLowerCase() : '';
+      const artistLower = s.artist ? s.artist.toLowerCase() : '';
+      
+      // පරිශීලකයා ටයිප් කරන සියලුම වචන සින්දුවේ Title, Artist හෝ Lyrics වල අඩංගුදැයි බැලීම
+      return searchWords.every(word => 
+        titleLower.includes(word) || 
+        lyricsLower.includes(word) || 
+        artistLower.includes(word)
+      );
+    });
+  }
  
  if(filtered.length === 0) {  
  grid.innerHTML = `  
@@ -1542,6 +1572,9 @@ document.getElementById('songTitle').addEventListener('input', function() {
     lyricsField.dataset.autoTitle = "false"; // Auto වැටීම නවත්වයි
   }
 });
+
+// 🟢 මෙන්න මෙතනට 4 වෙනි පියවර ඇතුළත් කරන්න:
+document.getElementById('songArtist').addEventListener('focus', filterArtistSuggestions);
 
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Enter') {
