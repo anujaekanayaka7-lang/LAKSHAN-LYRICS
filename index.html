@@ -1250,17 +1250,26 @@ function openLyrics(id){
  const lyricsContainer = document.getElementById('modalLyrics'); lyricsContainer.scrollTop = 0;  
  const footer = document.getElementById('modalFooter'); document.getElementById('lyricsModal').style.display = 'flex';  
   
- // ⚠️ Edit බොත්තම එබූ විට Lyrics Modal එක ඇතුළේම Password Popup එක උඩින්ම මතුවේ
+ // Edit බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
  document.getElementById('modalEditBtn').onclick = () => {  
    requestPassword(() => {
      window.editId = song.id;  
      document.getElementById('songTitle').value = song.title;  
      document.getElementById('songArtist').value = song.artist;  
      document.getElementById('songLyrics').value = song.lyrics;  
+     
+     // ⚡ මෙන්න මේ කොටස නිවැරදි කර ඇත:
+     document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false); // Reset all inputs
      if(song.category) {  
-       document.querySelectorAll('input[name="songCat"]:checked').forEach(cb => cb.checked = song.category.includes(cb.value));  
+       document.querySelectorAll('input[name="songCat"]').forEach(cb => {
+         if(song.category.includes(cb.value)) {
+           cb.checked = true; // Tick only saved categories
+         }
+       });  
      }  
-     updateSelectedText();  
+     
+     updateSelectedText(); // Dropdown button text එක නිවැරදිව update කරයි (උදා: "1 Selected")
+     
      document.getElementById('formTitle').innerText = "Edit Song";  
      document.getElementById('mainBtn').innerText = "Update Song";  
      closeLyricsModal();  
@@ -1268,7 +1277,7 @@ function openLyrics(id){
    });
  };  
   
- // ⚠️ Delete බොත්තම එබූ විටද Lyrics Modal එක ඇතුළේම Password Popup එක උඩින්ම මතුවේ
+ // Delete බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
  document.getElementById('modalDeleteBtn').onclick = () => {  
    requestPassword(() => {
      showCustomConfirm("මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද?", () => { 
@@ -1281,7 +1290,7 @@ function openLyrics(id){
  if (lyricsContainer.scrollHeight <= lyricsContainer.clientHeight) { footer.classList.add('reveal'); }  
  else { footer.classList.remove('reveal'); }  
  }, 50);  
-}  
+}
  
 document.getElementById('modalLyrics').addEventListener('scroll', function() {  
  const footer = document.getElementById('modalFooter');  
