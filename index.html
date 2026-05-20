@@ -822,7 +822,14 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
   };
 
   window.updateArtistDatabaseName = async function(oldName, newName) {
-    let affectedSongs = window.songs.filter(s => s.artist === oldName);
+    let affectedSongs = window.songs.filter(s => {
+  if(!s.artist) return false;
+
+  return s.artist
+    .split('/')
+    .map(a => a.trim())
+    .includes(oldName);
+});
     if(affectedSongs.length === 0) return;
     
     document.getElementById('syncStatus').innerText = "Updating artist names...";
@@ -832,7 +839,10 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
         promises.push(
           setDoc(doc(db, "lyricsSongs", song.id.toString()), {
             title: song.title,
-            artist: newName,
+            artist: song.artist
+  .split('/')
+  .map(a => a.trim() === oldName ? newName : a.trim())
+  .join(' / '),
             category: song.category,
             lyrics: song.lyrics
           })
@@ -952,24 +962,25 @@ function showCustomAlert(message, title = "Notification") {
   document.getElementById('customDialogModal').style.display = 'flex';
 }
 
-function showCustomConfirm(message, onConfirm, title = "Confirmation required") {
+function showCustomConfirm(message, onConfirm, title = "Confirmation required", btnText = "Yes, Delete", isDanger = true) {
   document.getElementById('dialogIcon').innerText = "❓";
   document.getElementById('dialogTitle').innerText = title;
   document.getElementById('dialogMsg').innerText = message;
   document.getElementById('dialogInputWrapper').style.display = 'none';
-  
   const btnsWrapper = document.getElementById('dialogBtnsWrapper');
+  
+  // Danger (මකන ඒවාට) නම් dialog-btn-danger ද, Confirm (Edit කරන ඒවාට) නම් dialog-btn-primary ද යොදයි.
+  const btnClass = isDanger ? "dialog-btn-danger" : "dialog-btn-primary";
+  
   btnsWrapper.innerHTML = `
     <button class="dialog-btn-secondary" id="confirmCancelBtn">No, Cancel</button>
-    <button class="dialog-btn-danger" id="confirmYesBtn">Yes, Delete</button>
+    <button class="${btnClass}" id="confirmYesBtn">${btnText}</button>
   `;
-  
   document.getElementById('confirmCancelBtn').onclick = closeCustomDialog;
   document.getElementById('confirmYesBtn').onclick = function() {
     closeCustomDialog();
     if (onConfirm) onConfirm();
   };
-  
   document.getElementById('customDialogModal').style.display = 'flex';
 }
 
@@ -1408,9 +1419,15 @@ function editArtistNameDirect(oldName) {
     if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
     const finalNewName = newName.trim();
     
-    showCustomConfirm(`"${oldName}" නමින් ඇති සියලුම ගීත "${finalNewName}" ලෙස වෙනස් කිරීමට ස්ථිරද?`, () => {
+    // මෙතැනදී අන්තිමට "Yes, Confirm" සහ false (Danger නොවන බව) එකතු කර ඇත
+    showCustomConfirm(`"${oldName}" නම ඇතුළත් සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
+      window.allArtistsList = window.allArtistsList.map(a => a === oldName ? finalNewName : a);
+      window.allArtistsList.sort();
+      renderArtistManagerList();
+      updateArtistDropdownOptions();
+      renderSongs();
       window.updateArtistDatabaseName(oldName, finalNewName);
-    }, "Update Artist Name");
+    }, "Update Artist Name", "Yes, Confirm", false);
   }, "Edit Artist Name");
 }
 
@@ -1476,19 +1493,17 @@ function editCategoryNameDirect(oldName) {
     if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
     const finalNewName = newName.trim().toUpperCase();
     
+    // මෙතැනදීත් අන්තිමට "Yes, Confirm" සහ false එකතු කර ඇත
     showCustomConfirm(`"${oldName}" ප්‍රවර්ගය යටතේ ඇති සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
       window.allCategoriesList = window.allCategoriesList.map(c => c === oldName ? finalNewName : c);
       localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
-      
       initCategoryChecklist();
       renderCategoryManagerList();
       renderSongs();
-      
       window.saveCategoriesToFirebase(window.allCategoriesList);
       window.updateCategoryInsideSongs(oldName, finalNewName);
-      
       showCustomAlert(`Category නම "${finalNewName}" ලෙස වෙනස් කරන ලදී!`, "Updated");
-    }, "Update Category");
+    }, "Update Category", "Yes, Confirm", false);
   }, "Edit Category Name");
 }
 
