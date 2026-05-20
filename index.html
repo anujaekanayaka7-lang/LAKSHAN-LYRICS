@@ -277,14 +277,26 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
   backdrop-filter: blur(4px); 
   overflow-y: auto; /* ⚡ ජනේලයෙන් පිටතට සින්දුව දිගු වුවහොත් Scroll වීමට ඉඩ දීම */
 }
-.modal-content { width: 100%; max-width: 550px; background: white; border-radius: 28px; padding: 30px; position: relative; animation: zoomIn 0.15s ease-out; max-height: 85vh; display: flex; flex-direction: column; }  
+.modal-content { 
+  width: 100%; 
+  max-width: 550px; 
+  background: white; 
+  border-radius: 28px; 
+  padding: 24px; /* පිරවුම තරමක් ක්‍රමවත් කර ඇත */
+  position: relative; 
+  animation: zoomIn 0.15s ease-out; 
+  max-height: 85vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; /* අන්තර්ගතය පිටතට පැනීම වළක්වයි */
+}
  
 .modal-header-container { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; }  
 .modal-back-btn { background: #f1f5f9; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: #1e293b; transition: all 0.15s; white-space: nowrap; }  
 .modal-back-btn:hover { background: #e2e8f0; }  
  
 #modalLyrics { 
-  white-space: pre-line; 
+  white-space: pre-wrap; 
   line-height: 1.7; 
   font-size: 18px; 
   padding-bottom: 15px; 
@@ -666,13 +678,44 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
 
 <div class="modal" id="lyricsModal" onclick="closeOnOutsideClick(event)">  
  <div class="modal-content" onclick="event.stopPropagation()">  
- <div class="modal-header-container">  
- <h2 id="modalTitle"></h2>  
- <button class="modal-back-btn" onclick="closeLyricsModal()">Back</button>  
- </div>  
- <p id="modalArtist" style="color:#64748b; margin-bottom:15px; font-size: 13px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;"></p>  
    
-<div id="modalLyrics"></div>  
+   <div class="modal-header-container" style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">  
+     <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 15px;">  
+       <h2 id="modalTitle" style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;"></h2>  
+       <button class="modal-back-btn" onclick="closeLyricsModal()" style="margin: 0;">Back</button>  
+     </div>  
+     <p id="modalArtist" style="color:#64748b; font-size: 13px; margin: 0; font-weight: 500;"></p>  
+   </div>  
+
+   <div style="flex: 1; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 15px 0;">
+     
+     <div id="modalLyrics" style="padding-bottom: 20px;"></div> 
+
+     <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
+       <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:10px; border-radius:10px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Copy</button>  
+       <button id="modalEditBtn" style="flex:1; padding:10px; border-radius:10px; background:#8b5cf6; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Edit</button>  
+       <button id="modalDeleteBtn" style="flex:1; padding:10px; border-radius:10px; background:#ef4444; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Delete</button>  
+       <button onclick="closeLyricsModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #e2e8f0; background:white; color:#475569; cursor:pointer; font-weight:600; font-size:13px;">Close</button>  
+     </div>
+
+   </div>  
+
+   <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; background: #ffffff;"> 
+     <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">  
+       <span style="font-size: 11px; font-weight: 600; color: #64748b;">Font Size:</span>  
+       <div style="display: flex; gap: 6px;">  
+         <button onclick="changeFontSize(-2)" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-weight: bold; font-size: 12px; cursor: pointer;">A-</button>  
+         <button onclick="resetFontSize()" style="padding: 0 8px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-size: 10px; font-weight: 500; cursor: pointer;">Reset</button>  
+         <button onclick="changeFontSize(2)" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-weight: bold; font-size: 12px; cursor: pointer;">A+</button>  
+       </div>  
+     </div>  
+   </div>  
+
+ </div>  
+</div>
+
+<div id="modalLyrics"></div>
+  
   
 <div class="modal-footer-btns" id="modalFooter">  
  <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:12px; border-radius:12px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600;">Copy</button>  
@@ -1626,6 +1669,27 @@ document.addEventListener('keydown', function(event) {
     }
   }
 });
+// 🟢 Font Size එක වෙනස් කරන සහ Reset කරන Functions
+window.changeFontSize = function(amount) {
+  const lyricsElement = document.getElementById('modalLyrics');
+  let currentSize = parseInt(window.getComputedStyle(lyricsElement).fontSize) || 18;
+  let newSize = currentSize + amount;
+  
+  // ආරක්ෂාව සඳහා අකුරු 12px ට වඩා කුඩා වීමත් 36px ට වඩා ලොකු වීමත් වළක්වයි
+  if (newSize >= 12 && newSize <= 36) {
+    lyricsElement.style.fontSize = newSize + 'px';
+  }
+}
+
+window.resetFontSize = function() {
+  const lyricsElement = document.getElementById('modalLyrics');
+  if (window.innerWidth <= 768) {
+    lyricsElement.style.fontSize = '16px'; // මොබයිල් සඳහා Default size
+  } else {
+    lyricsElement.style.fontSize = '18px'; // පරිගණක සඳහා Default size
+  }
+}
+
 </script>  
 <script>
     if ('serviceWorker' in navigator) {
