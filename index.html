@@ -35,7 +35,7 @@ html, body, div, textarea {
   -webkit-overflow-scrolling: touch !important; 
   /* ⚠️ Scroll එක හිරවීම නැවැත්වීමට 'contain' වෙනුවට 'auto' හෝ 'initial' කරන්න */
   overscroll-behavior-y: auto !important; 
-  scroll-behavior: smooth; /* මුළු පිටුවේම scroll වීම smooth කරයි */
+  
 }
 
 /* Chrome, Safari සහ Opera වල scrollbars සැඟවීම */
@@ -235,7 +235,7 @@ border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
  border-radius: 15px;  
  outline: none;  
  font-size: 14px;  
- height: 300px;  
+ height: 200px;  
  resize: none;  
  background: #ffffff;
  transition: all 0.2s ease;
@@ -263,18 +263,248 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
 .song-card small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  
  
 .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; }  
- 
+
+/* නවීන Audio Player පෙනුම */
+/* ===== ULTRA SLIM PLAYER ===== */
+
+.audioPlayerBox{
+display:flex;
+align-items:center;
+gap:10px;
+
+width:100%;
+
+padding:10px 14px;
+margin-top:10px;
+
+background:#fff;
+
+border:1px solid #222;
+border-radius:18px;
+}
+
+.mainPlayBtn{
+width:42px;
+height:42px;
+
+border:none;
+outline:none;
+
+border-radius:50%;
+
+background:#111;
+color:#fff;
+
+font-size:18px;
+font-weight:bold;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+flex-shrink:0;
+
+cursor:pointer;
+
+padding:0;
+
+touch-action:manipulation;
+-webkit-tap-highlight-color:transparent;
+
+user-select:none;
+-webkit-user-select:none;
+
+transition:none !important;
+
+transform:translateZ(0);
+will-change:transform;
+
+position:relative;
+z-index:5;
+
+.mainPlayBtn span{
+pointer-events:none;}
+
+}
+.mainPlayBtn{
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  user-select:none;
+  -webkit-user-select:none;
+
+  cursor:pointer;
+}
+
+/* RIGHT SIDE */
+
+.playerRight{
+flex:1;
+min-width:0;
+}
+
+/* SONG TITLE */
+
+.playerTitle{
+font-size:12px;
+font-weight:700;
+color:#111;
+
+margin-bottom:6px;
+
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+/* TIME + BAR */
+
+.progressRow{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.audioTime{
+font-size:11px;
+font-weight:600;
+color:#444;
+
+min-width:34px;
+text-align:center;
+}
+
+.audioSeek{
+flex:1;
+height:4px;
+
+appearance:none;
+-webkit-appearance:none;
+
+border-radius:30px;
+outline:none;
+cursor:pointer;
+
+/* DEFAULT BAR */
+
+background:#d1d5db;
+}
+
+/* PLAYED PART */
+
+.audioSeek::-webkit-slider-runnable-track{
+height:4px;
+border-radius:30px;
+
+background:linear-gradient(
+to right,
+#111 0%,
+#111 var(--progress),
+#d1d5db var(--progress),
+#d1d5db 100%
+);
+}
+
+/* THUMB */
+
+.audioSeek::-webkit-slider-thumb{
+appearance:none;
+-webkit-appearance:none;
+
+margin-top:-3px;
+
+width:10px;
+height:10px;
+
+border:none;
+border-radius:50%;
+
+background:#111;
+cursor:pointer;
+}
+
+/* FIREFOX */
+
+.audioSeek::-moz-range-track{
+height:4px;
+background:#d1d5db;
+border-radius:30px;
+}
+
+.audioSeek::-moz-range-progress{
+height:4px;
+background:#111;
+border-radius:30px;
+}
+
+.audioSeek::-moz-range-thumb{
+width:10px;
+height:10px;
+
+border:none;
+border-radius:50%;
+
+background:#111;
+cursor:pointer;
+}
+
+/* PLAY BUTTON */
+.mainPlayBtn{
+width:34px;
+height:34px;
+
+border:none;
+outline:none;
+
+background:#111;
+color:#fff;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+padding:0;
+
+font-size:20px;
+line-height:1;
+}
+
+/* ⚡ TOUCH INSTANT RESPONSE */
+button,
+.song-card,
+.filter-btn,
+.category-item,
+.artist-option-item,
+.select-display,
+.artist-display{
+
+  touch-action: manipulation;
+  
+  -webkit-tap-highlight-color: transparent;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  cursor: pointer;
+
+  transition: none !important;
+}
+
 /* MODAL */  
 .modal { 
   position: fixed; 
   inset: 0; 
-  background: rgba(15, 23, 42, 0.6); 
+  background: rgba(15, 23, 42, 0.75); 
   display: none; 
   justify-content: center; 
   align-items: center; 
   padding: 15px; 
   z-index: 2000; 
-  backdrop-filter: blur(4px); 
+  backdrop-filter:none;
   overflow-y: auto; /* ⚡ ජනේලයෙන් පිටතට සින්දුව දිගු වුවහොත් Scroll වීමට ඉඩ දීම */
 }
 .modal-content { 
@@ -284,7 +514,7 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
   border-radius: 28px; 
   padding: 24px; /* පිරවුම තරමක් ක්‍රමවත් කර ඇත */
   position: relative; 
-  animation: zoomIn 0.15s ease-out; 
+  animation: zoomIn 0.10s ease-out; 
   max-height: 85vh; 
   display: flex; 
   flex-direction: column; 
@@ -387,6 +617,15 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
  .header-btns button { width: 100%; padding: 10px 12px; text-align: left; border: none; font-size: 13px; }  
  .header-btns button:hover { background: #f1f5f9; border-radius: 8px; }  
  
+ /* ⚡ FAST TOUCH */
+  button,
+  .song-card,
+  .filter-btn,
+  .category-item{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+
  /* මොබයිල් එකේදී උඩ මෙනූ එකෙන් Manage බොත්තම් දෙක සැඟවීම */
  .header-btns button:nth-child(1),
  .header-btns button:nth-child(2) {
@@ -423,7 +662,7 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
  }
  
  .input-field { padding: 11px 15px !important; font-size: 13px; border-radius: 12px; border: 1px solid #cbd5e1 !important; }  
- .lyrics-textarea { height: 300px; font-size: 13px; border-radius: 12px; padding: 11px 15px !important; border: 1px solid #cbd5e1 !important; }  
+ .lyrics-textarea { height: 200px; font-size: 13px; border-radius: 12px; padding: 11px 15px !important; border: 1px solid #cbd5e1 !important; }  
  .mobile-form-close { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }  
  .close-form-btn { background: #f1f5f9; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }  
  .mobile-overlay.active { display: block; }  
@@ -603,6 +842,19 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
  <div class="checkbox-list" id="categoryChecklist"></div>  
  </div>  
  </div>  
+
+<div style="margin-bottom:15px;">
+  <input type="text" id="originalYoutube"
+  class="input-field"
+  placeholder="Original Song YouTube Link">
+</div>
+
+<div style="margin-bottom:15px;">
+  <input type="text" id="karaokeYoutube"
+  class="input-field"
+  placeholder="Karaoke YouTube Link">
+</div>
+
  <div style="margin-bottom:15px;"><textarea id="songLyrics" class="lyrics-textarea" placeholder="Type Lyrics here..."></textarea></div>  
  <button class="save-btn" id="mainBtn" onclick="addSong()">Save Song</button>  
  
@@ -676,7 +928,7 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
   </div>
 </div>
 
-<div class="modal" id="lyricsModal" onclick="closeOnOutsideClick(event)">  
+<div class="modal" id="lyricsModal" onclick="handleModalOutside(event)">  
  <div class="modal-content" onclick="event.stopPropagation()">  
    
    <div class="modal-header-container" style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">  
@@ -690,6 +942,134 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
    <div style="flex: 1; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 15px 0;">
      
      <div id="modalLyrics" style="padding-bottom: 20px;"></div> 
+     
+<!-- 🎵 MODERN AUDIO PLAYERS -->
+<!-- 🎵 ORIGINAL PLAYER -->
+<div style="margin-top:18px;">
+
+<div style="
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#111827;
+padding-left:4px;
+">
+🎵 Original Audio Player
+</div>
+
+<div class="audioPlayerBox">
+
+<button
+onclick="toggleOriginalAudio()"
+id="originalPlayBtn"
+class="mainPlayBtn">
+<span>▸</span>
+</button>
+
+<div class="playerRight">
+
+<div class="progressRow">
+
+<div
+class="audioTime"
+id="currentTime">
+0:00
+</div>
+
+<input
+type="range"
+id="originalSeekBar"
+value="0"
+min="0"
+max="100"
+class="audioSeek">
+
+<div
+class="audioTime"
+id="durationTime">
+0:00
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 🎤 KARAOKE PLAYER -->
+<div style="margin-top:16px;">
+
+<div style="
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#111827;
+padding-left:4px;
+">
+🎤 Karaoke Player
+</div>
+
+<div class="audioPlayerBox">
+
+<button
+onclick="toggleKaraokeAudio()"
+id="karaokePlayBtn"
+class="mainPlayBtn">
+<span>▸</span>
+</button>
+
+<div class="playerRight">
+
+<div class="progressRow">
+
+<div
+class="audioTime"
+id="karaokeCurrentTime">
+0:00
+</div>
+
+<input
+type="range"
+id="karaokeSeekBar"
+value="0"
+min="0"
+max="100"
+class="audioSeek">
+
+<div
+class="audioTime"
+id="karaokeDurationTime">
+0:00
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- HIDDEN YOUTUBE PLAYERS -->
+<div id="originalPlayer"
+style="
+width:0;
+height:0;
+overflow:hidden;
+position:absolute;
+pointer-events:none;
+"></div>
+
+<div id="karaokePlayer"
+style="
+width:0;
+height:0;
+overflow:hidden;
+position:absolute;
+pointer-events:none;
+"></div>
 
      <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
        <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:10px; border-radius:10px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Copy</button>  
@@ -841,7 +1221,14 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
 
     const id = window.editId ? window.editId.toString() : Date.now().toString();
-    const songData = { title, artist, category: selectedCats, lyrics };
+    const songData = {
+         title,
+         artist,
+         category: selectedCats,
+         lyrics,
+         originalYoutube: document.getElementById('originalYoutube').value.trim(),
+        karaokeYoutube: document.getElementById('karaokeYoutube').value.trim()       };
+
 
     try {
       document.getElementById('syncStatus').innerText = "Syncing with Firebase Cloud...";
@@ -1346,15 +1733,27 @@ function resetForm() {
  document.getElementById('songTitle').value = ''; 
  document.getElementById('songArtist').value = ''; 
  document.getElementById('songLyrics').value = '';  
+ document.getElementById('originalYoutube').value = '';
+ document.getElementById('karaokeYoutube').value = '';
  document.querySelectorAll('input[name="songCat"]:checked').forEach(cb => cb.checked = false); updateSelectedText();  
  window.editId = null; document.getElementById('formTitle').innerText = "Add New Song"; document.getElementById('mainBtn').innerText = "Save Song";  
 }  
  
 function openLyrics(id){  
- currentlyViewingId = id; const song = window.songs.find(s => s.id == id); if(!song) return;  
+
+ const song = window.songs.find(s => s.id == id);
+
+ currentlyViewingId = id;
+
+ loadYoutubePlayers(song);
+
  document.getElementById('modalTitle').innerText = song.title;  
- document.getElementById('modalArtist').innerText = `${song.artist} | ${song.category ? song.category.join(', ') : ''}`;  
- document.getElementById('modalLyrics').innerText = song.lyrics;  
+
+ document.getElementById('modalArtist').innerText =
+ `${song.artist} | ${song.category ? song.category.join(', ') : ''}`;  
+
+ document.getElementById('modalLyrics').innerText =
+ song.lyrics;
     
  const lyricsContainer = document.getElementById('modalLyrics'); lyricsContainer.scrollTop = 0;  
  const footer = document.getElementById('modalFooter'); document.getElementById('lyricsModal').style.display = 'flex';  
@@ -1365,7 +1764,10 @@ function openLyrics(id){
      window.editId = song.id;  
      document.getElementById('songTitle').value = song.title;  
      document.getElementById('songArtist').value = song.artist;  
-     document.getElementById('songLyrics').value = song.lyrics;  
+     document.getElementById('songLyrics').value = song.lyrics; 
+     document.getElementById('originalYoutube').value = song.originalYoutube || '';
+     document.getElementById('karaokeYoutube').value = song.karaokeYoutube || '';
+ 
      
      // ⚡ මෙන්න මේ කොටස නිවැරදි කර ඇත:
      document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false); // Reset all inputs
@@ -1406,9 +1808,51 @@ document.getElementById('modalLyrics').addEventListener('scroll', function() {
  if (this.scrollTop > 20) { footer.classList.add('reveal'); } else { footer.classList.remove('reveal'); }  
 });  
  
-function closeLyricsModal(){ document.getElementById('lyricsModal').style.display = 'none'; }  
-function closeOnOutsideClick(e) { if (e.target.id === "lyricsModal") closeLyricsModal(); }  
-function filterByCategory(cat){ currentFilter = cat; renderSongs(); }  
+function closeLyricsModal(){
+
+  // 🎵 Original stop
+  if(originalPlayer && originalPlayer.stopVideo){
+    originalPlayer.stopVideo();
+  }
+
+  // 🎤 Karaoke stop
+  if(karaokePlayer && karaokePlayer.stopVideo){
+    karaokePlayer.stopVideo();
+  }
+
+  // reset states
+  originalPlaying = false;
+  karaokePlaying = false;
+
+  // reset buttons
+  document.getElementById("originalPlayBtn").innerHTML = "<span>▸</span>";
+  document.getElementById("karaokePlayBtn").innerHTML = "<span>▸</span>";
+
+  // reset seekbars
+  document.getElementById("originalSeekBar").value = 0;
+  document.getElementById("karaokeSeekBar").value = 0;
+
+  // reset times
+  document.getElementById("currentTime").innerText = "0:00";
+  document.getElementById("durationTime").innerText = "0:00";
+
+  document.getElementById("karaokeCurrentTime").innerText = "0:00";
+  document.getElementById("karaokeDurationTime").innerText = "0:00";
+
+  // close modal
+  document.getElementById('lyricsModal').style.display = 'none';
+}
+
+function closeOnOutsideClick(e){
+  if(e.target.id === "lyricsModal"){
+    closeLyricsModal();
+  }
+}
+
+function filterByCategory(cat){
+  currentFilter = cat;
+  renderSongs();
+} 
 
 /* ARTIST MANAGEMENT LOGICS */
 function triggerArtistManager() {
@@ -1690,6 +2134,20 @@ window.resetFontSize = function() {
   }
 }
 
+function handleModalOutside(event){
+
+  // 📱 Mobile devices detect
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
+    .test(navigator.userAgent);
+
+  // 💻 PC වල විතරක් outside click close කිරීම
+  if(!isMobile && event.target.id === 'lyricsModal'){
+    closeLyricsModal();
+  }
+
+}
+
 </script>  
 <script>
     if ('serviceWorker' in navigator) {
@@ -1700,5 +2158,379 @@ window.resetFontSize = function() {
       });
     }
   </script>
+
+<!-- YOUTUBE IFRAME API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+
+let originalPlayer;
+let karaokePlayer;
+
+let originalPlaying = false;
+let karaokePlaying = false;
+
+function getYoutubeId(url){
+
+  try{
+
+    const urlObj = new URL(url);
+
+    if(urlObj.hostname.includes("youtu.be")){
+
+      return urlObj.pathname.slice(1);
+
+    }
+
+    if(urlObj.hostname.includes("youtube.com")){
+
+      return urlObj.searchParams.get("v");
+
+    }
+
+  } catch(e){
+
+    return null;
+
+  }
+
+  return null;
+}
+
+function onYouTubeIframeAPIReady() {
+
+  originalPlayer = new YT.Player('originalPlayer', {
+    height: '0',
+    width: '0',
+    videoId: ''
+  });
+
+  karaokePlayer = new YT.Player('karaokePlayer', {
+    height: '0',
+    width: '0',
+    videoId: ''
+  });
+}
+
+function loadYoutubePlayers(song) {
+  console.log(song);
+  const originalId =
+  getYoutubeId(song.originalYoutube || '');
+
+  const karaokeId =
+  getYoutubeId(song.karaokeYoutube || '');
+
+  if(originalId){
+    originalPlayer.loadVideoById(originalId);
+    originalPlayer.pauseVideo();
+  }
+
+  if(karaokeId){
+    karaokePlayer.loadVideoById(karaokeId);
+    karaokePlayer.pauseVideo();
+  }
+
+  originalPlaying = false;
+  karaokePlaying = false;
+
+  document.getElementById("originalPlayBtn")
+  .innerText = "▶ ";
+
+  document.getElementById("karaokePlayBtn")
+  .innerText = "▶ ";
+}
+
+function toggleOriginalAudio(){
+
+  if(!originalPlayer) return;
+
+  if(originalPlaying){
+    originalPlayer.pauseVideo();
+    originalPlaying = false;
+
+    document.getElementById("originalPlayBtn")
+    .innerText = "▶ ";
+
+  } else {
+
+    karaokePlayer.pauseVideo();
+    karaokePlaying = false;
+
+    document.getElementById("karaokePlayBtn")
+    .innerText = "▶ ";
+
+    originalPlayer.playVideo();
+    originalPlaying = true;
+
+    document.getElementById("originalPlayBtn")
+    .innerText = "⏸";
+  }
+}
+
+function toggleKaraokeAudio(){
+
+  if(!karaokePlayer) return;
+
+  if(karaokePlaying){
+
+    karaokePlayer.pauseVideo();
+    karaokePlaying = false;
+
+    document.getElementById("karaokePlayBtn")
+    .innerText = "▶ ";
+
+  } else {
+
+    originalPlayer.pauseVideo();
+    originalPlaying = false;
+
+    document.getElementById("originalPlayBtn")
+    .innerText = "▶";
+
+    karaokePlayer.playVideo();
+    karaokePlaying = true;
+
+    document.getElementById("karaokePlayBtn")
+    .innerText = "⏸ ";
+  }
+}
+
+setInterval(()=>{
+
+/* ================= ORIGINAL PLAYER ================= */
+
+if(originalPlayer && originalPlayer.getCurrentTime){
+
+let current = originalPlayer.getCurrentTime();
+
+let duration = originalPlayer.getDuration();
+
+const seekBar =
+document.getElementById('originalSeekBar');
+
+/* PROGRESS */
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+/* TIME UPDATE */
+
+document.getElementById('currentTime')
+.innerText = formatTime(current);
+
+document.getElementById('durationTime')
+.innerText = formatTime(duration);
+
+}
+
+/* RESET */
+
+if(current <= 0){
+
+seekBar.value = 0;
+
+seekBar.style.setProperty(
+'--progress',
+'0%'
+);
+
+document.getElementById('currentTime')
+.innerText = '0:00';
+
+}
+
+}
+
+
+/* ================= KARAOKE PLAYER ================= */
+
+if(karaokePlayer && karaokePlayer.getCurrentTime){
+
+let current =
+karaokePlayer.getCurrentTime();
+
+let duration =
+karaokePlayer.getDuration();
+
+const seekBar =
+document.getElementById('karaokeSeekBar');
+
+/* PROGRESS */
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+/* TIME UPDATE */
+
+document.getElementById('karaokeCurrentTime')
+.innerText = formatTime(current);
+
+document.getElementById('karaokeDurationTime')
+.innerText = formatTime(duration);
+
+}
+
+/* RESET */
+
+if(current <= 0){
+
+seekBar.value = 0;
+
+seekBar.style.setProperty(
+'--progress',
+'0%'
+);
+
+document.getElementById('karaokeCurrentTime')
+.innerText = '0:00';
+
+}
+
+}
+
+},500);
+
+
+
+/* ================= SEEK ORIGINAL ================= */
+
+document.getElementById("originalSeekBar")
+.addEventListener("input", function(){
+
+if(!originalPlayer) return;
+
+const total =
+originalPlayer.getDuration();
+
+const seekTime =
+(this.value / 100) * total;
+
+originalPlayer.seekTo(seekTime, true);
+
+});
+
+
+/* ================= SEEK KARAOKE ================= */
+
+document.getElementById("karaokeSeekBar")
+.addEventListener("input", function(){
+
+if(!karaokePlayer) return;
+
+const total =
+karaokePlayer.getDuration();
+
+const seekTime =
+(this.value / 100) * total;
+
+karaokePlayer.seekTo(seekTime, true);
+
+});
+
+
+/* ================= FORMAT TIME ================= */
+
+function formatTime(sec){
+
+sec = Math.floor(sec);
+
+let minutes =
+Math.floor(sec / 60);
+
+let seconds =
+sec % 60;
+
+if(seconds < 10){
+seconds = '0' + seconds;
+}
+
+return minutes + ':' + seconds;
+
+}
+
+</script>
+<script>
+
+/* ⚡ INSTANT TOUCH SYSTEM */
+document.addEventListener(
+  "touchstart",
+  function(){},
+  {
+    passive:true
+  }
+);
+
+/* ⚡ REMOVE CLICK DELAY */
+document.querySelectorAll(
+  'button,.song-card,.filter-btn,.category-item'
+).forEach(el=>{
+
+  el.addEventListener(
+    'touchend',
+    function(e){
+
+      e.preventDefault();
+
+      this.click();
+
+    },
+    {
+      passive:false
+    }
+  );
+
+});
+
+</script>
+<script>
+
+/* ⚡ MOBILE FAST CLICK FIX */
+if(window.innerWidth <= 768){
+
+  document.addEventListener(
+    "touchstart",
+    ()=>{},
+    {passive:true}
+  );
+
+  document.querySelectorAll(
+    'button,.song-card,.filter-btn'
+  ).forEach(el=>{
+
+    el.addEventListener(
+      'touchend',
+      function(e){
+
+        e.preventDefault();
+
+        this.click();
+
+      },
+      {passive:false}
+    );
+
+  });
+
+}
+
+</script>
 </body>  
 </html>
