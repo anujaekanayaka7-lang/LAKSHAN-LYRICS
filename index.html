@@ -68,7 +68,7 @@ background: white;
 border-bottom: 1px solid #e2e8f0;  
 position: sticky;  
 top: 0;  
-z-index: 100;  
+z-index: 2000;  
 }  
 .logo { font-size: 22px; font-weight: 700; background: linear-gradient(90deg,#a855f7,#06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }  
  
@@ -109,9 +109,9 @@ max-width: 1500px;
 margin: 0 auto;  
 }  
 .left-sidebar {  
-width: 340px; background: white; padding: 25px; border-radius: 20px;  
-height: fit-content; position: sticky; top: 90px;  
-border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);  
+ width: 340px; background: white; padding: 25px; border-radius: 20px;  
+ height: fit-content; position: sticky; top: 90px;  
+ border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);  
  transform: translate3d(0,0,0);  
  will-change: transform;  
  transition: transform 0.1s linear, visibility 0.1s linear;  
@@ -227,7 +227,7 @@ border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 .input-field:hover, .input-field:focus {
  border-color: #8b5cf6 !important;
 }
- 
+
 .lyrics-textarea {  
  width: 100%;  
  padding: 13px 18px !important;  
@@ -264,9 +264,8 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
  
 .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; }  
 
-/* නවීන Audio Player පෙනුම */
-/* ===== ULTRA SLIM PLAYER ===== */
 
+/* නවීන Audio Player පෙනුම */
 .audioPlayerBox{
 display:flex;
 align-items:center;
@@ -284,19 +283,22 @@ border-radius:18px;
 }
 
 .mainPlayBtn{
-width:42px;
-height:42px;
+
+width:50px;
+height:30px;
 
 border:none;
 outline:none;
 
-border-radius:50%;
+border-radius:18px;
 
-background:#111;
+/* MODERN GRADIENT */
+background:linear-gradient(135deg,#000000,#000000);
+
 color:#fff;
 
-font-size:18px;
-font-weight:bold;
+font-size:15px;
+font-weight:700;
 
 display:flex;
 align-items:center;
@@ -314,7 +316,7 @@ touch-action:manipulation;
 user-select:none;
 -webkit-user-select:none;
 
-transition:none !important;
+transition:all .25s ease;
 
 transform:translateZ(0);
 will-change:transform;
@@ -322,9 +324,27 @@ will-change:transform;
 position:relative;
 z-index:5;
 
-.mainPlayBtn span{
-pointer-events:none;}
+/* SOFT SHADOW */
+box-shadow:
+0 6px 18px rgba(139,92,246,0.35),
+0 2px 6px rgba(0,0,0,0.15);
 
+}
+
+/* HOVER EFFECT */
+.mainPlayBtn:hover{
+transform:scale(1.06);
+filter:brightness(1.05);
+}
+
+/* CLICK EFFECT */
+.mainPlayBtn:active{
+transform:scale(0.94);
+}
+
+/* ICON CLICK FIX */
+.mainPlayBtn span{
+pointer-events:none;
 }
 .mainPlayBtn{
   touch-action: manipulation;
@@ -448,31 +468,6 @@ background:#111;
 cursor:pointer;
 }
 
-/* PLAY BUTTON */
-.mainPlayBtn{
-width:34px;
-height:34px;
-
-border:none;
-outline:none;
-
-background:#111;
-color:#fff;
-
-border-radius:50%;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-cursor:pointer;
-
-padding:0;
-
-font-size:20px;
-line-height:1;
-}
-
 /* ⚡ TOUCH INSTANT RESPONSE */
 button,
 .song-card,
@@ -494,8 +489,20 @@ button,
   transition: none !important;
 }
 
+
+/* 🎵 MODAL ACTION BUTTON HOVER EFFECT */
+
+#copyBtn:hover,
+#modalEditBtn:hover,
+#modalDeleteBtn:hover{
+
+transform:scale(1.00);
+filter:brightness(1.1);
+}
+
 /* MODAL */  
-.modal { 
+.modal {
+  
   position: fixed; 
   inset: 0; 
   background: rgba(15, 23, 42, 0.75); 
@@ -503,8 +510,8 @@ button,
   justify-content: center; 
   align-items: center; 
   padding: 15px; 
-  z-index: 2000; 
-  backdrop-filter:none;
+  z-index: 3000; 
+  backdrop-filter:blur(4px);
   overflow-y: auto; /* ⚡ ජනේලයෙන් පිටතට සින්දුව දිගු වුවහොත් Scroll වීමට ඉඩ දීම */
 }
 .modal-content { 
@@ -523,8 +530,31 @@ button,
  
 .modal-header-container { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; }  
 .modal-back-btn { background: #f1f5f9; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: #1e293b; transition: all 0.15s; white-space: nowrap; }  
-.modal-back-btn:hover { background: #e2e8f0; }  
- 
+.modal-back-btn:hover { background: #e2e8f0; }
+ /* 🔠 FONT SIZE BUTTON ANIMATION */
+
+button[onclick="changeFontSize(-2)"],
+button[onclick="resetFontSize()"],
+button[onclick="changeFontSize(2)"]{
+
+transition: all 0.15s ease;
+}
+
+/* 🖱️ HOVER */
+button[onclick="changeFontSize(-2)"]:hover,
+button[onclick="resetFontSize()"]:hover,
+button[onclick="changeFontSize(2)"]:hover{
+
+background:#e2e8f0 !important;
+}
+
+/* 👆 CLICK */
+button[onclick="changeFontSize(-2)"]:active,
+button[onclick="resetFontSize()"]:active,
+button[onclick="changeFontSize(2)"]:active{
+
+transform:scale(0.96);
+}
 #modalLyrics { 
   white-space: pre-wrap; 
   line-height: 1.7; 
@@ -575,7 +605,7 @@ button,
   border-radius: 24px !important;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
   /* මැසේජ් එක උඩ සිට පහළට එන ලස්සන Animation එකක් */
-  animation: slideDown 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  animation: slideDown 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
 /* ⚠️ මැසේජ් බොක්ස් පසුබිම (Modal) පමණක් මැද සිට ඉහළට (Top) සකස් කිරීම */
@@ -608,11 +638,22 @@ button,
  header { padding: 10px 15px; }  
  .logo { font-size: 18px; }  
   
- .header-btns {  
- display: none; position: absolute; top: 100%; right: 15px; background: white; border: 1px solid #e2e8f0;  
- border-radius: 12px; padding: 8px; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);  
- z-index: 1000; gap: 5px; min-width: 170px; animation: zoomIn 0.15s ease;  
- }  
+ .header-btns {   
+ display: none;
+ position: absolute;
+ top: 100%;
+ right: 15px;
+ background: white;
+ border: 1px solid #e2e8f0;
+ border-radius: 12px;
+ padding: 8px;
+ flex-direction: column;
+ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+ z-index: 8000;
+ gap: 5px;
+ min-width: 170px;
+ animation: zoomIn 0.15s ease;
+}
  .header-btns.active { display: flex; }  
  .header-btns button { width: 100%; padding: 10px 12px; text-align: left; border: none; font-size: 13px; }  
  .header-btns button:hover { background: #f1f5f9; border-radius: 8px; }  
@@ -626,11 +667,11 @@ button,
     -webkit-tap-highlight-color:transparent;
   }
 
- /* මොබයිල් එකේදී උඩ මෙනූ එකෙන් Manage බොත්තම් දෙක සැඟවීම */
+/* මොබයිල් එකේදී උඩ මෙනූ එකෙන් Manage බොත්තම් දෙක සැඟවීම */
  .header-btns button:nth-child(1),
  .header-btns button:nth-child(2) {
    display: none !important;
- }
+ } 
   
  .left-sidebar {  
  position: fixed; top: 0; left: 0; width: 320px; max-width: 85vw; height: 100vh; border-radius: 0; z-index: 2500;  
@@ -638,6 +679,7 @@ button,
  transition: transform 0.08s linear, visibility 0.08s linear; will-change: transform;  
  }  
  .left-sidebar.active { transform: translate3d(0, 0, 0); visibility: visible; }  
+ 
  
  /* මොබයිල් එකේදී Save Song එකට යටින් බොත්තම් දෙක එක ළඟින් පෙන්වීම */
  .mobile-only-manage-btns {
@@ -787,9 +829,8 @@ button,
   background: #e2e8f0;
 }
 
-/* ⚠️ Lyrics Modal එකට උඩින් Password Modal එක පෙන්වීමට Z-Index 3500 දක්වා වැඩි කරන ලදී */
 #customPasswordModal {
-  z-index: 3500 !important;
+  z-index: 4000 !important;
 }
 
 </style>  
@@ -963,7 +1004,7 @@ padding-left:4px;
 onclick="toggleOriginalAudio()"
 id="originalPlayBtn"
 class="mainPlayBtn">
-<span>▸</span>
+▸
 </button>
 
 <div class="playerRight">
@@ -1017,7 +1058,7 @@ padding-left:4px;
 onclick="toggleKaraokeAudio()"
 id="karaokePlayBtn"
 class="mainPlayBtn">
-<span>▸</span>
+▸
 </button>
 
 <div class="playerRight">
@@ -1069,13 +1110,16 @@ height:0;
 overflow:hidden;
 position:absolute;
 pointer-events:none;
-"></div>
+">
+</div>
+
 
      <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
        <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:10px; border-radius:10px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Copy</button>  
        <button id="modalEditBtn" style="flex:1; padding:10px; border-radius:10px; background:#8b5cf6; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Edit</button>  
        <button id="modalDeleteBtn" style="flex:1; padding:10px; border-radius:10px; background:#ef4444; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Delete</button>  
-       <button onclick="closeLyricsModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #e2e8f0; background:white; color:#475569; cursor:pointer; font-weight:600; font-size:13px;">Close</button>  
+       <button class="modal-back-btn"onclick="closeLyricsModal()"style="flex:1;">Close</button> 
+
      </div>
 
    </div>  
@@ -1095,16 +1139,6 @@ pointer-events:none;
 </div>
 
 <div id="modalLyrics"></div>
-  
-  
-<div class="modal-footer-btns" id="modalFooter">  
- <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:12px; border-radius:12px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600;">Copy</button>  
- <button id="modalEditBtn" style="flex:1; padding:12px; border-radius:12px; background:#8b5cf6; color:white; border:none; cursor:pointer; font-weight:600;">Edit</button>  
- <button id="modalDeleteBtn" style="flex:1; padding:12px; border-radius:12px; background:#ef4444; color:white; border:none; cursor:pointer; font-weight:600;">Delete</button>  
- <button onclick="closeLyricsModal()" style="flex:1; padding:12px; border-radius:12px; border:1px solid #e2e8f0; cursor:pointer; font-weight:600;">Close</button>  
- </div>  
- </div>  
-</div>  
 
 <div class="modal" id="artistManagerModal" onclick="if(event.target.id === 'artistManagerModal') closeArtistManagerModal()">  
  <div class="modal-content" onclick="event.stopPropagation()">  
@@ -1490,7 +1524,13 @@ function closePasswordModal() {
 
 function openSidebarDrawer() { document.getElementById('sidebarSection').classList.add('active'); document.getElementById('mobileOverlayLayer').classList.add('active'); }  
 function closeSidebarDrawer() { document.getElementById('sidebarSection').classList.remove('active'); document.getElementById('mobileOverlayLayer').classList.remove('active'); resetForm(); }  
-function toggleDotsMenu(e) { e.stopPropagation(); document.getElementById('headerActionMenu').classList.toggle('active'); }  
+function toggleDotsMenu(e) {
+  e.stopPropagation();
+
+  const menu = document.getElementById('headerActionMenu');
+
+  menu.classList.toggle('active');
+} 
 
 window.toggleArtistDropdown = function(e) {
   e.stopPropagation();
@@ -2240,59 +2280,100 @@ function loadYoutubePlayers(song) {
   .innerText = "▶ ";
 }
 
-function toggleOriginalAudio(){
+async function toggleOriginalAudio(){
 
   if(!originalPlayer) return;
 
-  if(originalPlaying){
-    originalPlayer.pauseVideo();
-    originalPlaying = false;
+  const btn =
+  document.getElementById("originalPlayBtn");
 
-    document.getElementById("originalPlayBtn")
-    .innerText = "▶ ";
+  const karaokeBtn =
+  document.getElementById("karaokePlayBtn");
 
-  } else {
+  try{
 
-    karaokePlayer.pauseVideo();
-    karaokePlaying = false;
+    const state =
+    originalPlayer.getPlayerState();
 
-    document.getElementById("karaokePlayBtn")
-    .innerText = "▶ ";
+    if(state == 1){
 
-    originalPlayer.playVideo();
-    originalPlaying = true;
+      /* ⏸ ORIGINAL PAUSE */
+      originalPlayer.pauseVideo();
 
-    document.getElementById("originalPlayBtn")
-    .innerText = "⏸";
+      btn.textContent = "▶";
+
+    }else{
+
+      /* ⛔ KARAOKE STOP */
+      if(karaokePlayer){
+
+        karaokePlayer.pauseVideo();
+
+        karaokeBtn.textContent = "▶";
+
+      }
+
+      /* ▶ ORIGINAL PLAY */
+      originalPlayer.playVideo();
+
+      btn.textContent = "⏸";
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
   }
+
 }
 
-function toggleKaraokeAudio(){
+async function toggleKaraokeAudio(){
 
   if(!karaokePlayer) return;
 
-  if(karaokePlaying){
+  const btn =
+  document.getElementById("karaokePlayBtn");
 
-    karaokePlayer.pauseVideo();
-    karaokePlaying = false;
+  const originalBtn =
+  document.getElementById("originalPlayBtn");
 
-    document.getElementById("karaokePlayBtn")
-    .innerText = "▶ ";
+  try{
 
-  } else {
+    const state =
+    karaokePlayer.getPlayerState();
 
-    originalPlayer.pauseVideo();
-    originalPlaying = false;
+    if(state == 1){
 
-    document.getElementById("originalPlayBtn")
-    .innerText = "▶";
+      /* ⏸ KARAOKE PAUSE */
+      karaokePlayer.pauseVideo();
 
-    karaokePlayer.playVideo();
-    karaokePlaying = true;
+      btn.textContent = "▶";
 
-    document.getElementById("karaokePlayBtn")
-    .innerText = "⏸ ";
+    }else{
+
+      /* ⛔ ORIGINAL STOP */
+      if(originalPlayer){
+
+        originalPlayer.pauseVideo();
+
+        originalBtn.textContent = "▶";
+
+      }
+
+      /* ▶ KARAOKE PLAY */
+      karaokePlayer.playVideo();
+
+      btn.textContent = "⏸"; 
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
   }
+
 }
 
 setInterval(()=>{
@@ -2486,6 +2567,12 @@ document.querySelectorAll(
   el.addEventListener(
     'touchend',
     function(e){
+
+      if(
+        this.id === "dotsMenuBtn"
+      ){
+        return;
+      }
 
       e.preventDefault();
 
