@@ -1,0 +1,2623 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<link rel="manifest" href="/LAKSHAN-LYRICS/manifest.json">  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>LAKSHAN LYRICS - PRO</title>  
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
+<style>  
+/* මූලික සැකසුම් */  
+*{ 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+  font-family: 'Poppins', sans-serif; 
+  -webkit-tap-highlight-color: transparent; 
+  
+  /* ⚡ මොබයිල් ඩබල් ටැප් (Double Tap Zoom) ප්‍රමාදය ඉවත් කර ස්පර්ශය වේගවත් කිරීම */
+  touch-action: manipulation; 
+}  
+
+/* ⚡ සියලුම බොත්තම් සහ ක්ලික් කරන දේවල් මොබයිල් ඇඟිල්ලට ඉක්මනින් හඳුනා ගැනීමට */
+button, .song-card, .filter-btn, .category-item, .artist-display, .select-display {
+  cursor: pointer;
+  transition: all 0.1s ease !important; /* Animations වේගවත් කිරීම */
+  will-change: transform, opacity;
+}
+body{ background:#f1f5f9; color:#111827; }  
+ 
+/* --- HIDE ALL SCROLLBARS & MAXIMIZE MOBILE SCROLL SPEED --- */  
+::-webkit-scrollbar { display: none; }  
+html, body, div, textarea { 
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+  -webkit-overflow-scrolling: touch !important; 
+  /* ⚠️ Scroll එක හිරවීම නැවැත්වීමට 'contain' වෙනුවට 'auto' හෝ 'initial' කරන්න */
+  overscroll-behavior-y: auto !important; 
+  
+}
+
+/* Chrome, Safari සහ Opera වල scrollbars සැඟවීම */
+::-webkit-scrollbar {  
+  display: none !important;  
+  width: 0 !important;
+  height: 0 !important;
+}  
+
+/* සියලුම div සහ textarea වල මොබයිල් touch speed එක සහ සුමට බව වැඩි කිරීම */
+div, textarea, #modalLyrics {  
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+  -webkit-overflow-scrolling: touch !important; /* iOS/Safari වල ස්වභාවික සුමට scroll එක ලබා දීම */
+  overscroll-behavior-y: auto !important; /* ⚠️ හිරවීම නැවැත්වීමට 'contain' වෙනුවට 'auto' කරන ලදී */
+}
+ 
+@keyframes zoomIn {  
+ from { opacity: 0; transform: scale(0.95); }  
+ to { opacity: 1; transform: scale(1); }  
+}  
+ 
+/* HEADER */  
+header {  
+padding: 15px 25px;  
+display: flex;  
+justify-content: space-between;  
+ align-items: center;  
+background: white;  
+border-bottom: 1px solid #e2e8f0;  
+position: sticky;  
+top: 0;  
+z-index: 2000;  
+}  
+.logo { font-size: 22px; font-weight: 700; background: linear-gradient(90deg,#a855f7,#06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }  
+ 
+.header-container { display: flex; align-items: center; gap: 15px; }  
+.header-btns { display: flex; gap: 10px; }  
+.header-btns button {  
+padding: 8px 15px; border-radius: 10px; border: 1px solid #e2e8f0;  
+background: white; cursor: pointer; font-size: 13px; font-weight: 500;  
+ transition: all 0.2s ease;  
+}  
+.header-btns button:hover { border-color: #06b6d4; color: #06b6d4; }  
+ 
+.menu-trigger { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #475569; padding: 5px; }  
+#dotsMenuBtn { font-size: 22px; font-weight: bold; color: #475569; line-height: 1; }  
+ 
+/* ONLINE/OFFLINE BADGE */
+.network-status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-online { background: #dcfce7; color: #15803d; }
+.status-offline { background: #fee2e2; color: #b91c1c; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.status-online .status-dot { background: #16a34a; }
+.status-offline .status-dot { background: #dc2626; }
+
+/* MAIN LAYOUT */  
+.main-wrapper {  
+display: flex;  
+padding: 25px 15px;  
+gap: 20px;  
+max-width: 1500px;  
+margin: 0 auto;  
+}  
+.left-sidebar {  
+ width: 340px; background: white; padding: 25px; border-radius: 20px;  
+ height: fit-content; position: sticky; top: 90px;  
+ border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);  
+ transform: translate3d(0,0,0);  
+ will-change: transform;  
+ transition: transform 0.1s linear, visibility 0.1s linear;  
+}  
+ 
+.right-content { flex: 1; min-width: 0; position: relative; }  
+ 
+/* --- CUSTOM ARTIST SELECTION UI --- */
+.custom-artist-dropdown { position: relative; width: 100%; }
+.artist-display {
+ width: 100%; 
+ padding: 13px 18px !important; 
+ border: 1px solid #cbd5e1 !important; 
+ border-radius: 15px; 
+ background: white; 
+ font-size: 14px;  
+ cursor: pointer; 
+ display: flex; 
+ justify-content: space-between; 
+ align-items: center;
+ position: relative;
+ transition: all 0.2s ease;
+}
+.artist-display:hover { border-color: #8b5cf6 !important; }
+
+.custom-artist-dropdown .arrow-icon {
+ width: 20px; height: 20px;
+ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
+ background-size: contain; background-repeat: no-repeat;
+ transition: transform 0.3s ease; pointer-events: none;
+}
+.custom-artist-dropdown.active .arrow-icon { transform: rotate(180deg); }
+
+.artist-list-container {
+ display: none; position: absolute; top: 100%; left: 0; right: 0; 
+ background: white; border: 1px solid #e2e8f0; border-radius: 15px; 
+ margin-top: 5px; z-index: 1010; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+ max-height: 280px !important; 
+ overflow-y: auto !important;   
+}
+.custom-artist-dropdown.active .artist-list-container { display: block !important; }
+
+.artist-option-item {
+ padding: 12px 18px; cursor: pointer; font-size: 14px; color: #1e293b; transition: all 0.15s;
+}
+.artist-option-item:hover { background: #f1f5f9; color: #8b5cf6; }
+.artist-option-item.selected { background: #f5f3ff; color: #8b5cf6; font-weight: 600; }
+ 
+/* CUSTOM MULTISELECT & SUGGEST INPUT */  
+.custom-multiselect { position: relative; width: 100%; }  
+.select-display {  
+ width: 100%; 
+ padding: 13px 18px !important; 
+ border: 1px solid #cbd5e1 !important; 
+ border-radius: 15px; 
+ background: white; 
+ font-size: 14px;  
+ cursor: pointer; 
+ display: flex; 
+ justify-content: space-between; 
+ align-items: center;  
+ transition: all 0.2s ease;
+}  
+.select-display:hover {  
+ border-color: #8b5cf6 !important;  
+}  
+
+.suggest-container { position: relative; width: 100%; }
+ 
+.arrow-icon {  
+ width: 20px;
+ height: 20px;
+ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
+ background-size: contain;
+ background-repeat: no-repeat;
+ transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s;  
+ user-select: none;  
+ pointer-events: none;  
+ display: inline-block;  
+}  
+
+.custom-multiselect.active .arrow-icon {  
+ transform: rotate(180deg);  
+ color: #8b5cf6;  
+}  
+ 
+.checkbox-list {  
+ display: none; position: absolute; top: 100%; left: 0; right: 0;  
+ background: white; border: 1px solid #e2e8f0; border-radius: 12px;  
+ margin-top: 5px; z-index: 1005; max-height: 220px; overflow-y: auto;  
+ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);  
+}  
+.custom-multiselect.active .checkbox-list { display: block; }  
+.suggest-container.active .checkbox-list { display: block; }
+ 
+.category-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; font-size: 13px; transition: background 0.15s; }  
+.category-item:hover { background: #f1f5f9; color: inherit; }  
+.category-item input { margin-right: 12px; width: 17px; height: 17px; cursor: pointer; }  
+ 
+/* FILTERS & CATEGORY BAR */  
+.filter-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }  
+
+.input-field {  
+ width: 100%;  
+ padding: 13px 18px !important;  
+ border: 1px solid #cbd5e1 !important;  
+ border-radius: 15px;  
+ outline: none;  
+ font-size: 14px;  
+ background: #ffffff;
+ transition: all 0.2s ease;
+}  
+.input-field:hover, .input-field:focus {
+ border-color: #8b5cf6 !important;
+}
+
+.lyrics-textarea {  
+ width: 100%;  
+ padding: 13px 18px !important;  
+ border: 1px solid #cbd5e1 !important;  
+ border-radius: 15px;  
+ outline: none;  
+ font-size: 14px;  
+ height: 200px;  
+ resize: none;  
+ background: #ffffff;
+ transition: all 0.2s ease;
+}  
+.lyrics-textarea:hover, .lyrics-textarea:focus {
+ border-color: #8b5cf6 !important;
+}
+ 
+.category-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 20px; cursor: grab; user-select: none; -webkit-user-select: none; padding-right: 20px;}  
+.category-bar:active { cursor: grabbing; }  
+ 
+.filter-btn {  
+padding: 8px 18px; border-radius: 20px; border: 1px solid #e2e8f0;  
+background: white; cursor: pointer; font-size: 13px; white-space: nowrap;  
+transition: background 0.15s, color 0.15s, border-color 0.15s;  
+}  
+.filter-btn:hover { border-color: #8b5cf6; }  
+.filter-btn.active { background: #8b5cf6; color: white; border-color: #8b5cf6; }  
+ 
+/* SONGS GRID */  
+.songs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }  
+.song-card { background: white; border-radius: 15px; padding: 18px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.15s; }  
+.song-card:hover { border-color: #8b5cf6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }  
+.song-card strong { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  
+.song-card small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }  
+ 
+.no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; }  
+
+
+/* නවීන Audio Player පෙනුම */
+.audioPlayerBox{
+display:flex;
+align-items:center;
+gap:10px;
+
+width:100%;
+
+padding:10px 14px;
+margin-top:10px;
+
+background:#fff;
+
+border:1px solid #222;
+border-radius:18px;
+}
+
+.mainPlayBtn{
+
+width:50px;
+height:30px;
+
+border:none;
+outline:none;
+
+border-radius:18px;
+
+/* MODERN GRADIENT */
+background:linear-gradient(135deg,#000000,#000000);
+
+color:#fff;
+
+font-size:15px;
+font-weight:700;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+flex-shrink:0;
+
+cursor:pointer;
+
+padding:0;
+
+touch-action:manipulation;
+-webkit-tap-highlight-color:transparent;
+
+user-select:none;
+-webkit-user-select:none;
+
+transition:all .25s ease;
+
+transform:translateZ(0);
+will-change:transform;
+
+position:relative;
+z-index:5;
+
+/* SOFT SHADOW */
+box-shadow:
+0 6px 18px rgba(139,92,246,0.35),
+0 2px 6px rgba(0,0,0,0.15);
+
+}
+
+/* HOVER EFFECT */
+.mainPlayBtn:hover{
+transform:scale(1.06);
+filter:brightness(1.05);
+}
+
+/* CLICK EFFECT */
+.mainPlayBtn:active{
+transform:scale(0.94);
+}
+
+/* ICON CLICK FIX */
+.mainPlayBtn span{
+pointer-events:none;
+}
+.mainPlayBtn{
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  user-select:none;
+  -webkit-user-select:none;
+
+  cursor:pointer;
+}
+
+/* RIGHT SIDE */
+
+.playerRight{
+flex:1;
+min-width:0;
+}
+
+/* SONG TITLE */
+
+.playerTitle{
+font-size:12px;
+font-weight:700;
+color:#111;
+
+margin-bottom:6px;
+
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+/* TIME + BAR */
+
+.progressRow{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.audioTime{
+font-size:11px;
+font-weight:600;
+color:#444;
+
+min-width:34px;
+text-align:center;
+}
+
+.audioSeek{
+flex:1;
+height:4px;
+
+appearance:none;
+-webkit-appearance:none;
+
+border-radius:30px;
+outline:none;
+cursor:pointer;
+
+/* DEFAULT BAR */
+
+background:#d1d5db;
+}
+
+/* PLAYED PART */
+
+.audioSeek::-webkit-slider-runnable-track{
+height:4px;
+border-radius:30px;
+
+background:linear-gradient(
+to right,
+#111 0%,
+#111 var(--progress),
+#d1d5db var(--progress),
+#d1d5db 100%
+);
+}
+
+/* THUMB */
+
+.audioSeek::-webkit-slider-thumb{
+appearance:none;
+-webkit-appearance:none;
+
+margin-top:-3px;
+
+width:10px;
+height:10px;
+
+border:none;
+border-radius:50%;
+
+background:#111;
+cursor:pointer;
+}
+
+/* FIREFOX */
+
+.audioSeek::-moz-range-track{
+height:4px;
+background:#d1d5db;
+border-radius:30px;
+}
+
+.audioSeek::-moz-range-progress{
+height:4px;
+background:#111;
+border-radius:30px;
+}
+
+.audioSeek::-moz-range-thumb{
+width:10px;
+height:10px;
+
+border:none;
+border-radius:50%;
+
+background:#111;
+cursor:pointer;
+}
+
+/* ⚡ TOUCH INSTANT RESPONSE */
+button,
+.song-card,
+.filter-btn,
+.category-item,
+.artist-option-item,
+.select-display,
+.artist-display{
+
+  touch-action: manipulation;
+  
+  -webkit-tap-highlight-color: transparent;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  cursor: pointer;
+
+  transition: none !important;
+}
+
+
+/* 🎵 MODAL ACTION BUTTON HOVER EFFECT */
+
+#copyBtn:hover,
+#modalEditBtn:hover,
+#modalDeleteBtn:hover{
+
+transform:scale(1.00);
+filter:brightness(1.1);
+}
+
+/* MODAL */  
+.modal {
+  
+  position: fixed; 
+  inset: 0; 
+  background: rgba(15, 23, 42, 0.75); 
+  display: none; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 15px; 
+  z-index: 3000; 
+  backdrop-filter:blur(4px);
+  overflow-y: auto; /* ⚡ ජනේලයෙන් පිටතට සින්දුව දිගු වුවහොත් Scroll වීමට ඉඩ දීම */
+}
+.modal-content { 
+  width: 100%; 
+  max-width: 550px; 
+  background: white; 
+  border-radius: 28px; 
+  padding: 24px; /* පිරවුම තරමක් ක්‍රමවත් කර ඇත */
+  position: relative; 
+  animation: zoomIn 0.10s ease-out; 
+  max-height: 85vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; /* අන්තර්ගතය පිටතට පැනීම වළක්වයි */
+}
+ 
+.modal-header-container { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; }  
+.modal-back-btn { background: #f1f5f9; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: #1e293b; transition: all 0.15s; white-space: nowrap; }  
+.modal-back-btn:hover { background: #e2e8f0; }
+ /* 🔠 FONT SIZE BUTTON ANIMATION */
+
+button[onclick="changeFontSize(-2)"],
+button[onclick="resetFontSize()"],
+button[onclick="changeFontSize(2)"]{
+
+transition: all 0.15s ease;
+}
+
+/* 🖱️ HOVER */
+button[onclick="changeFontSize(-2)"]:hover,
+button[onclick="resetFontSize()"]:hover,
+button[onclick="changeFontSize(2)"]:hover{
+
+background:#e2e8f0 !important;
+}
+
+/* 👆 CLICK */
+button[onclick="changeFontSize(-2)"]:active,
+button[onclick="resetFontSize()"]:active,
+button[onclick="changeFontSize(2)"]:active{
+
+transform:scale(0.96);
+}
+#modalLyrics { 
+  white-space: pre-wrap; 
+  line-height: 1.7; 
+  font-size: 18px; 
+  padding-bottom: 15px; 
+  color: #1e293b; 
+  
+  /* ⚡ Scroll එක Smooth කිරීමට එකතු කළ නව කේතයන් */
+  overflow-y: auto !important; 
+  scroll-behavior: smooth !important;           /* PC සහ පොදු Browsers වල සුමට scroll වීම සඳහා */
+  -webkit-overflow-scrolling: touch !important; /* මොබයිල් (Android/iOS) වල ස්වභාවික සුමට (Momentum) scroll එක සඳහා */
+}
+ 
+.modal-footer-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; pointer-events: none; }  
+.modal-footer-btns.reveal { opacity: 1; transform: translateY(0); pointer-events: auto; }  
+ 
+.save-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(90deg,#8b5cf6,#06b6d4); color: white; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s ease; }  
+.save-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+#scrollTopBtn { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: #8b5cf6; color: white; border: none; border-radius: 50%; cursor: pointer; display: none; font-size: 18px; font-weight: bold; z-index: 99; }  
+ 
+.mobile-form-close { display: none; }  
+.mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.4); backdrop-filter: blur(1px); z-index: 2400; }  
+ 
+.firebase-status { font-size: 11px; font-weight: 600; color: #64748b; margin-top: 5px; text-align: center; }  
+
+/* MANAGEMENT SYSTEM SYSTEM UI STYLES */
+.manage-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border-bottom: 1px solid #f1f5f9; gap: 10px; }
+.manage-item-text { font-size: 14px; font-weight: 500; color: #1e293b; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.manage-btns-group { display: flex; gap: 6px; }
+.manage-action-btn { padding: 5px 12px; border: none; background: #8b5cf6; color: white; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: background 0.15s; }
+.manage-action-btn:hover { background: #7c3aed; }
+.manage-delete-btn { padding: 5px 12px; border: none; background: #ef4444; color: white; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; transition: background 0.15s; }
+.manage-delete-btn:hover { background: #dc2626; }
+.add-new-btn-custom { width: 100%; padding: 12px; border: 1px dashed #8b5cf6; background: #f5f3ff; color: #8b5cf6; font-weight: 600; border-radius: 12px; cursor: pointer; margin-bottom: 15px; font-size: 13px; transition: all 0.2s ease; }
+.add-new-btn-custom:hover { background: #ede9fe; border-style: solid; }
+
+/* මොබයිල් වලදී පමණක් Save Song එකට යටින් පෙන්වන බොත්තම් දෙකේ මූලික CSS */
+.mobile-only-manage-btns {
+  display: none;
+}
+
+/* --- CUSTOM GENERAL DIALOGS SYSTEM STYLES --- */
+.custom-dialog-box {
+  width: 90% !important;
+  max-width: 400px !important;
+  text-align: center;
+  padding: 25px !important;
+  border-radius: 24px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  /* මැසේජ් එක උඩ සිට පහළට එන ලස්සන Animation එකක් */
+  animation: slideDown 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* ⚠️ මැසේජ් බොක්ස් පසුබිම (Modal) පමණක් මැද සිට ඉහළට (Top) සකස් කිරීම */
+#customDialogModal {
+  align-items: flex-start !important; /* මැද වෙනුවට ඉහළට */
+  padding-top: 40px !important;       /* තිරයේ උඩ සිට 40px ක ඉඩක් තැබීම */
+}
+
+/* උඩ සිට පහළට Slide වන Animation කේතය */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dialog-icon { font-size: 38px; margin-bottom: 10px; }
+.dialog-title { color: #1e293b; font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+.dialog-msg { color: #64748b; font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
+.dialog-input { margin-bottom: 18px; text-align: left; }
+.dialog-btns { display: flex; gap: 10px; justify-content: center; }
+.dialog-btn-primary { flex: 1; padding: 11px; background: linear-gradient(90deg, #8b5cf6, #06b6d4); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.dialog-btn-primary:hover { filter: brightness(1.05); }
+.dialog-btn-secondary { flex: 1; padding: 11px; background: #f1f5f9; color: #475569; border: none; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.dialog-btn-secondary:hover { background: #e2e8f0; }
+.dialog-btn-danger { flex: 1; padding: 11px; background: #ef4444; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.dialog-btn-danger:hover { background: #dc2626; }
+ 
+@media (max-width: 768px) {  
+ .menu-trigger { display: block; }  
+ .main-wrapper { flex-direction: column; padding: 15px; gap: 15px; }  
+ header { padding: 10px 15px; }  
+ .logo { font-size: 18px; }  
+  
+ .header-btns {   
+ display: none;
+ position: absolute;
+ top: 100%;
+ right: 15px;
+ background: white;
+ border: 1px solid #e2e8f0;
+ border-radius: 12px;
+ padding: 8px;
+ flex-direction: column;
+ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+ z-index: 8000;
+ gap: 5px;
+ min-width: 170px;
+ animation: zoomIn 0.15s ease;
+}
+ .header-btns.active { display: flex; }  
+ .header-btns button { width: 100%; padding: 10px 12px; text-align: left; border: none; font-size: 13px; }  
+ .header-btns button:hover { background: #f1f5f9; border-radius: 8px; }  
+ 
+ /* ⚡ FAST TOUCH */
+  button,
+  .song-card,
+  .filter-btn,
+  .category-item{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+/* මොබයිල් එකේදී උඩ මෙනූ එකෙන් Manage බොත්තම් දෙක සැඟවීම */
+ .header-btns button:nth-child(1),
+ .header-btns button:nth-child(2) {
+   display: none !important;
+ } 
+  
+ .left-sidebar {  
+ position: fixed; top: 0; left: 0; width: 320px; max-width: 85vw; height: 100vh; border-radius: 0; z-index: 2500;  
+ transform: translate3d(-100%, 0, 0); visibility: hidden; box-shadow: 10px 0 25px rgba(0,0,0,0.1); -y: auto;  
+ transition: transform 0.08s linear, visibility 0.08s linear; will-change: transform;  
+ }  
+ .left-sidebar.active { transform: translate3d(0, 0, 0); visibility: visible; }  
+ 
+ 
+ /* මොබයිල් එකේදී Save Song එකට යටින් බොත්තම් දෙක එක ළඟින් පෙන්වීම */
+ .mobile-only-manage-btns {
+   display: flex !important;
+   flex-direction: row;
+   gap: 10px;
+   margin-top: 15px;
+   border-top: 1px solid #f1f5f9;
+   padding-top: 15px;
+ }
+ .mobile-only-manage-btns button {
+   flex: 1;
+   padding: 8px 10px;
+   border: 1px solid #e2e8f0;
+   border-radius: 10px;
+   background: #f8fafc;
+   color: #475569;
+   font-weight: 600;
+   font-size: 12px;
+   cursor: pointer;
+   transition: all 0.2s ease;
+ }
+ 
+ .input-field { padding: 11px 15px !important; font-size: 13px; border-radius: 12px; border: 1px solid #cbd5e1 !important; }  
+ .lyrics-textarea { height: 200px; font-size: 13px; border-radius: 12px; padding: 11px 15px !important; border: 1px solid #cbd5e1 !important; }  
+ .mobile-form-close { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }  
+ .close-form-btn { background: #f1f5f9; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }  
+ .mobile-overlay.active { display: block; }  
+ .right-content { width: 100%; }  
+ .filter-section { gap: 12px; margin-bottom: 15px; }  
+
+ .artist-display { padding: 11px 15px !important; font-size: 13px; border-radius: 12px; }
+ .artist-option-item { padding: 11px 15px; font-size: 13px; }
+
+ .select-display { 
+   padding: 11px 15px !important; 
+   font-size: 13px; 
+   border-radius: 12px; 
+   position: relative;
+   border: 1px solid #cbd5e1 !important; 
+ }  
+ .select-display:hover {
+   border-color: #8b5cf6 !important;
+ }
+
+ .select-display .arrow-icon {
+   width: 20px !important;
+   height: 20px !important;
+   border: none !important; 
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E") !important;
+   background-size: contain !important;
+   background-repeat: no-repeat !important;
+   transform: none !important;
+   margin-top: 0 !important;
+   display: inline-block !important;
+ }
+
+ .custom-multiselect.active .arrow-icon {
+   transform: rotate(180deg) !important;
+ }
+
+ .category-bar { padding-bottom: 12px; gap: 6px; cursor: default; padding-right: 0; }  
+ .filter-btn { padding: 6px 14px; font-size: 12px; }  
+ .songs-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }  
+ .song-card { padding: 14px; border-radius: 12px; }  
+ .song-card strong { font-size: 14px; }  
+ .song-card small { font-size: 12px; }  
+ .modal-content { padding: 20px; max-height: 90vh; border-radius: 24px; animation: zoomIn 0.12s ease-out; }  
+ #modalTitle { font-size: 18px; }  
+ #modalArtist { font-size: 12px; margin-bottom: 10px; padding-bottom: 8px; }  
+ #modalLyrics { font-size: 16px; }  
+ .modal-footer-btns { gap: 8px; margin-top: 15px; padding-top: 10px; }  
+ .modal-footer-btns button { font-size: 12px; padding: 10px; border-radius: 10px; }  
+}
+ 
+@media (min-width: 769px) { .left-sidebar { transform: none !important; visibility: visible !important; } }  
+
+/* --- CUSTOM PASSWORD MODAL (FOR PC & MOBILE) --- */
+.password-modal-content {
+  width: 90% !important;        
+  max-width: 360px !important;  
+  text-align: center;
+  padding: 25px !important;
+  border-radius: 24px !important; 
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); 
+}
+
+.password-input-group {
+  margin: 20px 0;
+  position: relative;
+}
+
+.password-field {
+  width: 100%;
+  padding: 14px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  outline: none;
+  font-size: 18px; 
+  text-align: center;
+  letter-spacing: 6px; 
+  font-weight: bold;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.password-field:focus {
+  border-color: #8b5cf6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+.password-modal-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.pass-btn-confirm {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pass-btn-confirm:hover {
+  filter: brightness(1.05);
+}
+
+.pass-btn-cancel {
+  flex: 1;
+  padding: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pass-btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+#customPasswordModal {
+  z-index: 4000 !important;
+}
+
+</style>  
+</head>  
+<body>  
+  
+<header>  
+ <button class="menu-trigger" onclick="openSidebarDrawer()">☰</button>  
+ <div class="logo">LAKSHAN LYRICS</div>  
+   
+<div class="header-container">  
+ <div id="networkStatusIndicator" class="network-status status-offline"><span class="status-dot"></span>Connecting...</div>
+ <button class="menu-trigger" id="dotsMenuBtn" onclick="toggleDotsMenu(event)">⋮</button>  
+   
+<div class="header-btns" id="headerActionMenu">  
+ <button onclick="triggerArtistManager()">Manage Artists</button>
+ <button onclick="triggerCategoryManager()">Manage Categories</button>
+ <button onclick="exportData()">Offline Backup</button>  
+ <button onclick="document.getElementById('importInput').click()">Offline Restore</button>  
+ </div>  
+  </div>  
+ <input type="file" id="importInput" style="display:none" onchange="importData(event)">  
+</header>  
+  
+<div class="mobile-overlay" id="mobileOverlayLayer" onclick="closeSidebarDrawer()"></div>  
+  
+<div class="main-wrapper">  
+ <aside class="left-sidebar" id="sidebarSection">  
+ <div class="mobile-form-close">  
+ <h3 id="formTitle" style="margin-bottom:0;">Add New Song</h3>  
+ <button class="close-form-btn" onclick="closeSidebarDrawer()">Back</button>  
+ </div>  
+   
+ <div style="margin-bottom:15px;"><input type="text" id="songTitle" class="input-field" placeholder="Song Title" autocomplete="off"></div>  
+ 
+ <div style="margin-bottom:15px;">  
+ <div class="suggest-container" id="artistSuggestWrapper">  
+ <input type="text" id="songArtist" class="input-field" placeholder="Artist Name" autocomplete="off" oninput="filterArtistSuggestions()">
+ <div class="checkbox-list" id="artistSuggestChecklist"></div>  
+ </div>  
+ </div>  
+ 
+ <div style="margin-bottom:15px;">  
+ <label style="font-size:13px; font-weight:600; color:#64748b; margin-bottom:5px; display:block;">Select Categories:</label>  
+ <div class="custom-multiselect" id="categoryDropdown" tabindex="0"> 
+ <div class="select-display" onclick="toggleDropdown()">  
+ <span id="selectedCountText">Select Categories</span>  
+ <span class="arrow-icon" id="categoryArrow"></span> 
+ </div>  
+ <div class="checkbox-list" id="categoryChecklist"></div>  
+ </div>  
+ </div>  
+
+<div style="margin-bottom:15px;">
+  <input type="text" id="originalYoutube"
+  class="input-field"
+  placeholder="Original Song YouTube Link">
+</div>
+
+<div style="margin-bottom:15px;">
+  <input type="text" id="karaokeYoutube"
+  class="input-field"
+  placeholder="Karaoke YouTube Link">
+</div>
+
+ <div style="margin-bottom:15px;"><textarea id="songLyrics" class="lyrics-textarea" placeholder="Type Lyrics here..."></textarea></div>  
+ <button class="save-btn" id="mainBtn" onclick="addSong()">Save Song</button>  
+ 
+ <div class="mobile-only-manage-btns">
+    <button onclick="closeSidebarDrawer(); setTimeout(triggerArtistManager, 150);">Artists</button>
+    <button onclick="closeSidebarDrawer(); setTimeout(triggerCategoryManager, 150);">Categories</button>
+ </div>
+
+ <div id="syncStatus" class="firebase-status"></div>  
+ </aside>  
+  
+ <div class="right-content">  
+ <div class="filter-section">  
+ <div class="search-container">  
+ <label style="font-size:13px; font-weight:600; color:#64748b;">සින්දු සොයන්න (Title, Artist, Lyrics):</label>  
+ <input type="text" id="searchInput" class="input-field" placeholder="Search song, artist or lyrics..." oninput="renderSongs()">  
+ </div>  
+ <div class="artist-filter">  
+ <label style="font-size:13px; font-weight:600; color:#64748b;">ගායකයා තෝරන්න:</label>  
+ 
+ <div class="custom-artist-dropdown" id="artistDropdownWrapper">
+   <div class="artist-display" onclick="toggleArtistDropdown(event)">
+     <span id="selectedArtistText">All Artists</span>
+     <span class="arrow-icon"></span>
+   </div>
+   <div class="artist-list-container" id="artistCustomList">
+     <div style="padding: 10px; position: sticky; top: 0; background: white; border-bottom: 1px solid #e2e8f0; z-index: 10;">
+       <input type="text" id="artistDropdownSearch" class="input-field" placeholder="Search artist name..." oninput="updateArtistDropdownOptions()" onclick="event.stopPropagation()" style="padding: 8px 12px !important; font-size: 13px; border-radius: 8px;">
+     </div>
+     <div id="artistActualOptionsList"></div>
+   </div>
+ </div>  
+ </div>  
+ </div>  
+ <div class="category-bar" id="categoryBar"></div>  
+ <div class="songs-grid" id="songsGrid"></div>  
+ </div>  
+</div>  
+
+<div class="modal" id="customPasswordModal">
+  <div class="modal-content password-modal-content">
+    <div style="font-size: 32px; margin-bottom: 10px;">🔒</div>
+    <h3 style="color: #1e293b; font-size: 16px; font-weight: 600;">Security Verification</h3>
+    <p style="color: #64748b; font-size: 12px; margin-top: 4px;">ඉදිරියට යාමට මුරපදය (Password) ඇතුළත් කරන්න.</p>
+    
+    <div class="password-input-group" style="margin-bottom: 5px;">
+      <input type="password" id="customPasswordInput" class="password-field" placeholder="••••" maxlength="6" autocomplete="off">
+    </div>
+    
+    <div id="passwordErrorMsg" style="color: #ef4444; font-size: 12px; font-weight: 500; height: 20px; margin-bottom: 10px; transition: all 0.2s;"></div>
+    
+    <div class="password-modal-btns">
+      <button class="pass-btn-cancel" onclick="closePasswordModal()">Cancel</button>
+      <button class="pass-btn-confirm" id="passwordConfirmBtn">Verify</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="customDialogModal" style="z-index: 4000;">
+  <div class="modal-content custom-dialog-box" id="customDialogBox">
+    <div class="dialog-icon" id="dialogIcon">ℹ️</div>
+    <h3 class="dialog-title" id="dialogTitle">Notification</h3>
+    <p class="dialog-msg" id="dialogMsg">Message body goes here...</p>
+    
+    <div class="dialog-input" id="dialogInputWrapper" style="display: none;">
+      <input type="text" id="dialogInputField" class="input-field" autocomplete="off">
+    </div>
+    
+    <div class="dialog-btns" id="dialogBtnsWrapper">
+      </div>
+  </div>
+</div>
+
+<div class="modal" id="lyricsModal" onclick="handleModalOutside(event)">  
+ <div class="modal-content" onclick="event.stopPropagation()">  
+   
+   <div class="modal-header-container" style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">  
+     <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 15px;">  
+       <h2 id="modalTitle" style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;"></h2>  
+       <button class="modal-back-btn" onclick="closeLyricsModal()" style="margin: 0;">Back</button>  
+     </div>  
+     <p id="modalArtist" style="color:#64748b; font-size: 13px; margin: 0; font-weight: 500;"></p>  
+   </div>  
+
+   <div style="flex: 1; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 15px 0;">
+     
+     <div id="modalLyrics" style="padding-bottom: 20px;"></div> 
+     
+<!-- 🎵 MODERN AUDIO PLAYERS -->
+<!-- 🎵 ORIGINAL PLAYER -->
+<div style="margin-top:18px;">
+
+<div style="
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#111827;
+padding-left:4px;
+">
+🎵 Original Audio Player
+</div>
+
+<div class="audioPlayerBox">
+
+<button
+onclick="toggleOriginalAudio()"
+id="originalPlayBtn"
+class="mainPlayBtn">
+▸
+</button>
+
+<div class="playerRight">
+
+<div class="progressRow">
+
+<div
+class="audioTime"
+id="currentTime">
+0:00
+</div>
+
+<input
+type="range"
+id="originalSeekBar"
+value="0"
+min="0"
+max="100"
+class="audioSeek">
+
+<div
+class="audioTime"
+id="durationTime">
+0:00
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 🎤 KARAOKE PLAYER -->
+<div style="margin-top:16px;">
+
+<div style="
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#111827;
+padding-left:4px;
+">
+🎤 Karaoke Player
+</div>
+
+<div class="audioPlayerBox">
+
+<button
+onclick="toggleKaraokeAudio()"
+id="karaokePlayBtn"
+class="mainPlayBtn">
+▸
+</button>
+
+<div class="playerRight">
+
+<div class="progressRow">
+
+<div
+class="audioTime"
+id="karaokeCurrentTime">
+0:00
+</div>
+
+<input
+type="range"
+id="karaokeSeekBar"
+value="0"
+min="0"
+max="100"
+class="audioSeek">
+
+<div
+class="audioTime"
+id="karaokeDurationTime">
+0:00
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- HIDDEN YOUTUBE PLAYERS -->
+<div id="originalPlayer"
+style="
+width:0;
+height:0;
+overflow:hidden;
+position:absolute;
+pointer-events:none;
+"></div>
+
+<div id="karaokePlayer"
+style="
+width:0;
+height:0;
+overflow:hidden;
+position:absolute;
+pointer-events:none;
+">
+</div>
+
+
+     <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
+       <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:10px; border-radius:10px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Copy</button>  
+       <button id="modalEditBtn" style="flex:1; padding:10px; border-radius:10px; background:#8b5cf6; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Edit</button>  
+       <button id="modalDeleteBtn" style="flex:1; padding:10px; border-radius:10px; background:#ef4444; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Delete</button>  
+       <button class="modal-back-btn"onclick="closeLyricsModal()"style="flex:1;">Close</button> 
+
+     </div>
+
+   </div>  
+
+   <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; background: #ffffff;"> 
+     <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">  
+       <span style="font-size: 11px; font-weight: 600; color: #64748b;">Font Size:</span>  
+       <div style="display: flex; gap: 6px;">  
+         <button onclick="changeFontSize(-2)" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-weight: bold; font-size: 12px; cursor: pointer;">A-</button>  
+         <button onclick="resetFontSize()" style="padding: 0 8px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-size: 10px; font-weight: 500; cursor: pointer;">Reset</button>  
+         <button onclick="changeFontSize(2)" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-weight: bold; font-size: 12px; cursor: pointer;">A+</button>  
+       </div>  
+     </div>  
+   </div>  
+
+ </div>  
+</div>
+
+<div id="modalLyrics"></div>
+
+<div class="modal" id="artistManagerModal" onclick="if(event.target.id === 'artistManagerModal') closeArtistManagerModal()">  
+ <div class="modal-content" onclick="event.stopPropagation()">  
+ <div class="modal-header-container" style="margin-bottom: 15px;">  
+ <h2>Manage Artists</h2>  
+ <button class="modal-back-btn" onclick="closeArtistManagerModal()">Close</button>  
+ </div>  
+ <button class="add-new-btn-custom" onclick="addNewArtistDirect()">+ Add New Artist</button>
+ <div style="margin-bottom: 15px;">
+   <input type="text" id="artistManagerSearch" class="input-field" placeholder="Search artist..." oninput="renderArtistManagerList()">
+ </div>
+ <div id="artistManagerList" style="overflow-y: auto; flex: 1; max-height: 50vh; padding-right: 5px;"></div>  
+ </div>  
+</div>  
+
+<div class="modal" id="categoryManagerModal" onclick="if(event.target.id === 'categoryManagerModal') closeCategoryManagerModal()">  
+ <div class="modal-content" onclick="event.stopPropagation()">  
+ <div class="modal-header-container" style="margin-bottom: 15px;">  
+ <h2>Manage Categories</h2>  
+ <button class="modal-back-btn" onclick="closeCategoryManagerModal()">Close</button>  
+ </div>  
+ <button class="add-new-btn-custom" onclick="addNewCategoryDirect()">+ Add New Category</button>
+ <div style="margin-bottom: 15px;">
+   <input type="text" id="categoryManagerSearch" class="input-field" placeholder="Search category..." oninput="renderCategoryManagerList()">
+ </div>
+ <div id="categoryManagerList" style="overflow-y: auto; flex: 1; max-height: 50vh; padding-right: 5px;"></div>  
+ </div>  
+</div>  
+  
+<button id="scrollTopBtn" onclick="scrollToTop()">↑</button>  
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, collection, setDoc, doc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2svK0wRGTcDgmOTHdp78aa3jrzvOQeM0",
+    authDomain: "lakshan-lryics.firebaseapp.com",
+    projectId: "lakshan-lryics",
+    storageBucket: "lakshan-lryics.firebasestorage.app",
+    messagingSenderId: "169788300202",
+    appId: "1:169788300202:web:711bbbb00902f569a769d3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const songsCollection = collection(db, "lyricsSongs");
+  const configDocRef = doc(db, "appSettings", "categoriesConfig"); 
+
+  enableIndexedDbPersistence(db).catch((err) => {
+      console.warn("Firestore persistence failed:", err.code);
+  });
+
+  window.songs = [];
+  window.editId = null;
+
+  onSnapshot(songsCollection, (snapshot) => {
+     window.songs = [];
+     snapshot.forEach((doc) => {
+       window.songs.push({ id: doc.id, ...doc.data() });
+     });
+     localStorage.setItem('lyricsSongs', JSON.stringify(window.songs));
+     extractDynamicMetadata();
+     if (typeof renderSongs === "function") { renderSongs(); }
+     if (document.getElementById('artistManagerModal').style.display === 'flex') { renderArtistManagerList(); }
+     updateNetworkStatus(navigator.onLine);
+  });
+
+  onSnapshot(configDocRef, (docSnap) => {
+     if(docSnap.exists() && docSnap.data().categoriesList) {
+       window.allCategoriesList = docSnap.data().categoriesList;
+       localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
+     } else {
+       window.allCategoriesList = ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
+     }
+     initCategoryChecklist();
+     renderSongs();
+     if (document.getElementById('categoryManagerModal').style.display === 'flex') { renderCategoryManagerList(); }
+  });
+
+  function updateNetworkStatus(isOnline) {
+    const indicator = document.getElementById('networkStatusIndicator');
+    if (isOnline) {
+      indicator.className = "network-status status-online";
+      indicator.innerHTML = `<span class="status-dot"></span>Online`;
+    } else {
+      indicator.className = "network-status status-offline";
+      indicator.innerHTML = `<span class="status-dot"></span>Offline`;
+    }
+  }
+
+  window.addEventListener('online', () => updateNetworkStatus(true));
+  window.addEventListener('offline', () => updateNetworkStatus(false));
+  updateNetworkStatus(navigator.onLine);
+
+  window.saveCategoriesToFirebase = async function(updatedList) {
+    try {
+      document.getElementById('syncStatus').innerText = "Syncing categories with Firebase...";
+      await setDoc(configDocRef, { categoriesList: updatedList });
+      document.getElementById('syncStatus').innerText = "Categories Synced to Firebase!";
+    } catch (e) {
+      console.error("Firebase category save error: ", e);
+    }
+  };
+
+  window.addSong = async function() {
+    const title = document.getElementById('songTitle').value.trim();
+    const artist = document.getElementById('songArtist').value.trim(); 
+    const lyrics = document.getElementById('songLyrics').value.trim();
+    const selectedCats = Array.from(document.querySelectorAll('input[name="songCat"]:checked')).map(cb => cb.value);
+    
+    if(!title || !lyrics || !selectedCats.length || !artist) {
+      return showCustomAlert("⚠️ කරුණාකර සියලුම විස්තර (Title, Artist, Categories, Lyrics) නිවැරදිව පුරවන්න!");
+    }
+
+    const id = window.editId ? window.editId.toString() : Date.now().toString();
+    const songData = {
+         title,
+         artist,
+         category: selectedCats,
+         lyrics,
+         originalYoutube: document.getElementById('originalYoutube').value.trim(),
+        karaokeYoutube: document.getElementById('karaokeYoutube').value.trim()       };
+
+
+    try {
+      document.getElementById('syncStatus').innerText = "Syncing with Firebase Cloud...";
+      await setDoc(doc(db, "lyricsSongs", id), songData);
+      document.getElementById('syncStatus').innerText = "Saved to Firebase Data Server!";
+      
+      resetForm();
+      closeSidebarDrawer();
+    } catch (error) {
+      showCustomAlert("❌ Firebase දත්ත ගබඩාවට සුරැකීමට නොහැකි විය!");
+    }
+  };
+
+  window.deleteSongFromFirebase = async function(id) {
+    try {
+      await deleteDoc(doc(db, "lyricsSongs", id.toString()));
+      closeLyricsModal();
+    } catch (error) {
+      showCustomAlert("❌ Firebase එකෙන් මකා දැමීමට නොහැකි විය!");
+    }
+  };
+
+  window.updateArtistDatabaseName = async function(oldName, newName) {
+    let affectedSongs = window.songs.filter(s => {
+  if(!s.artist) return false;
+
+  return s.artist
+    .split('/')
+    .map(a => a.trim())
+    .includes(oldName);
+});
+    if(affectedSongs.length === 0) return;
+    
+    document.getElementById('syncStatus').innerText = "Updating artist names...";
+    try {
+      const promises = [];
+      for(let song of affectedSongs) {
+        promises.push(
+          setDoc(doc(db, "lyricsSongs", song.id.toString()), {
+            title: song.title,
+            artist: song.artist
+  .split('/')
+  .map(a => a.trim() === oldName ? newName : a.trim())
+  .join(' / '),
+            category: song.category,
+            lyrics: song.lyrics
+          })
+        );
+      }
+      await Promise.all(promises);
+      document.getElementById('syncStatus').innerText = "Artist sync complete!";
+      showCustomAlert(`✅ ගීත ${affectedSongs.length} ක Artist නම සාර්ථකව වෙනස් කරන ලදී!`);
+    } catch (error) {
+      showCustomAlert("❌ Firebase දත්ත වෙනස් කිරීමට නොහැකි විය!");
+    }
+  };
+
+  window.updateCategoryInsideSongs = async function(oldName, newName) {
+    document.getElementById('syncStatus').innerText = "Updating categories in songs...";
+    try {
+      const promises = [];
+      for(let song of window.songs) {
+        if(song.category && song.category.includes(oldName)) {
+          let updatedCats = song.category.map(c => c === oldName ? newName : c);
+          promises.push(
+            setDoc(doc(db, "lyricsSongs", song.id.toString()), {
+              title: song.title,
+              artist: song.artist,
+              category: updatedCats,
+              lyrics: song.lyrics
+            })
+          );
+        }
+      }
+      await Promise.all(promises);
+      document.getElementById('syncStatus').innerText = "Songs category update complete!";
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  window.removeCategoryFromSongs = async function(categoryToDelete) {
+    document.getElementById('syncStatus').innerText = "Deleting songs belonging to deleted category...";
+    try {
+      const promises = [];
+      for(let song of window.songs) {
+        if(song.category && song.category.includes(categoryToDelete)) {
+          if(song.category.length === 1) {
+            promises.push(deleteDoc(doc(db, "lyricsSongs", song.id.toString())));
+          } else {
+            let updatedCats = song.category.filter(c => c !== categoryToDelete);
+            promises.push(
+              setDoc(doc(db, "lyricsSongs", song.id.toString()), {
+                title: song.title,
+                artist: song.artist,
+                category: updatedCats,
+                lyrics: song.lyrics
+              })
+            );
+          }
+        }
+      }
+      await Promise.all(promises);
+      document.getElementById('syncStatus').innerText = "Category and its songs updated/deleted completely!";
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  window.importData = async function(e) {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const importedSongs = JSON.parse(ev.target.result);
+        if(Array.isArray(importedSongs)) {
+          document.getElementById('syncStatus').innerText = "Restoring backups...";
+          for (let song of importedSongs) {
+            const id = song.id ? song.id.toString() : Date.now().toString();
+            await setDoc(doc(db, "lyricsSongs", id), {
+              title: song.title,
+              artist: song.artist,
+              category: song.category,
+              lyrics: song.lyrics
+            });
+          }
+          document.getElementById('syncStatus').innerText = "Restore Complete!";
+          showCustomAlert("✅ දත්ත සාර්ථකව Restore කරන ලදී!");
+        }
+      } catch (err) { showCustomAlert("❌ JSON ෆයිල් එකෙහි දෝෂයක් ඇත!"); }
+    };
+    reader.readAsText(file); e.target.value = '';
+    document.getElementById('headerActionMenu').classList.remove('active');
+  };
+</script>
+
+<script>
+let currentlyViewingId = null;
+let currentFilter = 'All';  
+window.selectedArtistFilter = 'All'; 
+
+window.allArtistsList = []; 
+window.allCategoriesList = ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
+
+const CORRECT_PASSWORD = "2643";
+
+/* --- 🛠️ CUSTOM DIALOG ENGINE 🛠️ --- */
+function closeCustomDialog() {
+  document.getElementById('customDialogModal').style.display = 'none';
+}
+
+function showCustomAlert(message, title = "Notification") {
+  document.getElementById('dialogIcon').innerText = "ℹ️";
+  document.getElementById('dialogTitle').innerText = title;
+  document.getElementById('dialogMsg').innerText = message;
+  document.getElementById('dialogInputWrapper').style.display = 'none';
+  
+  document.getElementById('dialogBtnsWrapper').innerHTML = `
+    <button class="dialog-btn-primary" onclick="closeCustomDialog()">OK</button>
+  `;
+  document.getElementById('customDialogModal').style.display = 'flex';
+}
+
+function showCustomConfirm(message, onConfirm, title = "Confirmation required", btnText = "Yes, Delete", isDanger = true) {
+  document.getElementById('dialogIcon').innerText = "❓";
+  document.getElementById('dialogTitle').innerText = title;
+  document.getElementById('dialogMsg').innerText = message;
+  document.getElementById('dialogInputWrapper').style.display = 'none';
+  const btnsWrapper = document.getElementById('dialogBtnsWrapper');
+  
+  // Danger (මකන ඒවාට) නම් dialog-btn-danger ද, Confirm (Edit කරන ඒවාට) නම් dialog-btn-primary ද යොදයි.
+  const btnClass = isDanger ? "dialog-btn-danger" : "dialog-btn-primary";
+  
+  btnsWrapper.innerHTML = `
+    <button class="dialog-btn-secondary" id="confirmCancelBtn">No, Cancel</button>
+    <button class="${btnClass}" id="confirmYesBtn">${btnText}</button>
+  `;
+  document.getElementById('confirmCancelBtn').onclick = closeCustomDialog;
+  document.getElementById('confirmYesBtn').onclick = function() {
+    closeCustomDialog();
+    if (onConfirm) onConfirm();
+  };
+  document.getElementById('customDialogModal').style.display = 'flex';
+}
+
+function showCustomPrompt(message, defaultValue, onConfirm, title = "Input required") {
+  document.getElementById('dialogIcon').innerText = "📝";
+  document.getElementById('dialogTitle').innerText = title;
+  document.getElementById('dialogMsg').innerText = message;
+  
+  const inputWrapper = document.getElementById('dialogInputWrapper');
+  const inputField = document.getElementById('dialogInputField');
+  inputWrapper.style.display = 'block';
+  inputField.value = defaultValue || "";
+  
+  const btnsWrapper = document.getElementById('dialogBtnsWrapper');
+  btnsWrapper.innerHTML = `
+    <button class="dialog-btn-secondary" id="promptCancelBtn">Cancel</button>
+    <button class="dialog-btn-primary" id="promptSaveBtn">Save</button>
+  `;
+  
+  document.getElementById('promptCancelBtn').onclick = closeCustomDialog;
+  document.getElementById('promptSaveBtn').onclick = function() {
+    const value = inputField.value.trim();
+    closeCustomDialog();
+    if (onConfirm) onConfirm(value);
+  };
+  
+  document.getElementById('customDialogModal').style.display = 'flex';
+  setTimeout(() => inputField.focus(), 100);
+}
+
+/* --- PASSWORD MODAL LOGICS (100% FIXED) --- */
+let passwordSuccessCallback = null;
+
+function requestPassword(onSuccess) {
+  passwordSuccessCallback = onSuccess;
+  document.getElementById('customPasswordInput').value = '';
+  document.getElementById('passwordErrorMsg').innerText = ''; 
+  document.getElementById('customPasswordModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('customPasswordInput').focus(), 100);
+  
+  document.getElementById('customPasswordInput').onkeydown = function(e) {
+    if(e.key === 'Enter') handlePasswordVerification();
+  };
+  
+  document.getElementById('customPasswordInput').oninput = function() {
+    document.getElementById('passwordErrorMsg').innerText = '';
+  };
+  
+  document.getElementById('passwordConfirmBtn').onclick = handlePasswordVerification;
+}
+
+function handlePasswordVerification() {
+  const inputVal = document.getElementById('customPasswordInput').value;
+  if(inputVal === CORRECT_PASSWORD) {
+    // 1. Password එක හරිනම් Modal එක මුලින්ම වසනවා
+    document.getElementById('customPasswordModal').style.display = 'none';
+    document.getElementById('passwordErrorMsg').innerText = ''; 
+    
+    // 2. ඊටපසු ඊළඟට කිරීමට තිබූ ක්‍රියාව (Edit/Delete/Manage) බාධාවකින් තොරව සිදුවේ
+    if(passwordSuccessCallback) {
+      passwordSuccessCallback();
+    }
+    passwordSuccessCallback = null;
+  } else {
+    const errorElement = document.getElementById('passwordErrorMsg');
+    errorElement.innerText = "❌ වැරදි මුරපදයක්! නැවත උත්සාහ කරන්න.";
+    document.getElementById('customPasswordInput').value = '';
+    document.getElementById('customPasswordInput').focus();
+  }
+}
+
+function closePasswordModal() {
+  document.getElementById('customPasswordModal').style.display = 'none';
+  document.getElementById('passwordErrorMsg').innerText = ''; 
+  passwordSuccessCallback = null;
+}
+
+function openSidebarDrawer() { document.getElementById('sidebarSection').classList.add('active'); document.getElementById('mobileOverlayLayer').classList.add('active'); }  
+function closeSidebarDrawer() { document.getElementById('sidebarSection').classList.remove('active'); document.getElementById('mobileOverlayLayer').classList.remove('active'); resetForm(); }  
+function toggleDotsMenu(e) {
+  e.stopPropagation();
+
+  const menu = document.getElementById('headerActionMenu');
+
+  menu.classList.toggle('active');
+} 
+
+window.toggleArtistDropdown = function(e) {
+  e.stopPropagation();
+  document.getElementById("categoryDropdown").classList.remove("active");
+  document.getElementById("artistSuggestWrapper").classList.remove("active");
+  
+  const wrapper = document.getElementById("artistDropdownWrapper");
+  wrapper.classList.toggle("active");
+  
+  if(wrapper.classList.contains("active")) {
+    const searchInp = document.getElementById("artistDropdownSearch");
+    if (searchInp) {
+      searchInp.value = "";
+      updateArtistDropdownOptions();
+      setTimeout(() => searchInp.focus(), 50);
+    }
+  }
+}
+ 
+window.addEventListener('click', (e) => {  
+ if (!document.getElementById('categoryDropdown').contains(e.target)) { document.getElementById('categoryDropdown').classList.remove('active'); }  
+ if (!document.getElementById('artistSuggestWrapper').contains(e.target)) { document.getElementById('artistSuggestWrapper').classList.remove('active'); }  
+ if (!document.getElementById('headerActionMenu').contains(e.target) && e.target.id !== 'dotsMenuBtn') { document.getElementById('headerActionMenu').classList.remove('active'); }  
+ if (!document.getElementById('artistDropdownWrapper').contains(e.target)) { document.getElementById('artistDropdownWrapper').classList.remove('active'); }
+});  
+ 
+function toggleDropdown() { 
+  document.getElementById("artistSuggestWrapper").classList.remove("active");
+  document.getElementById("artistDropdownWrapper").classList.remove("active");
+  document.getElementById("categoryDropdown").classList.toggle("active");
+} 
+
+function extractDynamicMetadata() {  
+  const artistsSet = new Set();
+  window.songs.forEach(s => {
+    if (s.artist) {
+      // ⚡ සින්දුවේ Artist ගේ නම ඇල ඉරෙන් (/) වෙන් කර වෙන වෙනම ලිස්ට් එකට දමයි
+      s.artist.split('/').forEach(part => {
+        if(part.trim()) artistsSet.add(part.trim());
+      });
+    }
+  });
+  window.allArtistsList = Array.from(artistsSet).filter(a => a).sort((a, b) => a.localeCompare(b));  
+  updateArtistDropdownOptions();  
+}
+
+function filterArtistSuggestions() {
+  document.getElementById("categoryDropdown").classList.remove("active");
+  const inputField = document.getElementById('songArtist');
+  const inputVal = inputField.value;
+  const listContainer = document.getElementById('artistSuggestChecklist');
+  
+  if (!inputVal.trim()) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  // ඇල ඉරෙන් (/) වෙන් කර අවසානයටම ටයිප් කරන කොටස පමණක් ලබා ගැනීම
+  const parts = inputVal.split('/');
+  const currentTypingWord = parts[parts.length - 1].trim().toLowerCase();
+  
+  if (!currentTypingWord) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  // අකුරු ගැලපෙන Artists ලා සෙවීම
+  const filtered = window.allArtistsList.filter(a => a.toLowerCase().startsWith(currentTypingWord));
+  
+  if (filtered.length === 0) {
+    document.getElementById("artistSuggestWrapper").classList.remove("active");
+    return;
+  }
+  
+  document.getElementById("artistSuggestWrapper").classList.add("active");
+  listContainer.innerHTML = '';
+  
+  filtered.forEach(artist => {
+    const div = document.createElement('div');
+    div.className = 'category-item'; 
+    div.style.padding = '10px 15px';
+    div.innerText = artist;
+    
+    div.onclick = function() {
+      // 🛑 ස්වයංක්‍රීයව ඇල ඉර වැටීම නතර කර නම පමණක් එකතු කිරීම:
+      parts[parts.length - 1] = " " + artist;
+      inputField.value = parts.join(' / ').replace(/\s+/g, ' ').trim();
+      
+      document.getElementById("artistSuggestWrapper").classList.remove("active");
+      inputField.focus();
+    };
+    
+    listContainer.appendChild(div);
+  });
+}
+
+function selectArtistSuggestion(name) {
+  document.getElementById('songArtist').value = name;
+  document.getElementById("artistSuggestWrapper").classList.remove("active");
+}
+
+function updateSelectedText() {  
+ const selected = document.querySelectorAll('input[name="songCat"]:checked');  
+ document.getElementById("selectedCountText").innerText = selected.length > 0 ? `${selected.length} Selected` : "Select Categories";  
+}  
+ 
+function initCategoryChecklist() {  
+ const checkedValues = Array.from(document.querySelectorAll('input[name="songCat"]:checked')).map(cb => cb.value);
+ document.getElementById('categoryChecklist').innerHTML = window.allCategoriesList.map(cat => `  
+ <label class="category-item">
+   <input type="checkbox" name="songCat" value="${cat}" ${checkedValues.includes(cat) ? 'checked' : ''} onchange="handleCategorySelection(this)"> 
+   <span>${cat}</span>
+ </label>  
+ `).join('');  
+}  
+
+function handleCategorySelection(checkbox) {
+  updateSelectedText(); 
+  document.getElementById('categoryDropdown').classList.remove('active');
+}
+ 
+function renderSongs() {  
+ const grid = document.getElementById('songsGrid');  
+ const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();  
+ if(!grid) return;  
+   
+ let filtered = window.songs;  
+ 
+ // 1. Category අනුව පෙරීම
+ if(currentFilter !== 'All') {  
+ filtered = filtered.filter(s => s.category && s.category.includes(currentFilter));  
+ }  
+ 
+ // 2. Artist Filter Dropdown එක අනුව පෙරීම (Duet සින්දු වෙන වෙනම හඳුනා ගනී)
+ if(window.selectedArtistFilter !== 'All') {  
+ filtered = filtered.filter(s => {
+   if(!s.artist) return false;
+   // සින්දුවේ සිටින සියලුම Artist ලා ඇල ඉරෙන් වෙන් කර වත්මන් Artist ට සමානදැයි බලයි
+   return s.artist.split('/').map(p => p.trim().toLowerCase()).includes(window.selectedArtistFilter.toLowerCase());
+ });  
+ }  
+ 
+ // 3. Search බාර් එකේ ටයිප් කරන විට සෙවීම (Duet සින්දු ද ඇතුළුව)
+ if(searchVal) {  
+ filtered = filtered.filter(s => {  
+ const titleMatch = s.title && s.title.toLowerCase().includes(searchVal);  
+ const lyricsMatch = s.lyrics && s.lyrics.toLowerCase().includes(searchVal);  
+ 
+ // Duet සින්දුවක ඕනෑම Artist කෙනෙකුගේ නමක කොටසක් සෙව්වද එය ගැලපේ
+ const artistMatch = s.artist && s.artist.toLowerCase().includes(searchVal);  
+ 
+ return titleMatch || lyricsMatch || artistMatch;  
+ });  
+ }  
+ 
+ // තිරය මත සින්දු පෙන්වීම
+ if(filtered.length === 0) {  
+ grid.innerHTML = `  
+ <div class="no-results">  
+ <div style="font-size: 45px; margin-bottom: 10px;">🔍</div>  
+ <h3 style="color: #475569; font-weight: 600; font-size: 16px;">එවැනි ගීතයක් හමු නොවීය!</h3>  
+ <p style="color: #94a3b8; font-size: 13px; margin-top: 5px;">කරුණාකර වෙනත් නමකින් සොයා බලන්න.</p>  
+ </div>`;  
+ } else {  
+ grid.innerHTML = '';  
+ filtered.forEach(song => {  
+ const div = document.createElement('div');  
+ div.className = 'song-card';  
+ div.innerHTML = `<strong>${song.title}</strong><small style="color:#64748b">${song.artist}</small>`;  
+ div.onclick = () => openLyrics(song.id);  
+ grid.appendChild(div);  
+ });  
+ }  
+ renderCategoryBar();  
+}
+ 
+function renderCategoryBar() {  
+ let html = `<button class="filter-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterByCategory('All')">All (${window.songs.length})</button>`;  
+ window.allCategoriesList.forEach(cat => {  
+ const count = window.songs.filter(s => s.category && s.category.includes(cat)).length;  
+ html += `<button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat} (${count})</button>`;  
+ });  
+ const bar = document.getElementById('categoryBar'); bar.innerHTML = html; setupDragScroll();  
+}  
+ 
+function setupDragScroll() {  
+ const slider = document.getElementById('categoryBar'); if (!slider) return;  
+ let isDown = false; let startX; let scrollLeft; let isDragging = false;  
+ const newSlider = slider.cloneNode(true); slider.parentNode.replaceChild(newSlider, slider);  
+  
+ newSlider.addEventListener('mousedown', (e) => { isDown = true; isDragging = false; startX = e.pageX - newSlider.offsetLeft; scrollLeft = newSlider.scrollLeft; });  
+ newSlider.addEventListener('mouseleave', () => { isDown = false; });  
+ newSlider.addEventListener('mouseup', (e) => { isDown = false; if (isDragging) { e.preventDefault(); } });  
+ newSlider.addEventListener('mousemove', (e) => {  
+ if (!isDown) return; const x = e.pageX - newSlider.offsetLeft; const walk = (x - startX) * 1.8;  
+ if (Math.abs(walk) > 5) { isDragging = true; } newSlider.scrollLeft = scrollLeft - walk;  
+ });  
+  
+ const buttons = newSlider.querySelectorAll('.filter-btn');  
+ buttons.forEach(btn => { btn.addEventListener('click', (e) => { if (isDragging) { e.stopImmediatePropagation(); e.preventDefault(); } }); });  
+}  
+
+window.updateArtistDropdownOptions = function() {  
+ const listContainer = document.getElementById('artistActualOptionsList');
+ if(!listContainer) return;
+ 
+ const searchVal = document.getElementById('artistDropdownSearch') ? document.getElementById('artistDropdownSearch').value.trim().toLowerCase() : "";
+ let listHtml = "";
+ 
+ if(!searchVal || "all artists".includes(searchVal)) {
+   listHtml += `
+     <div class="artist-option-item ${window.selectedArtistFilter === 'All' ? 'selected' : ''}" onclick="selectArtistFilterCustom('All')">All Artists</div>
+   `;
+ }
+ 
+ const filteredArtists = window.allArtistsList.filter(artist => artist.toLowerCase().startsWith(searchVal));
+ 
+ if(filteredArtists.length === 0 && searchVal !== "") {
+   listHtml += `<div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">No artist found</div>`;
+ } else {
+   filteredArtists.forEach(artist => {
+     listHtml += `
+       <div class="artist-option-item ${window.selectedArtistFilter === artist ? 'selected' : ''}" onclick="selectArtistFilterCustom('${artist.replace(/'/g, "\\'")}')">${artist}</div>
+     `;
+   });
+ }
+ 
+ listContainer.innerHTML = listHtml;
+}
+
+window.selectArtistFilterCustom = function(artistName) {
+  window.selectedArtistFilter = artistName;
+  document.getElementById('selectedArtistText').innerText = artistName === 'All' ? 'All Artists' : artistName;
+  document.getElementById('artistDropdownWrapper').classList.remove('active');
+  updateArtistDropdownOptions();
+  renderSongs();
+}
+ 
+function resetForm() {  
+ document.getElementById('songTitle').value = ''; 
+ document.getElementById('songArtist').value = ''; 
+ document.getElementById('songLyrics').value = '';  
+ document.getElementById('originalYoutube').value = '';
+ document.getElementById('karaokeYoutube').value = '';
+ document.querySelectorAll('input[name="songCat"]:checked').forEach(cb => cb.checked = false); updateSelectedText();  
+ window.editId = null; document.getElementById('formTitle').innerText = "Add New Song"; document.getElementById('mainBtn').innerText = "Save Song";  
+}  
+ 
+function openLyrics(id){  
+
+ const song = window.songs.find(s => s.id == id);
+
+ currentlyViewingId = id;
+
+ loadYoutubePlayers(song);
+
+ document.getElementById('modalTitle').innerText = song.title;  
+
+ document.getElementById('modalArtist').innerText =
+ `${song.artist} | ${song.category ? song.category.join(', ') : ''}`;  
+
+ document.getElementById('modalLyrics').innerText =
+ song.lyrics;
+    
+ const lyricsContainer = document.getElementById('modalLyrics'); lyricsContainer.scrollTop = 0;  
+ const footer = document.getElementById('modalFooter'); document.getElementById('lyricsModal').style.display = 'flex';  
+  
+ // Edit බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
+ document.getElementById('modalEditBtn').onclick = () => {  
+   requestPassword(() => {
+     window.editId = song.id;  
+     document.getElementById('songTitle').value = song.title;  
+     document.getElementById('songArtist').value = song.artist;  
+     document.getElementById('songLyrics').value = song.lyrics; 
+     document.getElementById('originalYoutube').value = song.originalYoutube || '';
+     document.getElementById('karaokeYoutube').value = song.karaokeYoutube || '';
+ 
+     
+     // ⚡ මෙන්න මේ කොටස නිවැරදි කර ඇත:
+     document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false); // Reset all inputs
+     if(song.category) {  
+       document.querySelectorAll('input[name="songCat"]').forEach(cb => {
+         if(song.category.includes(cb.value)) {
+           cb.checked = true; // Tick only saved categories
+         }
+       });  
+     }  
+     
+     updateSelectedText(); // Dropdown button text එක නිවැරදිව update කරයි (උදා: "1 Selected")
+     
+     document.getElementById('formTitle').innerText = "Edit Song";  
+     document.getElementById('mainBtn').innerText = "Update Song";  
+     closeLyricsModal();  
+     openSidebarDrawer();  
+   });
+ };  
+  
+ // Delete බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
+ document.getElementById('modalDeleteBtn').onclick = () => {  
+   requestPassword(() => {
+     showCustomConfirm("මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද?", () => { 
+       window.deleteSongFromFirebase(song.id); 
+     }, "Delete Song");
+   });
+ };  
+  
+ setTimeout(() => {  
+ if (lyricsContainer.scrollHeight <= lyricsContainer.clientHeight) { footer.classList.add('reveal'); }  
+ else { footer.classList.remove('reveal'); }  
+ }, 50);  
+}
+ 
+document.getElementById('modalLyrics').addEventListener('scroll', function() {  
+ const footer = document.getElementById('modalFooter');  
+ if (this.scrollTop > 20) { footer.classList.add('reveal'); } else { footer.classList.remove('reveal'); }  
+});  
+ 
+function closeLyricsModal(){
+
+  // 🎵 Original stop
+  if(originalPlayer && originalPlayer.stopVideo){
+    originalPlayer.stopVideo();
+  }
+
+  // 🎤 Karaoke stop
+  if(karaokePlayer && karaokePlayer.stopVideo){
+    karaokePlayer.stopVideo();
+  }
+
+  // reset states
+  originalPlaying = false;
+  karaokePlaying = false;
+
+  // reset buttons
+  document.getElementById("originalPlayBtn").innerHTML = "<span>▸</span>";
+  document.getElementById("karaokePlayBtn").innerHTML = "<span>▸</span>";
+
+  // reset seekbars
+  document.getElementById("originalSeekBar").value = 0;
+  document.getElementById("karaokeSeekBar").value = 0;
+
+  // reset times
+  document.getElementById("currentTime").innerText = "0:00";
+  document.getElementById("durationTime").innerText = "0:00";
+
+  document.getElementById("karaokeCurrentTime").innerText = "0:00";
+  document.getElementById("karaokeDurationTime").innerText = "0:00";
+
+  // close modal
+  document.getElementById('lyricsModal').style.display = 'none';
+}
+
+function closeOnOutsideClick(e){
+  if(e.target.id === "lyricsModal"){
+    closeLyricsModal();
+  }
+}
+
+function filterByCategory(cat){
+  currentFilter = cat;
+  renderSongs();
+} 
+
+/* ARTIST MANAGEMENT LOGICS */
+function triggerArtistManager() {
+  requestPassword(() => {
+    document.getElementById('headerActionMenu').classList.remove('active');
+    document.getElementById('artistManagerModal').style.display = 'flex';
+    document.getElementById('artistManagerSearch').value = '';
+    renderArtistManagerList();
+  });
+}
+function closeArtistManagerModal() { document.getElementById('artistManagerModal').style.display = 'none'; }
+
+function renderArtistManagerList() {
+  const searchVal = document.getElementById('artistManagerSearch').value.trim().toLowerCase();
+  const listContainer = document.getElementById('artistManagerList');
+  listContainer.innerHTML = '';
+  
+  let filteredArtists = window.allArtistsList;
+  if(searchVal) filteredArtists = window.allArtistsList.filter(a => a.toLowerCase().includes(searchVal));
+  
+  if(filteredArtists.length === 0) {
+    listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">No artists found.</div>`;
+    return;
+  }
+  
+  filteredArtists.forEach(artist => {
+    const div = document.createElement('div'); div.className = 'manage-item-row';
+    div.innerHTML = `<span class="manage-item-text">${artist}</span><button class="manage-action-btn" onclick="editArtistNameDirect('${artist.replace(/'/g, "\\\\'")}')">Edit Name</button>`;
+    listContainer.appendChild(div);
+  });
+}
+
+function addNewArtistDirect() {
+  showCustomPrompt("ඇතුලත් කිරීමට අවශ්‍ය නව Artist ගේ නම සඳහන් කරන්න:", "", (name) => {
+    if(!name || name.trim() === "") return;
+    const cleanedName = name.trim();
+    
+    if(window.allArtistsList.includes(cleanedName)) {
+      return showCustomAlert("මෙම Artist දැනටමත් ලියාපදිංචි කර ඇත!", "Duplicate Artist");
+    }
+    window.allArtistsList.push(cleanedName);
+    window.allArtistsList.sort();
+    renderArtistManagerList();
+    updateArtistDropdownOptions();
+    showCustomAlert(`"${cleanedName}" සාර්ථකව එක් කරන ලදී!`, "Success");
+  }, "Add Artist");
+}
+
+function editArtistNameDirect(oldName) {
+  showCustomPrompt(`"${oldName}" සඳහා නව නම ඇතුළත් කරන්න:`, oldName, (newName) => {
+    if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
+    const finalNewName = newName.trim();
+    
+    // මෙතැනදී අන්තිමට "Yes, Confirm" සහ false (Danger නොවන බව) එකතු කර ඇත
+    showCustomConfirm(`"${oldName}" නම ඇතුළත් සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
+      window.allArtistsList = window.allArtistsList.map(a => a === oldName ? finalNewName : a);
+      window.allArtistsList.sort();
+      renderArtistManagerList();
+      updateArtistDropdownOptions();
+      renderSongs();
+      window.updateArtistDatabaseName(oldName, finalNewName);
+    }, "Update Artist Name", "Yes, Confirm", false);
+  }, "Edit Artist Name");
+}
+
+/* CATEGORY MANAGEMENT LOGICS */
+function triggerCategoryManager() {
+  requestPassword(() => {
+    document.getElementById('headerActionMenu').classList.remove('active');
+    document.getElementById('categoryManagerModal').style.display = 'flex';
+    document.getElementById('categoryManagerSearch').value = '';
+    renderCategoryManagerList();
+  });
+}
+function closeCategoryManagerModal() { document.getElementById('categoryManagerModal').style.display = 'none'; }
+
+function renderCategoryManagerList() {
+  const searchVal = document.getElementById('categoryManagerSearch').value.trim().toLowerCase();
+  const listContainer = document.getElementById('categoryManagerList');
+  listContainer.innerHTML = '';
+  
+  let filteredCats = window.allCategoriesList;
+  if(searchVal) filteredCats = window.allCategoriesList.filter(c => c.toLowerCase().includes(searchVal));
+  
+  if(filteredCats.length === 0) {
+    listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">No categories found.</div>`;
+    return;
+  }
+  
+  filteredCats.forEach(cat => {
+    const div = document.createElement('div'); div.className = 'manage-item-row';
+    div.innerHTML = `
+      <span class="manage-item-text">${cat}</span>
+      <div class="manage-btns-group">
+        <button class="manage-action-btn" onclick="editCategoryNameDirect('${cat.replace(/'/g, "\\\\'")}')">Edit</button>
+        <button class="manage-delete-btn" onclick="deleteCategoryDirect('${cat.replace(/'/g, "\\\\'")}')">Delete</button>
+      </div>
+    `;
+    listContainer.appendChild(div);
+  });
+}
+
+function addNewCategoryDirect() {
+  showCustomPrompt("ඇතුලත් කිරීමට අවශ්‍ය නව Category එකෙහි නම සඳහන් කරන්න:", "", (catName) => {
+    if(!catName || catName.trim() === "") return;
+    const cleanedCat = catName.trim().toUpperCase(); 
+    
+    if(window.allCategoriesList.includes(cleanedCat)) {
+      return showCustomAlert("මෙම Category එක දැනටමත් පද්ධතියේ පවතී!", "Duplicate Category");
+    }
+    window.allCategoriesList.push(cleanedCat);
+    
+    localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
+    window.saveCategoriesToFirebase(window.allCategoriesList);
+    
+    initCategoryChecklist();
+    renderCategoryManagerList();
+    renderSongs(); 
+    showCustomAlert(`"${cleanedCat}" ප්‍රවර්ගය සාර්ථකව එක් කරන ලදී!`, "Success");
+  }, "Add Category");
+}
+
+function editCategoryNameDirect(oldName) {
+  showCustomPrompt(`"${oldName}" Category එක සඳහා නව නමක් ඇතුළත් කරන්න:`, oldName, (newName) => {
+    if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
+    const finalNewName = newName.trim().toUpperCase();
+    
+    // මෙතැනදීත් අන්තිමට "Yes, Confirm" සහ false එකතු කර ඇත
+    showCustomConfirm(`"${oldName}" ප්‍රවර්ගය යටතේ ඇති සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
+      window.allCategoriesList = window.allCategoriesList.map(c => c === oldName ? finalNewName : c);
+      localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
+      initCategoryChecklist();
+      renderCategoryManagerList();
+      renderSongs();
+      window.saveCategoriesToFirebase(window.allCategoriesList);
+      window.updateCategoryInsideSongs(oldName, finalNewName);
+      showCustomAlert(`Category නම "${finalNewName}" ලෙස වෙනස් කරන ලදී!`, "Updated");
+    }, "Update Category", "Yes, Confirm", false);
+  }, "Edit Category Name");
+}
+
+function deleteCategoryDirect(catName) {
+  showCustomConfirm(`"${catName}" ප්‍රවර්ගය පද්ධතියෙන් සම්පූර්ණයෙන්ම මකා දැමීමට අවශ්‍යද?\n\n⚠️ අවධානයට: මෙම ප්‍රවර්ගයට පමණක් අයත් සියලුම ගීතද මෙහිදී ස්වයංක්‍රීයව Firebase වෙතින් සදහටම මකා දැමෙනු ඇත!`, () => {
+    window.allCategoriesList = window.allCategoriesList.filter(c => c !== catName);
+    localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
+    
+    if(currentFilter === catName) currentFilter = 'All';
+    
+    initCategoryChecklist();
+    renderCategoryManagerList();
+    renderSongs();
+    
+    window.saveCategoriesToFirebase(window.allCategoriesList);
+    window.removeCategoryFromSongs(catName); 
+    
+    showCustomAlert(`"${catName}" ප්‍රවර්ගය සහ ඊට අදාල ගීත සාර්ථකව මකා දමන ලදී!`, "Deleted");
+  }, "Delete Category Completely");
+}
+ 
+function exportData() {  
+ const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(window.songs)], {type:"application/json"}));  
+ a.download = 'lyrics_backup.json'; a.click(); document.getElementById('headerActionMenu').classList.remove('active');  
+}  
+  
+function copyLyrics() {
+ const lyrics = document.getElementById('modalLyrics').innerText;
+ 
+ // මොබයිල් සහ PC දෙකටම 100% ක් හරියන පැරණි ස්ථාවර ක්‍රමය
+ const textarea = document.createElement('textarea');
+ textarea.value = lyrics;
+ textarea.style.position = 'fixed'; // තිරයෙන් පිටත සැඟවීමට
+ document.body.appendChild(textarea);
+ textarea.select();
+ textarea.setSelectionRange(0, 99999); // මොබයිල් දුරකථන සඳහා
+ 
+ try {
+   document.execCommand('copy'); // කොපි කිරීම සිදු කරයි
+   const copyBtn = document.getElementById('copyBtn');
+   copyBtn.innerText = "Copied!"; 
+   copyBtn.style.background = "#10b981";
+   setTimeout(() => { copyBtn.innerText = "Copy"; copyBtn.style.background = "#06b6d4"; }, 2000);
+ } catch (err) {
+   showCustomAlert("Copy කිරීමට නොහැකි විය! කරුණාකර අතින් Select කර Copy කරගන්න.");
+ }
+ 
+ document.body.removeChild(textarea); // සාදාගත් තාවකාලික කොටුව ඉවත් කිරීම
+}
+
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }  
+window.addEventListener('scroll', () => {  
+ const btn = document.getElementById('scrollTopBtn');  
+ if (window.scrollY > 300) { btn.style.display = 'block'; } else { btn.style.display = 'none'; }  
+ });  
+  
+window.onload = () => {  
+ window.songs = JSON.parse(localStorage.getItem('lyricsSongs')) || [];  
+ window.allCategoriesList = JSON.parse(localStorage.getItem('lyricsCategories')) || ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
+ 
+ extractDynamicMetadata();
+ renderSongs();  
+ initCategoryChecklist();
+};  
+
+// Lyrics ටයිප් කරද්දී මුල් වචන 3 Title එකට Auto වැටීමේ කේතය
+document.getElementById('songLyrics').addEventListener('input', function() {
+  const titleField = document.getElementById('songTitle');
+  
+  // පරිශීලකයා දැනටමත් අතින් Title එකක් ටයිප් කරලා නැත්නම් පමණක් මෙය ක්‍රියාත්මක වේ
+  if (titleField.value.trim() === "" || this.dataset.autoTitle === "true" || titleField.value === this.dataset.lastAutoTitle) {
+    
+    // Lyrics වල ඇති හිස්තැන් (Spaces) සහ පේළි බිඳීම් (New lines) ඉවත් කර වචන වෙන් කරගන්න
+    const words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+    
+    if (words.length > 0) {
+      // මුල් වචන 3 පමණක් ලබාගෙන එකතු කරන්න
+      const autoTitle = words.slice(0, 3).join(' ');
+      
+      titleField.value = autoTitle;
+      this.dataset.autoTitle = "true";     // Auto වැටුණු එකක් බව සලකුණු කිරීමට
+      this.dataset.lastAutoTitle = autoTitle; // අවසන් වරට වැටුණු Title එක මතක තබා ගැනීමට
+    } else {
+      titleField.value = "";
+    }
+  }
+});
+
+// පරිශීලකයා අතින් Title එකක් ටයිප් කලහොත් Auto වැටීම නතර කිරීමට
+document.getElementById('songTitle').addEventListener('input', function() {
+  const lyricsField = document.getElementById('songLyrics');
+  if (this.value !== lyricsField.dataset.lastAutoTitle) {
+    lyricsField.dataset.autoTitle = "false"; // Auto වැටීම නවත්වයි
+  }
+});
+
+// 🟢 මෙන්න මෙතනට 4 වෙනි පියවර ඇතුළත් කරන්න:
+document.getElementById('songArtist').addEventListener('focus', filterArtistSuggestions);
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const activeElem = document.activeElement;
+    
+    if (activeElem.id === 'songTitle') {
+      event.preventDefault();
+      document.getElementById('songArtist').focus();
+    }  
+    else if (activeElem.id === 'songArtist') {
+      event.preventDefault();
+      
+      if(!document.getElementById('categoryDropdown').classList.contains('active')) {
+        toggleDropdown(); 
+      }
+      document.getElementById('categoryDropdown').focus();
+    }
+    else if (activeElem.id === 'categoryDropdown') {
+      event.preventDefault();
+      document.getElementById('categoryDropdown').classList.remove('active');
+      document.getElementById('songLyrics').focus();
+    }
+  }
+});
+// 🟢 Font Size එක වෙනස් කරන සහ Reset කරන Functions
+window.changeFontSize = function(amount) {
+  const lyricsElement = document.getElementById('modalLyrics');
+  let currentSize = parseInt(window.getComputedStyle(lyricsElement).fontSize) || 18;
+  let newSize = currentSize + amount;
+  
+  // ආරක්ෂාව සඳහා අකුරු 12px ට වඩා කුඩා වීමත් 36px ට වඩා ලොකු වීමත් වළක්වයි
+  if (newSize >= 12 && newSize <= 36) {
+    lyricsElement.style.fontSize = newSize + 'px';
+  }
+}
+
+window.resetFontSize = function() {
+  const lyricsElement = document.getElementById('modalLyrics');
+  if (window.innerWidth <= 768) {
+    lyricsElement.style.fontSize = '16px'; // මොබයිල් සඳහා Default size
+  } else {
+    lyricsElement.style.fontSize = '18px'; // පරිගණක සඳහා Default size
+  }
+}
+
+function handleModalOutside(event){
+
+  // 📱 Mobile devices detect
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
+    .test(navigator.userAgent);
+
+  // 💻 PC වල විතරක් outside click close කිරීම
+  if(!isMobile && event.target.id === 'lyricsModal'){
+    closeLyricsModal();
+  }
+
+}
+
+</script>  
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/LAKSHAN-LYRICS/sw.js')
+          .then(reg => console.log('Service Worker Registered!', reg))
+          .catch(err => console.log('Service Worker Error', err));
+      });
+    }
+  </script>
+
+<!-- YOUTUBE IFRAME API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+
+let originalPlayer;
+let karaokePlayer;
+
+let originalPlaying = false;
+let karaokePlaying = false;
+
+function getYoutubeId(url){
+
+  try{
+
+    const urlObj = new URL(url);
+
+    if(urlObj.hostname.includes("youtu.be")){
+
+      return urlObj.pathname.slice(1);
+
+    }
+
+    if(urlObj.hostname.includes("youtube.com")){
+
+      return urlObj.searchParams.get("v");
+
+    }
+
+  } catch(e){
+
+    return null;
+
+  }
+
+  return null;
+}
+
+function onYouTubeIframeAPIReady() {
+
+  originalPlayer = new YT.Player('originalPlayer', {
+    height: '0',
+    width: '0',
+    videoId: ''
+  });
+
+  karaokePlayer = new YT.Player('karaokePlayer', {
+    height: '0',
+    width: '0',
+    videoId: ''
+  });
+}
+
+function loadYoutubePlayers(song) {
+  console.log(song);
+  const originalId =
+  getYoutubeId(song.originalYoutube || '');
+
+  const karaokeId =
+  getYoutubeId(song.karaokeYoutube || '');
+
+  if(originalId){
+    originalPlayer.loadVideoById(originalId);
+    originalPlayer.pauseVideo();
+  }
+
+  if(karaokeId){
+    karaokePlayer.loadVideoById(karaokeId);
+    karaokePlayer.pauseVideo();
+  }
+
+  originalPlaying = false;
+  karaokePlaying = false;
+
+  document.getElementById("originalPlayBtn")
+  .innerText = "▶ ";
+
+  document.getElementById("karaokePlayBtn")
+  .innerText = "▶ ";
+}
+
+async function toggleOriginalAudio(){
+
+  if(!originalPlayer) return;
+
+  const btn =
+  document.getElementById("originalPlayBtn");
+
+  const karaokeBtn =
+  document.getElementById("karaokePlayBtn");
+
+  try{
+
+    const state =
+    originalPlayer.getPlayerState();
+
+    if(state == 1){
+
+      /* ⏸ ORIGINAL PAUSE */
+      originalPlayer.pauseVideo();
+
+      btn.textContent = "▶";
+
+    }else{
+
+      /* ⛔ KARAOKE STOP */
+      if(karaokePlayer){
+
+        karaokePlayer.pauseVideo();
+
+        karaokeBtn.textContent = "▶";
+
+      }
+
+      /* ▶ ORIGINAL PLAY */
+      originalPlayer.playVideo();
+
+      btn.textContent = "⏸";
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+}
+
+async function toggleKaraokeAudio(){
+
+  if(!karaokePlayer) return;
+
+  const btn =
+  document.getElementById("karaokePlayBtn");
+
+  const originalBtn =
+  document.getElementById("originalPlayBtn");
+
+  try{
+
+    const state =
+    karaokePlayer.getPlayerState();
+
+    if(state == 1){
+
+      /* ⏸ KARAOKE PAUSE */
+      karaokePlayer.pauseVideo();
+
+      btn.textContent = "▶";
+
+    }else{
+
+      /* ⛔ ORIGINAL STOP */
+      if(originalPlayer){
+
+        originalPlayer.pauseVideo();
+
+        originalBtn.textContent = "▶";
+
+      }
+
+      /* ▶ KARAOKE PLAY */
+      karaokePlayer.playVideo();
+
+      btn.textContent = "⏸"; 
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+}
+
+setInterval(()=>{
+
+/* ================= ORIGINAL PLAYER ================= */
+
+if(originalPlayer && originalPlayer.getCurrentTime){
+
+let current = originalPlayer.getCurrentTime();
+
+let duration = originalPlayer.getDuration();
+
+const seekBar =
+document.getElementById('originalSeekBar');
+
+/* PROGRESS */
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+/* TIME UPDATE */
+
+document.getElementById('currentTime')
+.innerText = formatTime(current);
+
+document.getElementById('durationTime')
+.innerText = formatTime(duration);
+
+}
+
+/* RESET */
+
+if(current <= 0){
+
+seekBar.value = 0;
+
+seekBar.style.setProperty(
+'--progress',
+'0%'
+);
+
+document.getElementById('currentTime')
+.innerText = '0:00';
+
+}
+
+}
+
+
+/* ================= KARAOKE PLAYER ================= */
+
+if(karaokePlayer && karaokePlayer.getCurrentTime){
+
+let current =
+karaokePlayer.getCurrentTime();
+
+let duration =
+karaokePlayer.getDuration();
+
+const seekBar =
+document.getElementById('karaokeSeekBar');
+
+/* PROGRESS */
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+/* TIME UPDATE */
+
+document.getElementById('karaokeCurrentTime')
+.innerText = formatTime(current);
+
+document.getElementById('karaokeDurationTime')
+.innerText = formatTime(duration);
+
+}
+
+/* RESET */
+
+if(current <= 0){
+
+seekBar.value = 0;
+
+seekBar.style.setProperty(
+'--progress',
+'0%'
+);
+
+document.getElementById('karaokeCurrentTime')
+.innerText = '0:00';
+
+}
+
+}
+
+},500);
+
+
+
+/* ================= SEEK ORIGINAL ================= */
+
+document.getElementById("originalSeekBar")
+.addEventListener("input", function(){
+
+if(!originalPlayer) return;
+
+const total =
+originalPlayer.getDuration();
+
+const seekTime =
+(this.value / 100) * total;
+
+originalPlayer.seekTo(seekTime, true);
+
+});
+
+
+/* ================= SEEK KARAOKE ================= */
+
+document.getElementById("karaokeSeekBar")
+.addEventListener("input", function(){
+
+if(!karaokePlayer) return;
+
+const total =
+karaokePlayer.getDuration();
+
+const seekTime =
+(this.value / 100) * total;
+
+karaokePlayer.seekTo(seekTime, true);
+
+});
+
+
+/* ================= FORMAT TIME ================= */
+
+function formatTime(sec){
+
+sec = Math.floor(sec);
+
+let minutes =
+Math.floor(sec / 60);
+
+let seconds =
+sec % 60;
+
+if(seconds < 10){
+seconds = '0' + seconds;
+}
+
+return minutes + ':' + seconds;
+
+}
+
+</script>
+<script>
+
+/* ⚡ INSTANT TOUCH SYSTEM */
+document.addEventListener(
+  "touchstart",
+  function(){},
+  {
+    passive:true
+  }
+);
+
+/* ⚡ REMOVE CLICK DELAY */
+document.querySelectorAll(
+  'button,.song-card,.filter-btn,.category-item'
+).forEach(el=>{
+
+  el.addEventListener(
+    'touchend',
+    function(e){
+
+      if(
+        this.id === "dotsMenuBtn"
+      ){
+        return;
+      }
+
+      e.preventDefault();
+
+      this.click();
+
+    },
+    {
+      passive:false
+    }
+  );
+
+});
+
+</script>
+<script>
+
+/* ⚡ MOBILE FAST CLICK FIX */
+if(window.innerWidth <= 768){
+
+  document.addEventListener(
+    "touchstart",
+    ()=>{},
+    {passive:true}
+  );
+
+  document.querySelectorAll(
+    'button,.song-card,.filter-btn'
+  ).forEach(el=>{
+
+    el.addEventListener(
+      'touchend',
+      function(e){
+
+        e.preventDefault();
+
+        this.click();
+
+      },
+      {passive:false}
+    );
+
+  });
+
+}
+
+</script>
+</body>  
+</html>
