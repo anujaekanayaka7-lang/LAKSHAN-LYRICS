@@ -631,8 +631,95 @@ transform:scale(0.96);
 .dialog-btn-secondary:hover { background: #e2e8f0; }
 .dialog-btn-danger { flex: 1; padding: 11px; background: #ef4444; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
 .dialog-btn-danger:hover { background: #dc2626; }
- 
-@media (max-width: 768px) {  
+
+.mobile-sidebar-menu{
+  display:none;
+}
+
+@media (max-width: 768px) {
+
+  #songFormArea{
+display:none !important;
+}
+
+#songFormArea.active{
+display:block !important;
+}
+  .mobile-sidebar-menu{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-bottom:15px;
+}
+
+.mobile-sidebar-menu button{
+
+width:100%;
+
+padding:10px 14px;
+
+border:none;
+border-radius:12px;
+
+background:linear-gradient(
+135deg,
+#ffffff,
+#f8fafc
+);
+
+border:1px solid #e2e8f0;
+
+font-size:13px;
+font-weight:500;
+
+color:#334155;
+
+text-align:left;
+
+cursor:pointer;
+
+box-shadow:
+0 2px 8px rgba(0,0,0,.04);
+
+transition:all .2s ease;
+
+}
+
+.mobile-sidebar-menu button:hover{
+
+background:linear-gradient(
+135deg,
+#faf5ff,
+#f3f4f6
+);
+
+border-color:#8b5cf6;
+
+color:#8b5cf6;
+
+transform:translateX(3px);
+
+box-shadow:
+0 4px 12px rgba(139,92,246,.12);
+
+}
+
+  .mobile-sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:15px;
+  }
+
+  #songFormArea{
+    display:none;
+  }
+
+  #songFormArea.active{
+    display:block;
+  }
+
+
  .menu-trigger { display: block; }  
  .main-wrapper { flex-direction: column; padding: 15px; gap: 15px; }  
  header { padding: 10px 15px; }  
@@ -737,6 +824,10 @@ transform:scale(0.96);
    display: inline-block !important;
  }
 
+ .header-btns button:nth-child(3){
+  display:none !important;
+}
+
  .custom-multiselect.active .arrow-icon {
    transform: rotate(180deg) !important;
  }
@@ -833,6 +924,39 @@ transform:scale(0.96);
   z-index: 4000 !important;
 }
 
+/* DARK MODE */
+
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode header,
+body.dark-mode .left-sidebar,
+body.dark-mode .song-card,
+body.dark-mode .modal-content,
+body.dark-mode .header-btns{
+  background:#1e293b !important;
+  color:#fff !important;
+  border-color:#334155 !important;
+}
+
+body.dark-mode .input-field,
+body.dark-mode .lyrics-textarea,
+body.dark-mode .artist-display,
+body.dark-mode .select-display{
+  background:#334155 !important;
+  color:#fff !important;
+  border-color:#475569 !important;
+}
+
+body.dark-mode .song-card strong,
+body.dark-mode .song-card small,
+body.dark-mode #modalLyrics,
+body.dark-mode #modalArtist{
+  color:#fff !important;
+}
+
 </style>  
 </head>  
 <body>  
@@ -848,11 +972,10 @@ transform:scale(0.96);
 <div class="header-btns" id="headerActionMenu">  
  <button onclick="triggerArtistManager()">Manage Artists</button>
  <button onclick="triggerCategoryManager()">Manage Categories</button>
- <button onclick="exportData()">Offline Backup</button>  
- <button onclick="document.getElementById('importInput').click()">Offline Restore</button>  
+ <button onclick="showMostViewedSongs()">Most Viewed Songs</button>
+ <button onclick="toggleTheme()">Mode</button>
  </div>  
-  </div>  
- <input type="file" id="importInput" style="display:none" onchange="importData(event)">  
+  </div>   
 </header>  
   
 <div class="mobile-overlay" id="mobileOverlayLayer" onclick="closeSidebarDrawer()"></div>  
@@ -860,18 +983,29 @@ transform:scale(0.96);
 <div class="main-wrapper">  
  <aside class="left-sidebar" id="sidebarSection">  
  <div class="mobile-form-close">  
- <h3 id="formTitle" style="margin-bottom:0;">Add New Song</h3>  
- <button class="close-form-btn" onclick="closeSidebarDrawer()">Back</button>  
+ <h3 id="formTitle" style="margin-bottom:0;">LAKSHAN LYRICS</h3>  
+ <button class="close-form-btn" id="mainBackBtn" onclick="backToMainMenu()">Back</button>  
  </div>  
-   
- <div style="margin-bottom:15px;"><input type="text" id="songTitle" class="input-field" placeholder="Song Title" autocomplete="off"></div>  
- 
- <div style="margin-bottom:15px;">  
- <div class="suggest-container" id="artistSuggestWrapper">  
- <input type="text" id="songArtist" class="input-field" placeholder="Artist Name" autocomplete="off" oninput="filterArtistSuggestions()">
- <div class="checkbox-list" id="artistSuggestChecklist"></div>  
- </div>  
- </div>  
+  <div class="mobile-sidebar-menu">
+
+  <button onclick="showSongForm()">Add Song</button>
+  <button onclick="closeSidebarDrawer();setTimeout(triggerArtistManager,150);"> Artists</button>
+  <button onclick="closeSidebarDrawer();setTimeout(triggerCategoryManager,150);"> Categories</button>
+  <button onclick="showMostViewedSongs()">Most Viewed Songs</button>
+</div>
+
+<div id="songFormArea">
+
+<div style="margin-bottom:15px;">
+<input type="text" id="songTitle" class="input-field" placeholder="Song Title" autocomplete="off">
+</div>
+
+<div style="margin-bottom:15px;">
+<div class="suggest-container" id="artistSuggestWrapper">
+<input type="text" id="songArtist" class="input-field" placeholder="Artist Name" autocomplete="off" oninput="filterArtistSuggestions()">
+<div class="checkbox-list" id="artistSuggestChecklist"></div>
+</div>
+</div>
  
  <div style="margin-bottom:15px;">  
  <label style="font-size:13px; font-weight:600; color:#64748b; margin-bottom:5px; display:block;">Select Categories:</label>  
@@ -885,24 +1019,19 @@ transform:scale(0.96);
  </div>  
 
 <div style="margin-bottom:15px;">
-  <input type="text" id="originalYoutube"
+  <input type="text" id="karaokeYoutube"
   class="input-field"
-  placeholder="Original Song YouTube Link">
+  placeholder="Karaoke Song Link">
 </div>
 
 <div style="margin-bottom:15px;">
-  <input type="text" id="karaokeYoutube"
+  <input type="text" id="originalYoutube"
   class="input-field"
-  placeholder="Karaoke YouTube Link">
+  placeholder="Original Song Link">
 </div>
 
  <div style="margin-bottom:15px;"><textarea id="songLyrics" class="lyrics-textarea" placeholder="Type Lyrics here..."></textarea></div>  
  <button class="save-btn" id="mainBtn" onclick="addSong()">Save Song</button>  
- 
- <div class="mobile-only-manage-btns">
-    <button onclick="closeSidebarDrawer(); setTimeout(triggerArtistManager, 150);">Artists</button>
-    <button onclick="closeSidebarDrawer(); setTimeout(triggerCategoryManager, 150);">Categories</button>
- </div>
 
  <div id="syncStatus" class="firebase-status"></div>  
  </aside>  
@@ -911,7 +1040,7 @@ transform:scale(0.96);
  <div class="filter-section">  
  <div class="search-container">  
  <label style="font-size:13px; font-weight:600; color:#64748b;">සින්දු සොයන්න (Title, Artist, Lyrics):</label>  
- <input type="text" id="searchInput" class="input-field" placeholder="Search song, artist or lyrics..." oninput="renderSongs()">  
+ <input type="text"id="searchInput"class="input-field"placeholder="Search song, artist or lyrics..."autocomplete="off"oninput="renderSongs()">  
  </div>  
  <div class="artist-filter">  
  <label style="font-size:13px; font-weight:600; color:#64748b;">ගායකයා තෝරන්න:</label>  
@@ -985,6 +1114,60 @@ transform:scale(0.96);
      <div id="modalLyrics" style="padding-bottom: 20px;"></div> 
      
 <!-- 🎵 MODERN AUDIO PLAYERS -->
+<!-- 🎤 KARAOKE PLAYER -->
+<div style="margin-top:16px;">
+
+<div style="
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#111827;
+padding-left:4px;
+">
+🎤 Karaoke Audio Player
+</div>
+
+<div class="audioPlayerBox">
+
+<button
+onclick="toggleKaraokeAudio()"
+id="karaokePlayBtn"
+class="mainPlayBtn">
+▸
+</button>
+
+<div class="playerRight">
+
+<div class="progressRow">
+
+<div
+class="audioTime"
+id="karaokeCurrentTime">
+0:00
+</div>
+
+<input
+type="range"
+id="karaokeSeekBar"
+value="0"
+min="0"
+max="100"
+class="audioSeek">
+
+<div
+class="audioTime"
+id="karaokeDurationTime">
+0:00
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 <!-- 🎵 ORIGINAL PLAYER -->
 <div style="margin-top:18px;">
 
@@ -1039,70 +1222,7 @@ id="durationTime">
 
 </div>
 
-<!-- 🎤 KARAOKE PLAYER -->
-<div style="margin-top:16px;">
-
-<div style="
-font-size:13px;
-font-weight:700;
-margin-bottom:8px;
-color:#111827;
-padding-left:4px;
-">
-🎤 Karaoke Player
-</div>
-
-<div class="audioPlayerBox">
-
-<button
-onclick="toggleKaraokeAudio()"
-id="karaokePlayBtn"
-class="mainPlayBtn">
-▸
-</button>
-
-<div class="playerRight">
-
-<div class="progressRow">
-
-<div
-class="audioTime"
-id="karaokeCurrentTime">
-0:00
-</div>
-
-<input
-type="range"
-id="karaokeSeekBar"
-value="0"
-min="0"
-max="100"
-class="audioSeek">
-
-<div
-class="audioTime"
-id="karaokeDurationTime">
-0:00
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 <!-- HIDDEN YOUTUBE PLAYERS -->
-<div id="originalPlayer"
-style="
-width:0;
-height:0;
-overflow:hidden;
-position:absolute;
-pointer-events:none;
-"></div>
-
 <div id="karaokePlayer"
 style="
 width:0;
@@ -1112,6 +1232,18 @@ position:absolute;
 pointer-events:none;
 ">
 </div>
+
+<div id="originalPlayer"
+style="
+width:0;
+height:0;
+overflow:hidden;
+position:absolute;
+pointer-events:none;
+"></div>
+
+<audio id="originalAudio"></audio>
+<audio id="karaokeAudio"></audio>
 
 
      <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
@@ -1172,8 +1304,7 @@ pointer-events:none;
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore, collection, setDoc, doc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
+  import { getFirestore,collection,setDoc,doc,deleteDoc,onSnapshot,enableIndexedDbPersistence,updateDoc,increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
   const firebaseConfig = {
     apiKey: "AIzaSyC2svK0wRGTcDgmOTHdp78aa3jrzvOQeM0",
     authDomain: "lakshan-lryics.firebaseapp.com",
@@ -1184,9 +1315,16 @@ pointer-events:none;
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const songsCollection = collection(db, "lyricsSongs");
-  const configDocRef = doc(db, "appSettings", "categoriesConfig"); 
+
+const db = getFirestore(app);
+
+window.db = db;
+window.updateDoc = updateDoc;
+window.increment = increment;
+window.doc = doc;
+
+const songsCollection = collection(db, "lyricsSongs");
+const configDocRef = doc(db, "appSettings", "categoriesConfig");
 
   enableIndexedDbPersistence(db).catch((err) => {
       console.warn("Firestore persistence failed:", err.code);
@@ -1250,19 +1388,50 @@ pointer-events:none;
     const lyrics = document.getElementById('songLyrics').value.trim();
     const selectedCats = Array.from(document.querySelectorAll('input[name="songCat"]:checked')).map(cb => cb.value);
     
-    if(!title || !lyrics || !selectedCats.length || !artist) {
-      return showCustomAlert("⚠️ කරුණාකර සියලුම විස්තර (Title, Artist, Categories, Lyrics) නිවැරදිව පුරවන්න!");
-    }
+    const originalYoutube =
+document.getElementById('originalYoutube').value.trim();
 
+const karaokeYoutube =
+document.getElementById('karaokeYoutube').value.trim();
+
+if(
+  !title ||
+  !artist ||
+  !lyrics ||
+  !selectedCats.length ||
+  !originalYoutube ||
+  !karaokeYoutube
+){
+  return showCustomAlert(
+    "⚠️ Song Title, Artist, Categories, Karaoke Link, Original Link සහ Lyrics සියල්ල පිරවිය යුතුය!"
+  );
+}
+    // Duplicate Lyrics Check
+    const duplicateSong = window.songs.find(song =>
+    song.id != window.editId &&
+    song.lyrics &&
+    song.lyrics.trim().toLowerCase() === lyrics.trim().toLowerCase()
+      );
+
+    if(duplicateSong){
+         return showCustomAlert(
+     "⚠️ මෙම Lyrics එක දැනටමත් '" +
+    duplicateSong.title +
+    "' නමින් ඇතුලත් කර ඇත!"
+         );
+    }   
     const id = window.editId ? window.editId.toString() : Date.now().toString();
     const songData = {
-         title,
-         artist,
-         category: selectedCats,
-         lyrics,
-         originalYoutube: document.getElementById('originalYoutube').value.trim(),
-        karaokeYoutube: document.getElementById('karaokeYoutube').value.trim()       };
-
+  title,
+  artist,
+  category: selectedCats,
+  lyrics,
+  originalYoutube: document.getElementById('originalYoutube').value.trim(),
+  karaokeYoutube: document.getElementById('karaokeYoutube').value.trim(),
+  views: window.editId
+    ? (window.songs.find(s => s.id == window.editId)?.views || 0)
+    : 0
+};
 
     try {
       document.getElementById('syncStatus').innerText = "Syncing with Firebase Cloud...";
@@ -1372,36 +1541,12 @@ pointer-events:none;
     }
   };
 
-  window.importData = async function(e) {
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      try {
-        const importedSongs = JSON.parse(ev.target.result);
-        if(Array.isArray(importedSongs)) {
-          document.getElementById('syncStatus').innerText = "Restoring backups...";
-          for (let song of importedSongs) {
-            const id = song.id ? song.id.toString() : Date.now().toString();
-            await setDoc(doc(db, "lyricsSongs", id), {
-              title: song.title,
-              artist: song.artist,
-              category: song.category,
-              lyrics: song.lyrics
-            });
-          }
-          document.getElementById('syncStatus').innerText = "Restore Complete!";
-          showCustomAlert("✅ දත්ත සාර්ථකව Restore කරන ලදී!");
-        }
-      } catch (err) { showCustomAlert("❌ JSON ෆයිල් එකෙහි දෝෂයක් ඇත!"); }
-    };
-    reader.readAsText(file); e.target.value = '';
-    document.getElementById('headerActionMenu').classList.remove('active');
-  };
 </script>
 
 <script>
 let currentlyViewingId = null;
-let currentFilter = 'All';  
+let currentFilter = 'All'; 
+let specialFilter = "all"; 
 window.selectedArtistFilter = 'All'; 
 
 window.allArtistsList = []; 
@@ -1415,6 +1560,7 @@ function closeCustomDialog() {
 }
 
 function showCustomAlert(message, title = "Notification") {
+  document.activeElement.blur();
   document.getElementById('dialogIcon').innerText = "ℹ️";
   document.getElementById('dialogTitle').innerText = title;
   document.getElementById('dialogMsg').innerText = message;
@@ -1426,7 +1572,24 @@ function showCustomAlert(message, title = "Notification") {
   document.getElementById('customDialogModal').style.display = 'flex';
 }
 
+function showMostViewedSongs(){
+
+  specialFilter = "viewed";
+
+  renderSongs();
+
+  closeSidebarDrawer();
+
+  const menu =
+  document.getElementById("headerActionMenu");
+
+  if(menu){
+    menu.classList.remove("active");
+  }
+}
+
 function showCustomConfirm(message, onConfirm, title = "Confirmation required", btnText = "Yes, Delete", isDanger = true) {
+  document.activeElement.blur();
   document.getElementById('dialogIcon').innerText = "❓";
   document.getElementById('dialogTitle').innerText = title;
   document.getElementById('dialogMsg').innerText = message;
@@ -1449,6 +1612,7 @@ function showCustomConfirm(message, onConfirm, title = "Confirmation required", 
 }
 
 function showCustomPrompt(message, defaultValue, onConfirm, title = "Input required") {
+  document.activeElement.blur();
   document.getElementById('dialogIcon').innerText = "📝";
   document.getElementById('dialogTitle').innerText = title;
   document.getElementById('dialogMsg').innerText = message;
@@ -1496,6 +1660,34 @@ function requestPassword(onSuccess) {
   document.getElementById('passwordConfirmBtn').onclick = handlePasswordVerification;
 }
 
+function showSongForm(){
+
+  document.getElementById("formTitle").innerText =
+  "Add New Song";
+
+  document.getElementById("mainBackBtn").onclick =
+  backToMainMenu;
+
+  document.getElementById("songFormArea")
+  .classList.add("active");
+
+  document.querySelector(".mobile-sidebar-menu")
+  .style.display = "none";
+}
+
+function backToMainMenu(){
+
+  document.getElementById("songFormArea")
+  .classList.remove("active");
+
+  document.querySelector(".mobile-sidebar-menu")
+  .style.display = "flex";
+
+  document.getElementById("formTitle").innerText =
+  "Main Menu";
+
+}
+
 function handlePasswordVerification() {
   const inputVal = document.getElementById('customPasswordInput').value;
   if(inputVal === CORRECT_PASSWORD) {
@@ -1522,7 +1714,27 @@ function closePasswordModal() {
   passwordSuccessCallback = null;
 }
 
-function openSidebarDrawer() { document.getElementById('sidebarSection').classList.add('active'); document.getElementById('mobileOverlayLayer').classList.add('active'); }  
+function openSidebarDrawer(){
+
+  document.getElementById("formTitle").innerText =
+  "Main Menu";
+
+  document.getElementById("mainBackBtn").onclick =
+  closeSidebarDrawer;
+
+  document.getElementById('sidebarSection')
+  .classList.add('active');
+
+  document.getElementById('mobileOverlayLayer')
+  .classList.add('active');
+
+  document.getElementById("songFormArea")
+  .classList.remove("active");
+
+  document.querySelector(".mobile-sidebar-menu")
+  .style.display = "flex";
+}
+
 function closeSidebarDrawer() { document.getElementById('sidebarSection').classList.remove('active'); document.getElementById('mobileOverlayLayer').classList.remove('active'); resetForm(); }  
 function toggleDotsMenu(e) {
   e.stopPropagation();
@@ -1684,8 +1896,15 @@ function renderSongs() {
  
  return titleMatch || lyricsMatch || artistMatch;  
  });  
- }  
- 
+ } 
+
+ if(specialFilter === "viewed"){
+
+  filtered.sort((a,b)=>
+    (b.views || 0) - (a.views || 0)
+  );
+
+}
  // තිරය මත සින්දු පෙන්වීම
  if(filtered.length === 0) {  
  grid.innerHTML = `  
@@ -1748,17 +1967,34 @@ window.updateArtistDropdownOptions = function() {
  
  const filteredArtists = window.allArtistsList.filter(artist => artist.toLowerCase().startsWith(searchVal));
  
- if(filteredArtists.length === 0 && searchVal !== "") {
-   listHtml += `<div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">No artist found</div>`;
- } else {
-   filteredArtists.forEach(artist => {
-     listHtml += `
-       <div class="artist-option-item ${window.selectedArtistFilter === artist ? 'selected' : ''}" onclick="selectArtistFilterCustom('${artist.replace(/'/g, "\\'")}')">${artist}</div>
-     `;
-   });
- }
+if(filteredArtists.length === 0 && searchVal !== "") {
+
+  listHtml += `
+  <div style="padding:12px; color:#94a3b8; font-size:13px; text-align:center;">
+  No artist found
+  </div>`;
+
+} else {
+
+  filteredArtists.forEach(artist => {
+
+    listHtml += `
+    <div class="artist-option-item ${window.selectedArtistFilter === artist ? 'selected' : ''}"
+    onclick="selectArtistFilterCustom('${artist.replace(/'/g, "\\'")}')">
+
+    ${artist} (${window.songs.filter(s =>
+      s.artist &&
+      s.artist.split('/').map(a => a.trim()).includes(artist)
+    ).length})
+
+    </div>
+    `;
+
+  });
+
+}
  
- listContainer.innerHTML = listHtml;
+listContainer.innerHTML = listHtml;
 }
 
 window.selectArtistFilterCustom = function(artistName) {
@@ -1779,9 +2015,16 @@ function resetForm() {
  window.editId = null; document.getElementById('formTitle').innerText = "Add New Song"; document.getElementById('mainBtn').innerText = "Save Song";  
 }  
  
-function openLyrics(id){  
+function openLyrics(id){
 
  const song = window.songs.find(s => s.id == id);
+
+ window.updateDoc(
+   window.doc(window.db, "lyricsSongs", id.toString()),
+   {
+     views: window.increment(1)
+   }
+ ).catch(() => {});
 
  currentlyViewingId = id;
 
@@ -1795,52 +2038,69 @@ function openLyrics(id){
  document.getElementById('modalLyrics').innerText =
  song.lyrics;
     
- const lyricsContainer = document.getElementById('modalLyrics'); lyricsContainer.scrollTop = 0;  
- const footer = document.getElementById('modalFooter'); document.getElementById('lyricsModal').style.display = 'flex';  
-  
- // Edit බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
+ const lyricsContainer = document.getElementById('modalLyrics');
+ lyricsContainer.scrollTop = 0;
+
+ const footer = document.getElementById('modalFooter');
+
+ document.getElementById('lyricsModal').style.display = 'flex';  
+
+ // Edit බොත්තම
  document.getElementById('modalEditBtn').onclick = () => {  
    requestPassword(() => {
-     window.editId = song.id;  
-     document.getElementById('songTitle').value = song.title;  
-     document.getElementById('songArtist').value = song.artist;  
-     document.getElementById('songLyrics').value = song.lyrics; 
+
+     window.editId = song.id;
+
+     document.getElementById('songTitle').value = song.title;
+     document.getElementById('songArtist').value = song.artist;
+     document.getElementById('songLyrics').value = song.lyrics;
      document.getElementById('originalYoutube').value = song.originalYoutube || '';
      document.getElementById('karaokeYoutube').value = song.karaokeYoutube || '';
- 
-     
-     // ⚡ මෙන්න මේ කොටස නිවැරදි කර ඇත:
-     document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false); // Reset all inputs
-     if(song.category) {  
+
+     document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false);
+
+     if(song.category){
        document.querySelectorAll('input[name="songCat"]').forEach(cb => {
-         if(song.category.includes(cb.value)) {
-           cb.checked = true; // Tick only saved categories
+         if(song.category.includes(cb.value)){
+           cb.checked = true;
          }
-       });  
-     }  
-     
-     updateSelectedText(); // Dropdown button text එක නිවැරදිව update කරයි (උදා: "1 Selected")
-     
-     document.getElementById('formTitle').innerText = "Edit Song";  
-     document.getElementById('mainBtn').innerText = "Update Song";  
-     closeLyricsModal();  
-     openSidebarDrawer();  
+       });
+     }
+
+     updateSelectedText();
+
+     document.getElementById('formTitle').innerText = "Edit Song";
+     document.getElementById('mainBtn').innerText = "Update Song";
+
+     closeLyricsModal();
+     openSidebarDrawer();
+
    });
- };  
-  
- // Delete බොත්තම එබූ විට ක්‍රියාත්මක වන කොටස
+ };
+
+ // Delete බොත්තම
  document.getElementById('modalDeleteBtn').onclick = () => {  
    requestPassword(() => {
-     showCustomConfirm("මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද?", () => { 
-       window.deleteSongFromFirebase(song.id); 
-     }, "Delete Song");
+     showCustomConfirm(
+       "මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද?",
+       () => {
+         window.deleteSongFromFirebase(song.id);
+       },
+       "Delete Song"
+     );
    });
- };  
-  
- setTimeout(() => {  
- if (lyricsContainer.scrollHeight <= lyricsContainer.clientHeight) { footer.classList.add('reveal'); }  
- else { footer.classList.remove('reveal'); }  
- }, 50);  
+ };
+
+ setTimeout(() => {
+
+   if (lyricsContainer.scrollHeight <= lyricsContainer.clientHeight) {
+     footer.classList.add('reveal');
+   } else {
+     footer.classList.remove('reveal');
+   }
+
+ }, 50);
+
 }
  
 document.getElementById('modalLyrics').addEventListener('scroll', function() {  
@@ -1850,12 +2110,30 @@ document.getElementById('modalLyrics').addEventListener('scroll', function() {
  
 function closeLyricsModal(){
 
-  // 🎵 Original stop
+  /* 🎵 ORIGINAL CLOUDINARY STOP */
+  const originalAudio =
+  document.getElementById("originalAudio");
+
+  if(originalAudio){
+    originalAudio.pause();
+    originalAudio.currentTime = 0;
+  }
+
+  /* 🎤 KARAOKE CLOUDINARY STOP */
+  const karaokeAudio =
+  document.getElementById("karaokeAudio");
+
+  if(karaokeAudio){
+    karaokeAudio.pause();
+    karaokeAudio.currentTime = 0;
+  }
+
+  /* 🎵 ORIGINAL YOUTUBE STOP */
   if(originalPlayer && originalPlayer.stopVideo){
     originalPlayer.stopVideo();
   }
 
-  // 🎤 Karaoke stop
+  /* 🎤 KARAOKE YOUTUBE STOP */
   if(karaokePlayer && karaokePlayer.stopVideo){
     karaokePlayer.stopVideo();
   }
@@ -1865,8 +2143,11 @@ function closeLyricsModal(){
   karaokePlaying = false;
 
   // reset buttons
-  document.getElementById("originalPlayBtn").innerHTML = "<span>▸</span>";
-  document.getElementById("karaokePlayBtn").innerHTML = "<span>▸</span>";
+  document.getElementById("originalPlayBtn").innerHTML =
+  "<span>▸</span>";
+
+  document.getElementById("karaokePlayBtn").innerHTML =
+  "<span>▸</span>";
 
   // reset seekbars
   document.getElementById("originalSeekBar").value = 0;
@@ -1880,7 +2161,8 @@ function closeLyricsModal(){
   document.getElementById("karaokeDurationTime").innerText = "0:00";
 
   // close modal
-  document.getElementById('lyricsModal').style.display = 'none';
+  document.getElementById("lyricsModal").style.display =
+  "none";
 }
 
 function closeOnOutsideClick(e){
@@ -2051,11 +2333,6 @@ function deleteCategoryDirect(catName) {
     showCustomAlert(`"${catName}" ප්‍රවර්ගය සහ ඊට අදාල ගීත සාර්ථකව මකා දමන ලදී!`, "Deleted");
   }, "Delete Category Completely");
 }
- 
-function exportData() {  
- const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(window.songs)], {type:"application/json"}));  
- a.download = 'lyrics_backup.json'; a.click(); document.getElementById('headerActionMenu').classList.remove('active');  
-}  
   
 function copyLyrics() {
  const lyrics = document.getElementById('modalLyrics').innerText;
@@ -2253,42 +2530,138 @@ function onYouTubeIframeAPIReady() {
 }
 
 function loadYoutubePlayers(song) {
+
   console.log(song);
-  const originalId =
-  getYoutubeId(song.originalYoutube || '');
 
-  const karaokeId =
-  getYoutubeId(song.karaokeYoutube || '');
+  const originalLink = song.originalYoutube || '';
+  const karaokeLink = song.karaokeYoutube || '';
 
-  if(originalId){
-    originalPlayer.loadVideoById(originalId);
-    originalPlayer.pauseVideo();
+  const originalAudio =
+  document.getElementById("originalAudio");
+
+  const karaokeAudio =
+  document.getElementById("karaokeAudio");
+
+  // STOP OLD AUDIOS
+  originalAudio.pause();
+  karaokeAudio.pause();
+
+  originalAudio.currentTime = 0;
+  karaokeAudio.currentTime = 0;
+
+  /* ================= ORIGINAL ================= */
+
+  if(originalLink.includes("cloudinary.com")){
+
+    originalAudio.src = originalLink;
+    originalAudio.load();
+
+    if(originalPlayer){
+      originalPlayer.stopVideo();
+    }
+
+  }else{
+
+    // CLEAR OLD CLOUDINARY
+    originalAudio.removeAttribute("src");
+    originalAudio.load();
+
+    const originalId =
+    getYoutubeId(originalLink);
+
+    if(originalId && originalPlayer){
+
+      originalPlayer.loadVideoById(originalId);
+      originalPlayer.pauseVideo();
+
+    }
   }
 
-  if(karaokeId){
-    karaokePlayer.loadVideoById(karaokeId);
-    karaokePlayer.pauseVideo();
+  /* ================= KARAOKE ================= */
+
+  if(karaokeLink.includes("cloudinary.com")){
+
+    karaokeAudio.src = karaokeLink;
+    karaokeAudio.load();
+
+    if(karaokePlayer){
+      karaokePlayer.stopVideo();
+    }
+
+  }else{
+
+    // CLEAR OLD CLOUDINARY
+    karaokeAudio.removeAttribute("src");
+    karaokeAudio.load();
+
+    const karaokeId =
+    getYoutubeId(karaokeLink);
+
+    if(karaokeId && karaokePlayer){
+
+      karaokePlayer.loadVideoById(karaokeId);
+      karaokePlayer.pauseVideo();
+
+    }
   }
+
+  /* RESET STATES */
 
   originalPlaying = false;
   karaokePlaying = false;
 
   document.getElementById("originalPlayBtn")
-  .innerText = "▶ ";
+  .innerText = "▶";
 
   document.getElementById("karaokePlayBtn")
-  .innerText = "▶ ";
+  .innerText = "▶";
 }
 
 async function toggleOriginalAudio(){
 
-  if(!originalPlayer) return;
+  const audio =
+  document.getElementById("originalAudio");
 
   const btn =
   document.getElementById("originalPlayBtn");
 
   const karaokeBtn =
   document.getElementById("karaokePlayBtn");
+
+  /* CLOUDINARY MP3 */
+
+  if(audio.src){
+
+    if(audio.paused){
+
+      // STOP KARAOKE MP3
+      document.getElementById("karaokeAudio").pause();
+
+      // STOP KARAOKE YOUTUBE
+      if(karaokePlayer){
+        karaokePlayer.pauseVideo();
+      }
+
+      karaokeBtn.textContent = "▶";
+
+      audio.play();
+
+      btn.textContent = "⏸";
+
+    }else{
+
+      audio.pause();
+
+      btn.textContent = "▶";
+
+    }
+
+    return;
+  }
+
+  /* YOUTUBE */
+
+  if(!originalPlayer) return;
 
   try{
 
@@ -2297,23 +2670,22 @@ async function toggleOriginalAudio(){
 
     if(state == 1){
 
-      /* ⏸ ORIGINAL PAUSE */
       originalPlayer.pauseVideo();
 
       btn.textContent = "▶";
 
     }else{
 
-      /* ⛔ KARAOKE STOP */
+      // STOP KARAOKE MP3
+      document.getElementById("karaokeAudio").pause();
+
+      // STOP KARAOKE YOUTUBE
       if(karaokePlayer){
-
         karaokePlayer.pauseVideo();
-
-        karaokeBtn.textContent = "▶";
-
       }
 
-      /* ▶ ORIGINAL PLAY */
+      karaokeBtn.textContent = "▶";
+
       originalPlayer.playVideo();
 
       btn.textContent = "⏸";
@@ -2330,13 +2702,49 @@ async function toggleOriginalAudio(){
 
 async function toggleKaraokeAudio(){
 
-  if(!karaokePlayer) return;
+  const audio =
+  document.getElementById("karaokeAudio");
 
   const btn =
   document.getElementById("karaokePlayBtn");
 
   const originalBtn =
   document.getElementById("originalPlayBtn");
+
+  /* CLOUDINARY MP3 */
+
+  if(audio.src){
+
+    if(audio.paused){
+
+      // STOP ORIGINAL MP3
+      document.getElementById("originalAudio").pause();
+
+      // STOP ORIGINAL YOUTUBE
+      if(originalPlayer){
+        originalPlayer.pauseVideo();
+      }
+
+      originalBtn.textContent = "▶";
+
+      audio.play();
+
+      btn.textContent = "⏸";
+
+    }else{
+
+      audio.pause();
+
+      btn.textContent = "▶";
+
+    }
+
+    return;
+  }
+
+  /* YOUTUBE */
+
+  if(!karaokePlayer) return;
 
   try{
 
@@ -2345,26 +2753,25 @@ async function toggleKaraokeAudio(){
 
     if(state == 1){
 
-      /* ⏸ KARAOKE PAUSE */
       karaokePlayer.pauseVideo();
 
       btn.textContent = "▶";
 
     }else{
 
-      /* ⛔ ORIGINAL STOP */
+      // STOP ORIGINAL MP3
+      document.getElementById("originalAudio").pause();
+
+      // STOP ORIGINAL YOUTUBE
       if(originalPlayer){
-
         originalPlayer.pauseVideo();
-
-        originalBtn.textContent = "▶";
-
       }
 
-      /* ▶ KARAOKE PLAY */
+      originalBtn.textContent = "▶";
+
       karaokePlayer.playVideo();
 
-      btn.textContent = "⏸"; 
+      btn.textContent = "⏸";
 
     }
 
@@ -2380,16 +2787,16 @@ setInterval(()=>{
 
 /* ================= ORIGINAL PLAYER ================= */
 
-if(originalPlayer && originalPlayer.getCurrentTime){
+const originalAudio =
+document.getElementById("originalAudio");
 
-let current = originalPlayer.getCurrentTime();
+if(originalAudio && originalAudio.src){
 
-let duration = originalPlayer.getDuration();
+let current = originalAudio.currentTime;
+let duration = originalAudio.duration || 0;
 
 const seekBar =
 document.getElementById('originalSeekBar');
-
-/* PROGRESS */
 
 if(duration > 0){
 
@@ -2403,8 +2810,6 @@ seekBar.style.setProperty(
 progress + '%'
 );
 
-/* TIME UPDATE */
-
 document.getElementById('currentTime')
 .innerText = formatTime(current);
 
@@ -2413,7 +2818,34 @@ document.getElementById('durationTime')
 
 }
 
-/* RESET */
+}else if(originalPlayer && originalPlayer.getCurrentTime){
+
+let current = originalPlayer.getCurrentTime();
+
+let duration = originalPlayer.getDuration();
+
+const seekBar =
+document.getElementById('originalSeekBar');
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+document.getElementById('currentTime')
+.innerText = formatTime(current);
+
+document.getElementById('durationTime')
+.innerText = formatTime(duration);
+
+}
 
 if(current <= 0){
 
@@ -2434,18 +2866,16 @@ document.getElementById('currentTime')
 
 /* ================= KARAOKE PLAYER ================= */
 
-if(karaokePlayer && karaokePlayer.getCurrentTime){
+const karaokeAudio =
+document.getElementById("karaokeAudio");
 
-let current =
-karaokePlayer.getCurrentTime();
+if(karaokeAudio && karaokeAudio.src){
 
-let duration =
-karaokePlayer.getDuration();
+let current = karaokeAudio.currentTime;
+let duration = karaokeAudio.duration || 0;
 
 const seekBar =
 document.getElementById('karaokeSeekBar');
-
-/* PROGRESS */
 
 if(duration > 0){
 
@@ -2459,8 +2889,6 @@ seekBar.style.setProperty(
 progress + '%'
 );
 
-/* TIME UPDATE */
-
 document.getElementById('karaokeCurrentTime')
 .innerText = formatTime(current);
 
@@ -2469,7 +2897,36 @@ document.getElementById('karaokeDurationTime')
 
 }
 
-/* RESET */
+}else if(karaokePlayer && karaokePlayer.getCurrentTime){
+
+let current =
+karaokePlayer.getCurrentTime();
+
+let duration =
+karaokePlayer.getDuration();
+
+const seekBar =
+document.getElementById('karaokeSeekBar');
+
+if(duration > 0){
+
+let progress =
+(current / duration) * 100;
+
+seekBar.value = progress;
+
+seekBar.style.setProperty(
+'--progress',
+progress + '%'
+);
+
+document.getElementById('karaokeCurrentTime')
+.innerText = formatTime(current);
+
+document.getElementById('karaokeDurationTime')
+.innerText = formatTime(duration);
+
+}
 
 if(current <= 0){
 
@@ -2490,11 +2947,22 @@ document.getElementById('karaokeCurrentTime')
 },500);
 
 
-
 /* ================= SEEK ORIGINAL ================= */
 
 document.getElementById("originalSeekBar")
 .addEventListener("input", function(){
+
+const audio =
+document.getElementById("originalAudio");
+
+if(audio && audio.src){
+
+audio.currentTime =
+(this.value / 100) * audio.duration;
+
+return;
+
+}
 
 if(!originalPlayer) return;
 
@@ -2513,6 +2981,18 @@ originalPlayer.seekTo(seekTime, true);
 
 document.getElementById("karaokeSeekBar")
 .addEventListener("input", function(){
+
+const audio =
+document.getElementById("karaokeAudio");
+
+if(audio && audio.src){
+
+audio.currentTime =
+(this.value / 100) * audio.duration;
+
+return;
+
+}
 
 if(!karaokePlayer) return;
 
@@ -2592,12 +3072,6 @@ document.querySelectorAll(
 /* ⚡ MOBILE FAST CLICK FIX */
 if(window.innerWidth <= 768){
 
-  document.addEventListener(
-    "touchstart",
-    ()=>{},
-    {passive:true}
-  );
-
   document.querySelectorAll(
     'button,.song-card,.filter-btn'
   ).forEach(el=>{
@@ -2605,6 +3079,12 @@ if(window.innerWidth <= 768){
     el.addEventListener(
       'touchend',
       function(e){
+
+        if(
+          this.innerText === "Mode"
+        ){
+          return;
+        }
 
         e.preventDefault();
 
@@ -2617,6 +3097,39 @@ if(window.innerWidth <= 768){
   });
 
 }
+
+window.toggleTheme = function(){
+
+  document.body.classList.toggle("dark-mode");
+
+  const isDark =
+  document.body.classList.contains("dark-mode");
+
+  localStorage.setItem(
+    "theme",
+    isDark ? "dark" : "light"
+  );
+
+  if(window.innerWidth <= 768){
+
+    document.getElementById("dotsMenuBtn").click();
+
+  }
+
+}
+
+window.addEventListener("load",()=>{
+
+  const savedTheme =
+  localStorage.getItem("theme");
+
+  if(savedTheme === "dark"){
+
+    document.body.classList.add("dark-mode");
+
+  }
+
+});
 
 </script>
 
