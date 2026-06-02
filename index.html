@@ -642,6 +642,42 @@ transform:scale(0.96);
   justify-content:space-between;
   align-items:center;
 }
+.playlist-song-item{
+  cursor: grab;
+  user-select: none;
+}
+
+.playlist-song-item:active{
+  cursor: grabbing;
+}
+
+.sortable-ghost{
+  opacity: .3;
+}
+
+.sortable-chosen{
+  transform: scale(1.03);
+}
+
+.sortable-drag{
+  transform: rotate(2deg);
+}
+
+.drag-handle{
+  display:none;
+  font-size:20px;
+  cursor:grab;
+  margin-bottom:6px;
+}
+
+.reorder-mode .drag-handle{
+  display:block;
+}
+
+.reorder-mode .song-card{
+  cursor:grab;
+}
+
 
 @media (max-width: 768px) {
 
@@ -1089,13 +1125,16 @@ body.dark-mode #modalArtist{
 <div style="margin-bottom:15px;">
   <input type="text" id="karaokeYoutube"
   class="input-field"
-  placeholder="Karaoke Song Link">
+  placeholder="Karaoke Song Link"
+  autocomplete="off">
+  
 </div>
 
 <div style="margin-bottom:15px;">
   <input type="text" id="originalYoutube"
   class="input-field"
-  placeholder="Original Song Link">
+  placeholder="Original Song Link"
+  autocomplete="off">
 </div>
 
  <div style="margin-bottom:15px;"><textarea id="songLyrics" class="lyrics-textarea" placeholder="Type Lyrics here..."></textarea></div>  
@@ -1680,6 +1719,8 @@ if(
 let currentlyViewingId = null;
 let currentFilter = 'All'; 
 let specialFilter = "all"; 
+let sortableInstance = null;
+let reorderMode = false;
 window.selectedArtistFilter = 'All'; 
 
 window.allArtistsList = []; 
@@ -1701,11 +1742,14 @@ function showCustomAlert(message, title = "Notification") {
   document.getElementById('dialogInputWrapper').style.display = 'none';
 
   document.getElementById('dialogBtnsWrapper').innerHTML = `
-    <button class="dialog-btn-primary"
-    onclick="closeCustomDialog()">
-      OK
-    </button>
-  `;
+  <button class="dialog-btn-primary"
+  onclick="
+    closeCustomDialog();
+    closePlaylistPicker();
+  ">
+    OK
+  </button>
+`;
 
   const modal =
   document.getElementById('customDialogModal');
@@ -3511,7 +3555,20 @@ function openPlaylist(id){
         ">
         Delete
       </button>
-
+      <button
+        id="reorderBtn"
+        onclick="toggleReorderMode()"
+        style="
+        background:#f59e0b;
+        color:white;
+        border:none;
+        border-radius:6px;
+        padding:6px 12px;
+        font-size:11px;
+        cursor:pointer;
+         ">
+       Reorder
+      </button>
       <button
         class="playlist-back-btn"
         onclick="openPlaylistManager()">
@@ -3525,29 +3582,39 @@ function openPlaylist(id){
 const songIds = new Set(playlist.songs || []);
 
 const playlistSongs =
-window.songs.filter(song =>
-  songIds.has(song.id)
-);
+(playlist.songs || [])
+.map(id =>
+  window.songs.find(
+    s => s.id === id
+  )
+)
+.filter(Boolean);
 
   playlistSongs.forEach(song => {
 
-    const div =
-      document.createElement("div");
+    const div = document.createElement("div");
 
-    div.className = "song-card";
+div.className = "song-card playlist-song-item";
+div.dataset.songId = song.id;
 
-    div.innerHTML = `
-      <strong>${song.title}</strong>
-      <small>${song.artist}</small>
-    `;
+div.innerHTML = `
+  <div class="drag-handle">☰</div>
+  <strong>${song.title}</strong>
+  <small>${song.artist}</small>
+`;
 
-    div.onclick = () =>
-      openLyrics(song.id);
+div.onclick = () => {
 
-    grid.appendChild(div);
+  if(reorderMode) return;
+
+  openLyrics(song.id);
+
+};
+
+grid.appendChild(div);
 
   });
-
+enablePlaylistSorting(playlist.id);
 }
 
 function addSongToPlaylist(){
@@ -3842,7 +3909,102 @@ async function deletePlaylist(id){
 );
 }
 
+function enablePlaylistSorting(
+  playlistId
+){
 
+  const container =
+  document.getElementById(
+    "songsGrid"
+  );
+
+  if(sortableInstance){
+    sortableInstance.destroy();
+  }
+
+  sortableInstance =
+  Sortable.create(container, {
+
+    handle: ".drag-handle",
+
+    animation: 250,
+
+    delay: 150,
+
+    delayOnTouchOnly: true,
+
+    touchStartThreshold: 10,
+
+    ghostClass:
+    "sortable-ghost",
+
+    chosenClass:
+    "sortable-chosen",
+
+    dragClass:
+    "sortable-drag",
+
+    onEnd: async () => {
+
+      const orderedSongs =
+      [...container.querySelectorAll(
+        ".playlist-song-item"
+      )]
+      .map(el =>
+        el.dataset.songId
+      );
+
+      await updateDoc(
+        doc(
+          db,
+          "playlists",
+          playlistId
+        ),
+        {
+          songs: orderedSongs
+        }
+      );
+
+    }
+
+  });
+
+}
+
+async function toggleReorderMode(){
+
+  const grid =
+  document.getElementById("songsGrid");
+
+  reorderMode = !reorderMode;
+
+  const btn =
+  document.getElementById("reorderBtn");
+
+  if(reorderMode){
+
+    btn.innerText = "Done";
+
+    grid.classList.add("reorder-mode");
+
+    enablePlaylistSorting(
+      window.currentPlaylistId
+    );
+
+  }else{
+
+    btn.innerText = "Reorder";
+
+    grid.classList.remove("reorder-mode");
+
+    if(sortableInstance){
+      sortableInstance.destroy();
+      sortableInstance = null;
+    }
+
+  }
+
+}
 
 
 </script>
@@ -3852,6 +4014,8 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 
 </body>  
 </html>
