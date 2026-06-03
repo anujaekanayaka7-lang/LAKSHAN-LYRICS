@@ -2775,9 +2775,8 @@ function loadYoutubePlayers(song) {
 
     if(originalId && originalPlayer){
 
-    originalPlayer.cueVideoById(originalId);
-
-}
+      originalPlayer.loadVideoById(originalId);
+      originalPlayer.pauseVideo();
 
     }
   }
@@ -2804,9 +2803,8 @@ function loadYoutubePlayers(song) {
 
     if(karaokeId && karaokePlayer){
 
-    karaokePlayer.cueVideoById(karaokeId);
-
-}
+      karaokePlayer.loadVideoById(karaokeId);
+      karaokePlayer.pauseVideo();
 
     }
   }
