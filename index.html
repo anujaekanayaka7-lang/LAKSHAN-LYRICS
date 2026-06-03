@@ -2775,8 +2775,9 @@ function loadYoutubePlayers(song) {
 
     if(originalId && originalPlayer){
 
-      originalPlayer.loadVideoById(originalId);
-      originalPlayer.pauseVideo();
+    originalPlayer.cueVideoById(originalId);
+
+}
 
     }
   }
@@ -2803,8 +2804,9 @@ function loadYoutubePlayers(song) {
 
     if(karaokeId && karaokePlayer){
 
-      karaokePlayer.loadVideoById(karaokeId);
-      karaokePlayer.pauseVideo();
+    karaokePlayer.cueVideoById(karaokeId);
+
+}
 
     }
   }
@@ -2856,7 +2858,7 @@ async function toggleOriginalAudio(){
 
       try{
 
-        //await audio.play();
+        await audio.play();
 
         btn.textContent = "⏸";
 
@@ -2959,7 +2961,7 @@ async function toggleKaraokeAudio() {
 
       try {
 
-        //await audio.play();
+        await audio.play();
 
         btn.textContent = "⏸";
 
