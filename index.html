@@ -680,6 +680,7 @@ transform:scale(0.96);
 }
 
 
+
 @media (max-width: 768px) {
 
   #songFormArea{
@@ -900,6 +901,12 @@ box-shadow:
     width:100%;
   }
 
+.playlist-header{
+    flex-direction:column !important;
+    align-items:center !important;
+    gap:10px;
+  }
+  
 @media (min-width: 769px) { .left-sidebar { transform: none !important; visibility: visible !important; } }  
 
 /* --- CUSTOM PASSWORD MODAL (FOR PC & MOBILE) --- */
@@ -3521,7 +3528,7 @@ function openPlaylist(id){
     document.getElementById("songsGrid");
 
   grid.innerHTML = `
-  <div style="
+  <div class="playlist-header" style="
     display:flex;
     justify-content:space-between;
     align-items:center;
