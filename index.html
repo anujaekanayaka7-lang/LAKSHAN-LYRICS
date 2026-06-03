@@ -613,6 +613,7 @@ transform:scale(0.96);
 #customDialogModal {
   align-items: flex-start !important; /* මැද වෙනුවට ඉහළට */
   padding-top: 40px !important;       /* තිරයේ උඩ සිට 40px ක ඉඩක් තැබීම */
+  
 }
 
 /* උඩ සිට පහළට Slide වන Animation කේතය */
@@ -974,7 +975,7 @@ box-shadow:
 }
 
 #customPasswordModal {
-  z-index: 4000 !important;
+  z-index: 400000 !important;
 }
 
 /* DARK MODE */
@@ -1058,6 +1059,16 @@ body.dark-mode #modalArtist{
     0 2px 6px rgba(0,0,0,0.15);
 }
 
+.playlist-song-count{
+  background:#fefffe8a;
+  color:#000000;
+  border:0.5px solid #00000052;
+  padding:2px 8px;
+  border-radius:12px;
+  font-size:10px;
+  font-weight:600;
+  display:inline-block;
+}
 
 </style>  
 </head>  
@@ -1415,7 +1426,7 @@ display:none;
 position:fixed;
 inset:0;
 background:rgba(0,0,0,.5);
-z-index:99999;
+z-index:9999;
 justify-content:center;
 align-items:center;
 ">
@@ -2108,13 +2119,20 @@ function renderSongs() {
  </div>`;  
  } else {  
  grid.innerHTML = '';  
- filtered.forEach(song => {  
- const div = document.createElement('div');  
- div.className = 'song-card';  
- div.innerHTML = `<strong>${song.title}</strong><small style="color:#64748b">${song.artist}</small>`;  
- div.onclick = () => openLyrics(song.id);  
- grid.appendChild(div);  
- });  
+ filtered.forEach(song => {
+
+  const div = document.createElement('div');
+  div.className = 'song-card';
+
+  div.innerHTML = `
+    <strong>${song.title}</strong>
+    <small style="color:#64748b">${song.artist}</small>
+  `;
+
+  div.onclick = () => openLyrics(song.id);
+  grid.appendChild(div);
+
+});
  }  
  renderCategoryBar();  
 }
@@ -3373,69 +3391,71 @@ window.addEventListener("load",()=>{
 
 async function createPlaylist(){
 
-  showCustomPrompt(
-  "Enter playlist name",
-  "",
-  async (name) => {
+  requestPassword(() => {
 
-    if(!name || !name.trim())
-      return;
+    showCustomPrompt(
+      "Enter playlist name",
+      "",
+      async (name) => {
 
-    showCustomAlert(
-      "🎵 Playlist Created"
+        if(!name || !name.trim())
+          return;
+
+        showCustomAlert(
+          "🎵 Playlist Created"
+        );
+
+        setTimeout(() => {
+
+          const modal =
+            document.getElementById(
+              "customDialogModal"
+            );
+
+          function closePlaylistNotice(e){
+
+            if(e.target === modal){
+
+              closeCustomDialog();
+
+              modal.removeEventListener(
+                "click",
+                closePlaylistNotice
+              );
+
+            }
+
+          }
+
+          modal.addEventListener(
+            "click",
+            closePlaylistNotice
+          );
+
+        }, 50);
+
+        const id =
+          Date.now().toString();
+
+        await window.setDoc(
+          window.doc(
+            window.db,
+            "playlists",
+            id
+          ),
+          {
+            name: name.trim(),
+            songs: []
+          }
+        );
+
+      },
+      "Create Playlist"
     );
-    setTimeout(() => {
 
-  const modal =
-    document.getElementById(
-      "customDialogModal"
-    );
-
-  function closePlaylistNotice(e){
-
-    if(
-      e.target === modal
-    ){
-
-      closeCustomDialog();
-
-      modal.removeEventListener(
-        "click",
-        closePlaylistNotice
-      );
-
-    }
-
-  }
-
-  modal.addEventListener(
-    "click",
-    closePlaylistNotice
-  );
-
-}, 50);
-     
-    const id =
-      Date.now().toString();
-
-    await window.setDoc(
-      window.doc(
-        window.db,
-        "playlists",
-        id
-      ),
-      {
-        name: name.trim(),
-        songs: []
-      }
-    );
-
-  },
-  "Create Playlist"
-);
+  });
 
 }
-
 function openPlaylistManager(){
 
   const grid = document.getElementById("songsGrid");
@@ -3477,16 +3497,7 @@ function openPlaylistManager(){
         <div class="playlist-info">
           <strong>${pl.name}</strong>
 
-          <span style="
-          background:#22c55e;
-          color:white;
-          padding:2px 8px;
-          border-radius:12px;
-          font-size:10px;
-          ">
-          ${pl.songs?.length || 0} Songs
-          </span>
-
+          <span class="playlist-song-count"> ${pl.songs?.length || 0} Songs </span>
         </div>
       </div>
     </div>
@@ -3675,95 +3686,94 @@ async function togglePlaylistSong(
   playlistId
 ){
 
-  const playlist =
-    window.playlists.find(
-      p => p.id === playlistId
-    );
+  requestPassword(async () => {
 
-  if(!playlist) return;
+    const playlist =
+      window.playlists.find(
+        p => p.id === playlistId
+      );
 
-  let songs =
-    playlist.songs || [];
+    if(!playlist) return;
 
-  const songId =
-    window.currentlyViewingId;
+    let songs =
+      playlist.songs || [];
 
-  if(songs.includes(songId)){
+    const songId =
+      window.currentlyViewingId;
 
-    songs = songs.filter(
-      id => id !== songId
-    );
+    if(songs.includes(songId)){
 
-    await window.updateDoc(
-  window.doc(
-    window.db,
-    "playlists",
-    playlist.id
-  ),
-  {
-    songs: songs
-  }
-);
+      songs = songs.filter(
+        id => id !== songId
+      );
 
-    showCustomAlert(
-      "Playlist එකෙන් අයින් කළා"
-      
-    );
+      await window.updateDoc(
+        window.doc(
+          window.db,
+          "playlists",
+          playlist.id
+        ),
+        {
+          songs: songs
+        }
+      );
 
-  } else {
+      showCustomAlert(
+        "Playlist එකෙන් අයින් කළා"
+      );
 
-  const alreadyInPlaylist =
-    window.playlists.some(
-      pl =>
-        pl.id !== playlistId &&
-        (pl.songs || []).includes(songId)
-    );
+    } else {
 
-  if(alreadyInPlaylist){
+      const alreadyInPlaylist =
+        window.playlists.some(
+          pl =>
+            pl.id !== playlistId &&
+            (pl.songs || []).includes(songId)
+        );
 
-    showCustomAlert(
-      "⚠️ මේ සින්දුව දැනටමත් වෙනත් Playlist එකක තිබේ !"
-    );
+      if(alreadyInPlaylist){
 
-    return;
-  }
+        showCustomAlert(
+          "⚠️ මේ සින්දුව දැනටමත් වෙනත් Playlist එකක තිබේ !"
+        );
 
-  songs.push(songId);
-
-  await window.setDoc(
-      window.doc(
-        window.db,
-        "playlists",
-        playlist.id
-      ),
-      {
-        ...playlist,
-        songs
+        return;
       }
-    );
 
-    showCustomAlert(
-      "✅ Playlist එකට එකතු කළා"
-    );
+      songs.push(songId);
 
-  }
-  // Local update (instant)
-  playlist.songs = songs;
+      await window.setDoc(
+        window.doc(
+          window.db,
+          "playlists",
+          playlist.id
+        ),
+        {
+          ...playlist,
+          songs
+        }
+      );
 
-  // Popup refresh
-  addSongToPlaylist();
+      showCustomAlert(
+        "✅ Playlist එකට එකතු කළා"
+      );
 
-  // Playlist page open නම් ඒකත් refresh
-  if(window.currentPlaylistId === playlist.id){
-    openPlaylist(playlist.id);
-  }
+    }
 
-  // Firebase sync
+    playlist.songs = songs;
 
-  loadPlaylists();
-  addSongToPlaylist();
+    addSongToPlaylist();
+
+    if(window.currentPlaylistId === playlist.id){
+      openPlaylist(playlist.id);
+    }
+
+    loadPlaylists();
+    addSongToPlaylist();
+
+  });
+
 }
-
 function closePlaylistPicker(){
   document
   .getElementById(
@@ -3828,85 +3838,79 @@ async function saveSongToPlaylist(
 
 async function renamePlaylist(id){
 
-  const playlist =
-    window.playlists.find(
-      p => p.id === id
+  requestPassword(() => {
+
+    const playlist =
+      window.playlists.find(
+        p => p.id === id
+      );
+
+    if(!playlist) return;
+
+    showCustomPrompt(
+      "Enter new playlist name",
+      playlist.name,
+      async (newName) => {
+
+        if(!newName || !newName.trim())
+          return;
+
+        await window.updateDoc(
+          window.doc(
+            window.db,
+            "playlists",
+            playlist.id
+          ),
+          {
+            name: newName.trim()
+          }
+        );
+
+        showCustomAlert(
+          "✅ Playlist Renamed"
+        );
+
+      },
+      "Rename Playlist"
     );
 
-  if(!playlist) return;
-  
-  showCustomPrompt(
-  "Enter new playlist name",
-  playlist.name,
-  async (newName) => {
-
-    if(!newName) return;
-
-    showCustomAlert(
-      "Playlist Renamed"
-    );
-
-    await window.updateDoc(
-      window.doc(
-        window.db,
-        "playlists",
-        playlist.id
-      ),
-      { name:newName }
-    );
-
-  },
-  "Rename Playlist"
-);
-
-  if(!newName) return;
-
-  await window.setDoc(
-    window.doc(
-      window.db,
-      "playlists",
-      id
-    ),
-    {
-      ...playlist,
-      name:newName
-    }
-  );
-
-  showCustomAlert(
-    "✅ Playlist Renamed"
-  );
+  });
 
 }
 
 async function deletePlaylist(id){
 
-  const playlist =
-    window.playlists.find(
-      p => p.id === id
+  requestPassword(() => {
+
+    const playlist =
+      window.playlists.find(
+        p => p.id === id
+      );
+
+    if(!playlist) return;
+
+    showCustomConfirm(
+      `Delete "${playlist.name}" ?`,
+      async () => {
+
+        await window.deleteDoc(
+          window.doc(
+            window.db,
+            "playlists",
+            id
+          )
+        );
+
+        showCustomAlert(
+          "✅ Playlist Deleted"
+        );
+
+      },
+      "Delete Playlist"
     );
 
-  if(!playlist) return;
+  });
 
-  showCustomConfirm(
-  `Delete "${playlist.name}" ?`,
-  async () => {
-
-    showCustomAlert(
-      "Playlist Deleted"
-    );
-
-    await window.deleteDoc(
-      window.doc(
-        window.db,
-        "playlists",
-        id
-      )
-    );
-
-  },
-  "Delete Playlist"
-);
 }
 
 function enablePlaylistSorting(
@@ -3974,34 +3978,42 @@ function enablePlaylistSorting(
 async function toggleReorderMode(){
 
   const grid =
-  document.getElementById("songsGrid");
+    document.getElementById("songsGrid");
 
-  reorderMode = !reorderMode;
+  if(!reorderMode){
+
+    requestPassword(() => {
+
+      reorderMode = true;
+
+      const btn =
+        document.getElementById("reorderBtn");
+
+      btn.innerText = "Done";
+
+      grid.classList.add("reorder-mode");
+
+      enablePlaylistSorting(
+        window.currentPlaylistId
+      );
+
+    });
+
+    return;
+  }
+
+  reorderMode = false;
 
   const btn =
-  document.getElementById("reorderBtn");
+    document.getElementById("reorderBtn");
 
-  if(reorderMode){
+  btn.innerText = "Reorder";
 
-    btn.innerText = "Done";
+  grid.classList.remove("reorder-mode");
 
-    grid.classList.add("reorder-mode");
-
-    enablePlaylistSorting(
-      window.currentPlaylistId
-    );
-
-  }else{
-
-    btn.innerText = "Reorder";
-
-    grid.classList.remove("reorder-mode");
-
-    if(sortableInstance){
-      sortableInstance.destroy();
-      sortableInstance = null;
-    }
-
+  if(sortableInstance){
+    sortableInstance.destroy();
+    sortableInstance = null;
   }
 
 }
