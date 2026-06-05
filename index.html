@@ -712,7 +712,7 @@ background:linear-gradient(
 #f8fafc
 );
 
-border:1px solid #e2e8f0;
+border:1px solid #cccfd3;
 
 font-size:13px;
 font-weight:500;
@@ -907,7 +907,6 @@ box-shadow:
  #modalTitle { font-size: 18px; }  
  #modalArtist { font-size: 12px; margin-bottom: 10px; padding-bottom: 8px; }  
  #modalLyrics { font-size: 16px; }  
- .modal-footer-btns { gap: 8px; margin-top: 15px; padding-top: 10px; }  
  .modal-footer-btns button { font-size: 12px; padding: 10px; border-radius: 10px; }  
 }
 
@@ -919,8 +918,45 @@ box-shadow:
     width:100%;
   }
 
-  
-@media (min-width: 769px) { .left-sidebar { transform: none !important; visibility: visible !important; } }  
+#copyBtn,
+#modalEditBtn,
+#modalDeleteBtn,
+#playlistBtn,
+#favBtn,
+#closeBtn{
+    flex:1 !important;
+    min-width:0 !important;
+    padding:8px 2px !important;
+    font-size:10px !important; /* Mobile */
+    font-weight:600 !important;
+    border-radius:8px !important;
+    margin-top: 15px;
+    padding-top: 10px;
+    gap: 2px !important;
+} 
+
+#favBtn{
+  flex: 1.5 !important;
+}
+
+@media (min-width:769px){.left-sidebar{transform:none !important;visibility:visible !important;}
+
+    #copyBtn,
+    #modalEditBtn,
+    #modalDeleteBtn,
+    #playlistBtn,
+    #favBtn,
+    #closeBtn{
+        font-size:12px !important; /* PC */
+        flex:1 !important;
+        padding:8px 2px !important;
+        border-radius:10px !important;
+        margin-top: 15px;
+        padding-top: 10px;
+        gap: 2px ;
+    }
+
+}
 
 /* --- CUSTOM PASSWORD MODAL (FOR PC & MOBILE) --- */
 .password-modal-content {
@@ -1038,7 +1074,7 @@ body.dark-mode #modalArtist{
   color:#475569;
   padding:0 18px;
   border-radius:8px;
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
 }
@@ -1090,29 +1126,15 @@ body.dark-mode #modalArtist{
   display:inline-block;
 }
 
-#favBtn{
-  padding:10px 18px;
-  border:none;
-  border-radius:12px;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .25s ease;
-  background:hwb(347 18% 6%);
-  color:#fff;
-  box-shadow:0 4px 12px rgba(225,29,72,.25);
-}
-
 #favBtn:hover{
   transform:scale(1.00);
   filter:brightness(1.1);
 }
 
-#favBtn.favourited{
+#favBtn.favorited{
   background:#16a34a;
   box-shadow:0 4px 12px rgba(22,163,74,.25);
 }
-
 
 </style>  
 </head>  
@@ -1131,8 +1153,8 @@ body.dark-mode #modalArtist{
  <button onclick="triggerCategoryManager()">Manage Categories</button>
  <button onclick="showMostViewedSongs()">Most Viewed Songs</button>
  <button onclick="showRecentlyAddedSongs()">Recently Added Songs</button>
- <button onclick="showFavouriteNewSongs()">My Favourite [ New ]</button>
- <button onclick="showFavouriteOldSongs()">My Favourite [ Old ]</button>
+ <button onclick="showFavoriteNewSongs()">My New Favorite</button>
+ <button onclick="showFavoriteOldSongs()">My Old Favorite</button>
  <button onclick="openPlaylistManager()">My Playlist</button>
  <button onclick="toggleTheme()">Mode</button>
  </div>  
@@ -1154,8 +1176,8 @@ body.dark-mode #modalArtist{
   <button onclick="closeSidebarDrawer();setTimeout(triggerCategoryManager,150);"> Categories</button>
   <button onclick="showMostViewedSongs()">Most Viewed Songs</button>
   <button onclick="showRecentlyAddedSongs()">Recently Added Songs</button>
-  <button onclick="showFavouriteNewSongs()">My Favourite [ New ]</button>
-  <button onclick="showFavouriteOldSongs()">My Favourite [ Old ]</button>
+  <button onclick="showFavoriteNewSongs()">My New Favorite</button>
+  <button onclick="showFavoriteOldSongs()">My Old Favorite</button>
   <button onclick="closeSidebarDrawer();setTimeout(openPlaylistManager,150);">My Playlists</button>
 </div>
 
@@ -1414,13 +1436,13 @@ pointer-events:none;
 <audio id="karaokeAudio"></audio>
 
 
-     <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 8px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
-       <button id="copyBtn" onclick="copyLyrics()" style="flex:1; padding:10px; border-radius:10px; background:#06b6d4; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Copy</button>  
-       <button id="modalEditBtn" style="flex:1; padding:10px; border-radius:10px; background:#8b5cf6; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Edit</button>  
-       <button id="modalDeleteBtn" style="flex:1; padding:10px; border-radius:10px; background:#ef4444; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Delete</button>  
-       <button id="playlistBtn" onclick="addSongToPlaylist()" style="flex:1; padding:10px; border-radius:10px; background:#22c55e; color:white; border:none; cursor:pointer; font-weight:600; font-size:13px;">Playlist</button>
-       <button id="favBtn" onclick="addSongToFavourite()">Favourite</button>
-       <button class="modal-back-btn"onclick="closeLyricsModal()"style="flex:1;">Close</button> 
+     <div class="modal-footer-btns" id="modalFooter" style="display: flex; gap: 6px; margin: 0; padding: 15px 0 0 0; border-top: 1px solid #f1f5f9; opacity: 1; transform: none; pointer-events: auto; width: 100%;">  
+       <button id="copyBtn" onclick="copyLyrics()" style="flex:1; background:#06b6d4; color:white; border:none; cursor:pointer;">Copy</button>  
+       <button id="modalEditBtn" style="flex:1; background:#8b5cf6; color:white; border:none; cursor:pointer;">Edit</button>  
+       <button id="modalDeleteBtn" style="flex:1; background:#ef4444; color:white; border:none; cursor:pointer;">Delete</button>  
+       <button id="playlistBtn" onclick="addSongToPlaylist()" style="flex:1; background:#22c55e; color:white; border:none; cursor:pointer;">Playlist</button>
+       <button id="favBtn" onclick="addSongToFavorite()"style="flex:1; background:hwb(347 18% 6%); color:white; border:none; cursor:pointer;">Favorite</button>
+       <button id="closeBtn"class="modal-back-btn"onclick="closeLyricsModal()"style="flex:1;">Close</button>
 
      </div>
 
@@ -1513,7 +1535,7 @@ Close
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore,collection,setDoc,doc,deleteDoc,onSnapshot,enableIndexedDbPersistence,updateDoc,increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  import { getFirestore,collection,setDoc,doc,getDoc,deleteDoc,onSnapshot,enableIndexedDbPersistence,updateDoc,increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
   const firebaseConfig = {
     apiKey: "AIzaSyC2svK0wRGTcDgmOTHdp78aa3jrzvOQeM0",
     authDomain: "lakshan-lryics.firebaseapp.com",
@@ -1536,6 +1558,88 @@ window.doc = doc;
 const songsCollection = collection(db, "lyricsSongs");
 const playlistCollection = collection(db, "playlists");
 const configDocRef = doc(db, "appSettings", "categoriesConfig");
+
+async function saveFavoritesToFirebase() {
+  try {
+
+    console.log("saving...");
+
+    await setDoc(
+      doc(db, "favorites", "global"),
+      {
+        newSongs: favoriteNewSongs,
+        oldSongs: favoriteOldSongs
+      }
+    );
+
+    console.log("saved ok");
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+}
+
+async function loadFavoritesFromFirebase() {
+  try {
+
+    const snap = await getDoc(
+      doc(db, "favorites", "global")
+    );
+
+    if (snap.exists()) {
+
+      const data = snap.data();
+
+      console.log("Firebase loaded:", data);
+
+      favoriteNewSongs =
+        data.newSongs || [];
+
+      favoriteOldSongs =
+        data.oldSongs || [];
+
+      console.log(
+        "favoriteNewSongs =",
+        favoriteNewSongs
+      );
+
+      console.log(
+        "favoriteOldSongs =",
+        favoriteOldSongs
+      );
+
+      localStorage.setItem(
+        "favoriteNewSongs",
+        JSON.stringify(favoriteNewSongs)
+      );
+
+      localStorage.setItem(
+        "favoriteOldSongs",
+        JSON.stringify(favoriteOldSongs)
+      );
+
+    } else {
+
+      console.log(
+        "No favorites document found"
+      );
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Favorite load error:",
+      err
+    );
+
+  }
+}
+
+window.saveFavoritesToFirebase = saveFavoritesToFirebase;
+window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
 
   enableIndexedDbPersistence(db).catch((err) => {
       console.warn("Firestore persistence failed:", err.code);
@@ -1578,6 +1682,53 @@ const configDocRef = doc(db, "appSettings", "categoriesConfig");
   });
 
  });
+ 
+onSnapshot(
+  doc(db, "favorites", "global"),
+  (docSnap) => {
+
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data();
+
+    favoriteNewSongs =
+      data.newSongs || [];
+
+    favoriteOldSongs =
+      data.oldSongs || [];
+
+    localStorage.setItem(
+      "favoriteNewSongs",
+      JSON.stringify(favoriteNewSongs)
+    );
+
+    localStorage.setItem(
+      "favoriteOldSongs",
+      JSON.stringify(favoriteOldSongs)
+    );
+
+    const title =
+      document.querySelector("#songsGrid h2");
+
+    if (
+      title &&
+      (
+        title.innerText.includes("Favorite") ||
+        specialFilter === "fav_new" ||
+        specialFilter === "fav_old"
+      )
+    ) {
+      renderSongs();
+    }
+
+  },
+  (error) => {
+    console.error(
+      "Favorites realtime error:",
+      error
+    );
+  }
+);
 
   onSnapshot(configDocRef, (docSnap) => {
      if(docSnap.exists() && docSnap.data().categoriesList) {
@@ -1781,15 +1932,15 @@ if(
 let currentlyViewingId = null;
 let currentFilter = 'All'; 
 let specialFilter = "all"; 
-let favouriteNewSongs =
+let favoriteNewSongs =
 JSON.parse(
-localStorage.getItem("favouriteNewSongs")
+localStorage.getItem("favoriteNewSongs")
 || "[]"
 );
 
-let favouriteOldSongs =
+let favoriteOldSongs =
 JSON.parse(
-localStorage.getItem("favouriteOldSongs")
+localStorage.getItem("favoriteOldSongs")
 || "[]"
 );
 let sortableInstance = null;
@@ -1864,7 +2015,7 @@ function showRecentlyAddedSongs(){
   }
 }
 
-function showFavouriteNewSongs(){
+function showFavoriteNewSongs(){
   currentFilter = 'All';
   specialFilter = "fav_new";
   renderSongs();
@@ -1872,7 +2023,7 @@ function showFavouriteNewSongs(){
 
 }
 
-function showFavouriteOldSongs(){
+function showFavoriteOldSongs(){
   currentFilter = 'All';
   specialFilter = "fav_old";
   renderSongs();
@@ -2201,7 +2352,7 @@ function renderSongs() {
 if(specialFilter === "fav_new"){
 
   filtered = filtered.filter(
-    s => favouriteNewSongs.includes(s.id)
+    s => favoriteNewSongs.includes(s.id)
   );
 
 }
@@ -2209,7 +2360,7 @@ if(specialFilter === "fav_new"){
 if(specialFilter === "fav_old"){
 
   filtered = filtered.filter(
-    s => favouriteOldSongs.includes(s.id)
+    s => favoriteOldSongs.includes(s.id)
   );
 
 }
@@ -2342,13 +2493,13 @@ function openLyrics(id){
  window.currentlyViewingId = id;
  const song = window.songs.find(s => s.id == id);
  const isFav =
-favouriteNewSongs.includes(song.id) ||
-favouriteOldSongs.includes(song.id);
+favoriteNewSongs.includes(song.id) ||
+favoriteOldSongs.includes(song.id);
 
 document.getElementById("favBtn").innerText =
 isFav
-? "Favourited"
-: "Favourite";
+? "Favorited"
+: "Favorite";
  window.updateDoc(
    window.doc(window.db, "lyricsSongs", id.toString()),
    {
@@ -2718,14 +2869,32 @@ window.addEventListener('scroll', () => {
  if (window.scrollY > 300) { btn.style.display = 'block'; } else { btn.style.display = 'none'; }  
  });  
   
-window.onload = () => {  
- window.songs = JSON.parse(localStorage.getItem('lyricsSongs')) || [];  
- window.allCategoriesList = JSON.parse(localStorage.getItem('lyricsCategories')) || ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
- 
- extractDynamicMetadata();
- renderSongs();  
- initCategoryChecklist();
-};  
+window.onload = async () => {
+
+  window.songs =
+  JSON.parse(
+    localStorage.getItem('lyricsSongs')
+  ) || [];
+
+  window.allCategoriesList =
+  JSON.parse(
+    localStorage.getItem('lyricsCategories')
+  ) || [
+    "NEW KARAOKE SONGS",
+    "OLD KARAOKE SONGS",
+    "OLD KARAOKE DANCE",
+    "NEW KARAOKE DANCE",
+    "WEDDING SONGS"
+  ];
+
+  await loadFavoritesFromFirebase();
+
+  extractDynamicMetadata();
+  renderSongs();
+
+  initCategoryChecklist();
+
+};
 
 // Lyrics ටයිප් කරද්දී මුල් වචන 3 Title එකට Auto වැටීමේ කේතය
 document.getElementById('songLyrics').addEventListener('input', function() {
@@ -4150,7 +4319,7 @@ async function toggleReorderMode(){
 
 }
 
-function addSongToFavourite(){
+function addSongToFavorite(){
 
   const song =
   window.songs.find(
@@ -4165,8 +4334,8 @@ function addSongToFavourite(){
 
   const favList =
     isNewSong
-    ? favouriteNewSongs
-    : favouriteOldSongs;
+    ? favoriteNewSongs
+    : favoriteOldSongs;
 
   if(favList.includes(song.id)){
 
@@ -4176,23 +4345,25 @@ function addSongToFavourite(){
     favList.splice(index, 1);
 
     document.getElementById("favBtn").innerText =
-    "Favourite";
+    "Favorite";
 
   }else{
 
     favList.push(song.id);
 
     document.getElementById("favBtn").innerText =
-    "Favourited";
+    "Favorited";
 
   }
 
   localStorage.setItem(
     isNewSong
-    ? "favouriteNewSongs"
-    : "favouriteOldSongs",
+    ? "favoriteNewSongs"
+    : "favoriteOldSongs",
     JSON.stringify(favList)
   );
+
+  saveFavoritesToFirebase();
 
 }
 
