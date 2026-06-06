@@ -25,7 +25,7 @@ button, .song-card, .filter-btn, .category-item, .artist-display, .select-displa
   transition: all 0.1s ease !important; /* Animations වේගවත් කිරීම */
   will-change: transform, opacity;
 }
-body{ background:#f1f5f9; color:#111827; }  
+body{ background:#f1f5f9; color:#111827;  }  
  
 /* --- HIDE ALL SCROLLBARS & MAXIMIZE MOBILE SCROLL SPEED --- */  
 ::-webkit-scrollbar { display: none; }  
@@ -179,6 +179,11 @@ margin: 0 auto;
 .select-display:hover {  
  border-color: #8b5cf6 !important;  
 }  
+
+
+body.scroll-active{
+  overflow-y:auto;
+}
 
 .suggest-container { position: relative; width: 100%; }
  
@@ -577,8 +582,7 @@ transform:scale(0.96);
   color: #1e293b; 
   
   /* ⚡ Scroll එක Smooth කිරීමට එකතු කළ නව කේතයන් */
-  overflow-y: auto !important; 
-  scroll-behavior: smooth !important;           /* PC සහ පොදු Browsers වල සුමට scroll වීම සඳහා */
+  overflow-y: auto !important;     
   -webkit-overflow-scrolling: touch !important; /* මොබයිල් (Android/iOS) වල ස්වභාවික සුමට (Momentum) scroll එක සඳහා */
 }
  
@@ -704,6 +708,12 @@ transform:scale(0.96);
     font-size: 13px !important;
   }
 
+
+
+
+
+
+  
 @media (max-width: 768px) {
 
   #songFormArea{
@@ -2220,6 +2230,9 @@ function backToMainMenu(){
 
   document.getElementById("songFormArea")
   .classList.remove("active");
+  
+  document.getElementById("mainBackBtn").onclick =
+  closeSidebarDrawer;
 
   document.querySelector(".mobile-sidebar-menu")
   .style.display = "flex";
@@ -2385,10 +2398,38 @@ function selectArtistSuggestion(name) {
   document.getElementById("artistSuggestWrapper").classList.remove("active");
 }
 
-function updateSelectedText() {  
- const selected = document.querySelectorAll('input[name="songCat"]:checked');  
- document.getElementById("selectedCountText").innerText = selected.length > 0 ? `${selected.length} Selected` : "Select Categories";  
-}  
+function updateSelectedText() {
+
+  const selected =
+  Array.from(
+    document.querySelectorAll(
+      'input[name="songCat"]:checked'
+    )
+  );
+
+  const text =
+  document.getElementById(
+    "selectedCountText"
+  );
+
+  if(selected.length === 0){
+
+    text.innerText =
+    "Select Categories";
+
+  }else if(selected.length === 1){
+
+    text.innerText =
+    selected[0].value;
+
+  }else{
+
+    text.innerText =
+    `${selected.length} Selected`;
+
+  }
+
+}
  
 function initCategoryChecklist() {  
  const checkedValues = Array.from(document.querySelectorAll('input[name="songCat"]:checked')).map(cb => cb.value);
@@ -2645,8 +2686,8 @@ isFav
 
  const footer = document.getElementById('modalFooter');
 
- document.getElementById('lyricsModal').style.display = 'flex';  
-
+ document.getElementById("lyricsModal").style.display = "flex";
+ document.body.style.overflow = "hidden";
  // Edit බොත්තම
  document.getElementById('modalEditBtn').onclick = () => {  
    requestPassword(() => {
@@ -2662,14 +2703,45 @@ isFav
      document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false);
 
      if(song.category){
-       document.querySelectorAll('input[name="songCat"]').forEach(cb => {
-         if(song.category.includes(cb.value)){
-           cb.checked = true;
-         }
-       });
-     }
+  document.querySelectorAll('input[name="songCat"]').forEach(cb => {
+    if(song.category.includes(cb.value)){
+      cb.checked = true;
+    }
+  });
+}
 
-     updateSelectedText();
+updateSelectedText();
+
+/* Playlist show when editing */
+document.querySelectorAll(
+  'input[name="songPlaylist"]'
+).forEach(rb => rb.checked = false);
+
+const playlistFound = window.playlists.find(
+  pl => (pl.songs || []).includes(song.id.toString())
+);
+
+if(playlistFound){
+
+  const radio = document.querySelector(
+    `input[name="songPlaylist"][value="${playlistFound.id}"]`
+  );
+
+  if(radio){
+    radio.checked = true;
+  }
+
+  document.getElementById(
+    'selectedPlaylistText'
+  ).innerText = playlistFound.name;
+
+}else{
+
+  document.getElementById(
+    'selectedPlaylistText'
+  ).innerText = 'Select Playlist';
+
+}
 
      document.getElementById('formTitle').innerText = "Edit Song";
      document.getElementById('mainBtn').innerText = "Update Song";
@@ -2774,8 +2846,8 @@ function closeLyricsModal(){
   document.getElementById("karaokeDurationTime").innerText = "0:00";
 
   // close modal
-  document.getElementById("lyricsModal").style.display =
-  "none";
+document.getElementById("lyricsModal").style.display ="none";
+document.body.style.overflow = "";
 }
 
 function closeOnOutsideClick(e){
@@ -3714,70 +3786,6 @@ seconds = '0' + seconds;
 return minutes + ':' + seconds;
 
 }
-
-</script>
-<script>
-
-/* ⚡ INSTANT TOUCH SYSTEM */
-document.addEventListener(
-  "touchstart",
-  function(){},
-  {
-    passive:true
-  }
-);
-
-/* ⚡ REMOVE CLICK DELAY */
-document.querySelectorAll(
-  'button,.song-card,.filter-btn,.category-item'
-).forEach(el=>{
-
-  el.addEventListener(
-    'touchend',
-    function(e){
-
-      if(
-        this.id === "dotsMenuBtn"
-      ){
-        return;
-      }
-
-    },
-    {
-      passive:false
-    }
-  );
-
-});
-
-</script>
-<script>
-
-/* ⚡ MOBILE FAST CLICK FIX */
-if(window.innerWidth <= 768){
-
-  document.querySelectorAll(
-    'button,.song-card,.filter-btn'
-  ).forEach(el=>{
-
-    el.addEventListener(
-      'touchend',
-      function(e){
-
-        if(
-          this.innerText === "Mode"
-        ){
-          return;
-        }
-
-      },
-      {passive:false}
-    );
-
-  });
-
-}
-
 window.toggleTheme = function(){
 
   document.body.classList.toggle("dark-mode");
