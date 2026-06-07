@@ -181,9 +181,6 @@ margin: 0 auto;
 }  
 
 
-body.scroll-active{
-  overflow-y:auto;
-}
 
 .suggest-container { position: relative; width: 100%; }
  
@@ -589,10 +586,9 @@ transform:scale(0.96);
 .modal-footer-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; pointer-events: none; }  
 .modal-footer-btns.reveal { opacity: 1; transform: translateY(0); pointer-events: auto; }  
  
-.save-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: linear-gradient(90deg,#8b5cf6,#06b6d4); color: white; font-weight: 600; cursor: pointer; margin-top: 1px; transition: all 0.2s ease; }  
+.save-btn { width: 100%; padding: 10px; border: none; border-radius: 12px; background: linear-gradient(90deg,#8b5cf6,#06b6d4); color: white; font-weight: 600; cursor: pointer; margin-top:-10px; transition: all 0.2s ease; }  
 .save-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
-#scrollTopBtn { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: #8b5cf6; color: white; border: none; border-radius: 50%; cursor: pointer; display: none; font-size: 18px; font-weight: bold; z-index: 99; }  
- 
+
 .mobile-form-close { display: none; }  
 .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.4); backdrop-filter: blur(1px); z-index: 2400; }  
  
@@ -710,10 +706,6 @@ transform:scale(0.96);
 
 
 
-
-
-
-  
 @media (max-width: 768px) {
 
   #songFormArea{
@@ -807,20 +799,18 @@ box-shadow:
  display: none;
  position: absolute;
  top: 100%;
- right: 15px;
+ right: 13px;
  background: white;
- border: 1px solid #e2e8f0;
+ border: 1px solid #ffffff;
  border-radius: 12px;
- padding: 8px;
  flex-direction: column;
  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
  z-index: 8000;
  gap: 5px;
- min-width: 170px;
  animation: zoomIn 0.15s ease;
 }
  .header-btns.active { display: flex; }  
- .header-btns button { width: 100%; padding: 10px 12px; text-align: left; border: none; font-size: 13px; }  
+ .header-btns button { text-align: left; border: none; font-size: 13px; width: 100px; max-height: 150px;}  
  .header-btns button:hover { background: #f1f5f9; border-radius: 8px; }  
  
  /* ⚡ FAST TOUCH */
@@ -924,6 +914,11 @@ box-shadow:
   display:none !important;
 }
 
+html, body {
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important; /* මොබයිල් වලදී මුළු පිටුවේම scroll එක නිදහස් කරයි */
+  }
 
 
  .custom-multiselect.active .arrow-icon {
@@ -990,6 +985,43 @@ box-shadow:
     }
 
 }
+
+html, body {
+    height: 100vh !important;
+    overflow: hidden !important; /* PC එකේදී විතරක් මුළු පිටුවම හිර කරයි */
+  }
+
+  .main-wrapper {
+    height: calc(100vh - 70px) !important;
+    overflow: hidden !important;
+  }
+
+  .right-content {
+    height: 100% !important;
+    overflow-y: auto !important; /* PC එකේදී සින්දු ලිස්ට් එක විතරක් scroll වේ */
+    padding-right: 10px;
+  }
+
+  .left-sidebar {
+    height: 100% !important;
+  }
+
+
+  /* සාමාන්‍ය div වල scrollbar හැංගීමට පමණක් මෙය යොදන්න */
+div, textarea, #modalLyrics, .artist-list-container, .checkbox-list {  
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+/* Mouse pointer එක ආවම විතරක් scroll වෙන්න ඕනෑ තැන් */
+.right-content:hover, .right-content:active,
+#modalLyrics:hover, #modalLyrics:active,
+.artist-list-container:hover, .artist-list-container:active,
+.checkbox-list:hover, .checkbox-list:active,
+textarea:hover, textarea:focus {
+  overflow-y: auto !important;
+}
+
 
 /* --- CUSTOM PASSWORD MODAL (FOR PC & MOBILE) --- */
 .password-modal-content {
@@ -1168,7 +1200,24 @@ body.dark-mode #modalArtist{
   background:#16a34a;
   box-shadow:0 4px 12px rgba(22,163,74,.25);
 }
-
+ 
+#scrollTopBtn{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:50%;
+  background:#8b5cf6;
+  color:#fff;
+  font-size:18px;
+  font-weight: bold;
+  cursor:pointer;
+  display:none;
+  z-index:9999;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
 
 </style>  
 </head>  
@@ -1580,7 +1629,7 @@ Close
 
 </div>
 
-<button id="scrollTopBtn" onclick="scrollToTop()">↑</button>  
+<button id="scrollTopBtn">↑</button>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -1607,6 +1656,28 @@ window.doc = doc;
 const songsCollection = collection(db, "lyricsSongs");
 const playlistCollection = collection(db, "playlists");
 const configDocRef = doc(db, "appSettings", "categoriesConfig");
+
+const rightContent = document.querySelector(".right-content");
+const scrollBtn = document.getElementById("scrollTopBtn");
+
+rightContent.addEventListener("scroll", () => {
+
+  if(rightContent.scrollTop > 300){
+    scrollBtn.style.display = "block";
+  }else{
+    scrollBtn.style.display = "none";
+  }
+
+});
+
+scrollBtn.addEventListener("click", () => {
+
+  rightContent.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+});
 
 async function saveFavoritesToFirebase() {
   try {
@@ -3056,12 +3127,9 @@ function copyLyrics() {
  document.body.removeChild(textarea); // සාදාගත් තාවකාලික කොටුව ඉවත් කිරීම
 }
 
-function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }  
-window.addEventListener('scroll', () => {  
- const btn = document.getElementById('scrollTopBtn');  
- if (window.scrollY > 300) { btn.style.display = 'block'; } else { btn.style.display = 'none'; }  
- });  
-  
+window.addEventListener('scroll', handleScrollDisplay, true);
+
+
 window.onload = async () => {
 
   window.songs =
@@ -4544,7 +4612,6 @@ function addSongToFavorite(){
   saveFavoritesToFirebase();
 
 }
-
 
 
 </script>
