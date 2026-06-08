@@ -1560,8 +1560,6 @@ pointer-events:none;
  </div>  
 </div>
 
-<div id="modalLyrics"></div>
-
 <div class="modal" id="artistManagerModal" onclick="if(event.target.id === 'artistManagerModal') closeArtistManagerModal()">  
  <div class="modal-content" onclick="event.stopPropagation()">  
  <div class="modal-header-container" style="margin-bottom: 15px;">  
@@ -3214,26 +3212,35 @@ document.addEventListener('keydown', function(event) {
     }
   }
 });
-// 🟢 Font Size එක වෙනස් කරන සහ Reset කරන Functions
-window.changeFontSize = function(amount) {
+
+// 🟢 Font Size එක වෙනස් කරන සහ Reset කරන නිවැරදි ශ්‍රිතයන් (Global Functions)
+function changeFontSize(amount) {
   const lyricsElement = document.getElementById('modalLyrics');
+  if (!lyricsElement) return;
+
+  // වත්මන් size එක බ්‍රවුසරයෙන් නිවැරදිව කියවා ගැනීම
   let currentSize = parseInt(window.getComputedStyle(lyricsElement).fontSize) || 18;
   let newSize = currentSize + amount;
   
   // ආරක්ෂාව සඳහා අකුරු 12px ට වඩා කුඩා වීමත් 36px ට වඩා ලොකු වීමත් වළක්වයි
   if (newSize >= 12 && newSize <= 36) {
-    lyricsElement.style.fontSize = newSize + 'px';
+    // ⚠️ CSS වල පවතින ඕනෑම බාධාවක් ඉවත් කර බලෙන්ම size එක වෙනස් කිරීමට !important භාවිතා කරයි
+    lyricsElement.style.setProperty('font-size', newSize + 'px', 'important');
   }
 }
 
-window.resetFontSize = function() {
+function resetFontSize() {
   const lyricsElement = document.getElementById('modalLyrics');
+  if (!lyricsElement) return;
+
   if (window.innerWidth <= 768) {
-    lyricsElement.style.fontSize = '16px'; // මොබයිල් සඳහා Default size
+    lyricsElement.style.setProperty('font-size', '16px', 'important'); // මොබයිල් සඳහා Default size
   } else {
-    lyricsElement.style.fontSize = '18px'; // පරිගණක සඳහා Default size
+    lyricsElement.style.setProperty('font-size', '18px', 'important'); // පරිගණක සඳහා Default size
   }
 }
+
+// පැරණි window.changeFontSize කේතයන් තිබේ නම් ඒවා මකා දමන්න.
 
 function handleModalOutside(event){
 
