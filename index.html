@@ -45,6 +45,7 @@ html, body, div, textarea {
   height: 0 !important;
 }  
 
+
 /* සියලුම div සහ textarea වල මොබයිල් touch speed එක සහ සුමට බව වැඩි කිරීම */
 div, textarea, #modalLyrics {  
   -ms-overflow-style: none;  
@@ -1057,8 +1058,15 @@ html, body {
   }
 
   .left-sidebar {
-    height: 100% !important;
+  
+
+  .left-sidebar{
+    height:calc(100vh - 70px) !important;
+    padding-bottom:60px !important; /* කැමති නම් 70px හෝ 80px */
   }
+
+}
+
 
 
   /* සාමාන්‍ය div වල scrollbar හැංගීමට පමණක් මෙය යොදන්න */
@@ -1273,10 +1281,138 @@ body.dark-mode #modalArtist{
   box-shadow:0 4px 12px rgba(0,0,0,.2);
 }
 
+/* APP LOCK */
+
+#appLockOverlay{
+position:fixed;
+inset:0;
+background:#f8fafc;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999999;
+
+}
+
+.app-lock-box{
+width:90%;
+max-width:360px;
+background:white;
+padding:30px;
+border-radius:22px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+}
+
+.lock-icon{
+font-size:60px;
+margin-bottom:15px;
+
+}
+
+.app-lock-box h2{
+font-size:22px;
+margin-bottom:8px;
+
+}
+
+.app-lock-box p{
+font-size:13px;
+color:#64748b;
+margin-bottom:20px;
+
+}
+
+#appLockPassword{
+width:100%;
+height:45px;
+border:1px solid #d1d5db;
+border-radius:12px;
+padding:0 15px;
+font-size:15px;
+margin-bottom:15px;
+outline:none;
+
+}
+
+#unlockBtn{
+width:100%;
+height:45px;
+border:none;
+border-radius:12px;
+background:#8b5cf6;
+color:white;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+margin-top:12px;
+
+}
+
+#unlockBtn:hover{
+background:#7c3aed;
+
+}
+
+#appLockError{
+    height:18px;
+    margin-top:12px;
+    font-size:12px;
+    font-weight:600;
+    opacity:0;
+    transform:translateY(8px);
+    transition:.6s ease;
+}
+
+#appLockError.show{
+    opacity:1;
+    transform:translateY(8px);
+}
+
+#appLockError.show{
+    opacity:1;
+}
+
+#appLockError.success{
+    color:#22c55e;
+}
+
+#appLockError.error{
+    color:#ef4444;
+}
+
+#syncStatus {
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
 </style>  
 </head>  
 <body>  
-  
+
+<!-- APP LOCK SCREEN -->
+<div id="appLockOverlay">
+  <div class="app-lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>LAKSHAN LYRICS</h2>
+    <p>This App is Locked !</p>
+    <input
+      type="password"
+      id="appLockPassword"
+      placeholder="Enter Password"
+      autocomplete="off"
+    >
+    <button id="unlockBtn" onclick="unlockApp()">
+      Unlock
+    </button>
+
+    <div id="appLockError"></div>
+  </div>
+</div>
+
+
+
 <header>  
  <button class="menu-trigger" onclick="openSidebarDrawer()">☰</button> 
  <div class="logo">LAKSHAN LYRICS</div>  
@@ -1443,13 +1579,39 @@ Select Playlist:
 <div class="modal" id="lyricsModal" onclick="handleModalOutside(event)">  
  <div class="modal-content" onclick="event.stopPropagation()">  
    
-   <div class="modal-header-container" style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">  
-     <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 15px;">  
-       <h2 id="modalTitle" style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;"></h2>  
-       <button class="modal-back-btn" onclick="closeLyricsModal()" style="margin: 0;">Back</button>  
-     </div>  
-     <p id="modalArtist" style="color:#64748b; font-size: 13px; margin: 0; font-weight: 500;"></p>  
-   </div>  
+   <div class="modal-header-container" style="display:flex;flex-direction:column;gap:4px;border-bottom:1px solid #f1f5f9;padding-bottom:12px;">
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;gap:15px;">
+    <h2 id="modalTitle"
+        style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">
+    </h2>
+
+    <button class="modal-back-btn"
+            onclick="closeLyricsModal()">
+      Back
+    </button>
+  </div>
+
+  <!-- Artist + Categories -->
+  <p id="modalArtist"
+     style="margin:0;color:#64748b;font-size:13px;font-weight:500;">
+  </p>
+
+  <!-- Added Date + Views -->
+  <p id="modalSongInfo"
+   style="
+      margin:0;
+      margin-top:-4px;
+      color:#94a3b8;
+      font-size:10px;
+      font-weight:500;
+   ">
+     <span id="modalAddedDate">-</span>
+     &nbsp;&nbsp;•&nbsp;&nbsp;
+     Views : <span id="modalViews">0</span>
+  </p>
+
+</div>
 
    <div style="flex: 1; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 15px 0;">
      
@@ -1660,7 +1822,7 @@ pointer-events:none;
  <h2>Manage Artists</h2>  
  <button class="modal-back-btn" onclick="closeArtistManagerModal()">Close</button>  
  </div>  
- <button class="add-new-btn-custom" onclick="addNewArtistDirect()">+ Add New Artist</button>
+ <button class="add-new-btn-custom" onclick="verifyAddArtist()">+ Add New Artist</button>
  <div style="margin-bottom: 15px;">
    <input type="text" id="artistManagerSearch" class="input-field" placeholder="Search artist..." oninput="renderArtistManagerList()">
  </div>
@@ -1674,7 +1836,7 @@ pointer-events:none;
  <h2>Manage Categories</h2>  
  <button class="modal-back-btn" onclick="closeCategoryManagerModal()">Close</button>  
  </div>  
- <button class="add-new-btn-custom" onclick="addNewCategoryDirect()">+ Add New Category</button>
+ <button class="add-new-btn-custom" onclick="verifyAddCategory()">+ Add New Category</button>
  <div style="margin-bottom: 15px;">
    <input type="text" id="categoryManagerSearch" class="input-field" placeholder="Search category..." oninput="renderCategoryManagerList()">
  </div>
@@ -1745,9 +1907,10 @@ window.updateDoc = updateDoc;
 window.increment = increment;
 window.doc = doc;
 
+
 const songsCollection = collection(db, "lyricsSongs");
 const playlistCollection = collection(db, "playlists");
-const configDocRef = doc(db, "appSettings", "categoriesConfig");
+window.configDocRef = doc(db, "appSettings", "categoriesConfig");
 
 const rightContent = document.querySelector(".right-content");
 const scrollBtn = document.getElementById("scrollTopBtn");
@@ -1770,6 +1933,7 @@ scrollBtn.addEventListener("click", () => {
   });
 
 });
+
 
 async function saveFavoritesToFirebase() {
   try {
@@ -1822,16 +1986,6 @@ async function loadFavoritesFromFirebase() {
         favoriteOldSongs
       );
 
-      localStorage.setItem(
-        "favoriteNewSongs",
-        JSON.stringify(favoriteNewSongs)
-      );
-
-      localStorage.setItem(
-        "favoriteOldSongs",
-        JSON.stringify(favoriteOldSongs)
-      );
-
     } else {
 
       console.log(
@@ -1856,6 +2010,24 @@ window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
   enableIndexedDbPersistence(db).catch((err) => {
       console.warn("Firestore persistence failed:", err.code);
   });
+  const lyricsBox = document.getElementById("songLyrics");
+const titleBox = document.getElementById("songTitle");
+
+lyricsBox.addEventListener("paste", function () {
+
+    setTimeout(() => {
+
+        const text = lyricsBox.value.trim();
+
+        if (!text) return;
+
+        const firstLine = text.split("\n")[0].trim();
+
+        titleBox.value = firstLine.split(/\s+/).slice(0, 3).join(" ");
+
+    }, 0);
+
+});
   window.currentPlaylistId = null;
   window.songs = [];
   window.playlists = [];
@@ -1866,7 +2038,7 @@ window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
      snapshot.forEach((doc) => {
        window.songs.push({ id: doc.id, ...doc.data() });
      });
-     localStorage.setItem('lyricsSongs', JSON.stringify(window.songs));
+    
      extractDynamicMetadata();
      if(window.currentPlaylistId){
 
@@ -1878,7 +2050,7 @@ window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
 
 }
      if (document.getElementById('artistManagerModal').style.display === 'flex') { renderArtistManagerList(); }
-     updateNetworkStatus(navigator.onLine);
+     checkInternet();
   });
   
   onSnapshot(playlistCollection, (snapshot) => {
@@ -1907,7 +2079,6 @@ window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
   }
 
 });
- 
 onSnapshot(
   doc(db, "favorites", "global"),
   (docSnap) => {
@@ -1916,81 +2087,135 @@ onSnapshot(
 
     const data = docSnap.data();
 
-    favoriteNewSongs =
-      data.newSongs || [];
+    favoriteNewSongs = data.newSongs || [];
+    favoriteOldSongs = data.oldSongs || [];
 
-    favoriteOldSongs =
-      data.oldSongs || [];
-
-    localStorage.setItem(
-      "favoriteNewSongs",
-      JSON.stringify(favoriteNewSongs)
-    );
-
-    localStorage.setItem(
-      "favoriteOldSongs",
-      JSON.stringify(favoriteOldSongs)
-    );
-
-    const title =
-      document.querySelector("#songsGrid h2");
-
-    if (
-      title &&
-      (
-        title.innerText.includes("Favorite") ||
-        specialFilter === "fav_new" ||
-        specialFilter === "fav_old"
-      )
-    ) {
-      renderSongs();
-    }
+    renderSongs();
 
   },
   (error) => {
-    console.error(
-      "Favorites realtime error:",
-      error
-    );
+    console.error("Favorites realtime error:", error);
   }
 );
 
   onSnapshot(configDocRef, (docSnap) => {
-     if(docSnap.exists() && docSnap.data().categoriesList) {
-       window.allCategoriesList = docSnap.data().categoriesList;
-       localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
-     } else {
-       window.allCategoriesList = ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
+
+   if(docSnap.exists()) {
+
+     const data = docSnap.data();
+
+     // Load Categories
+     if(data.categoriesList) {
+       window.allCategoriesList = data.categoriesList;
+      
      }
-     initCategoryChecklist();
-     renderSongs();
-     if (document.getElementById('categoryManagerModal').style.display === 'flex') { renderCategoryManagerList(); }
-  });
+
+     // Load Artists
+     if(data.artistsList) {
+
+  window.allArtistsList = data.artistsList.sort((a, b) =>
+    a.localeCompare(b)
+  );
+
+}
+
+   } else {
+
+     window.allCategoriesList = [
+       "NEW KARAOKE SONGS",
+       "OLD KARAOKE SONGS",
+       "OLD KARAOKE DANCE",
+       "NEW KARAOKE DANCE",
+       "WEDDING SONGS"
+     ];
+
+     window.allArtistsList = [];
+
+   }
+
+   initCategoryChecklist();
+   updateArtistDropdownOptions();
+   renderSongs();
+
+   if (
+     document.getElementById('categoryManagerModal').style.display === 'flex'
+   ) {
+      renderCategoryManagerList();
+   }
+
+   if (
+     document.getElementById('artistManagerModal').style.display === 'flex'
+   ) {
+      renderArtistManagerList();
+   }
+
+});
 
   function updateNetworkStatus(isOnline) {
-    const indicator = document.getElementById('networkStatusIndicator');
+
+    const box = document.getElementById("networkStatusIndicator");
+
     if (isOnline) {
-      indicator.className = "network-status status-online";
-      indicator.innerHTML = `<span class="status-dot"></span>Online`;
+        box.className = "network-status status-online";
+        box.innerHTML = `
+            <span class="status-dot"></span>
+             Online
+        `;
     } else {
-      indicator.className = "network-status status-offline";
-      indicator.innerHTML = `<span class="status-dot"></span>Offline`;
+        box.className = "network-status status-offline";
+        box.innerHTML = `
+            <span class="status-dot"></span>
+             Offline
+        `;
     }
-  }
+}
 
-  window.addEventListener('online', () => updateNetworkStatus(true));
-  window.addEventListener('offline', () => updateNetworkStatus(false));
-  updateNetworkStatus(navigator.onLine);
+async function checkInternet() {
 
-  window.saveCategoriesToFirebase = async function(updatedList) {
+    if (!navigator.onLine) {
+        updateNetworkStatus(false);
+        return;
+    }
+
     try {
-      document.getElementById('syncStatus').innerText = "Syncing categories with Firebase...";
-      await setDoc(configDocRef, { categoriesList: updatedList });
-      document.getElementById('syncStatus').innerText = "Categories Synced to Firebase!";
+
+        await fetch("https://www.gstatic.com/generate_204?" + Date.now(), {
+            method: "GET",
+            cache: "no-store",
+            mode: "no-cors"
+        });
+
+        updateNetworkStatus(true);
+
     } catch (e) {
-      console.error("Firebase category save error: ", e);
+
+        updateNetworkStatus(false);
+
     }
-  };
+}
+
+window.addEventListener("online", checkInternet);
+window.addEventListener("offline", () => updateNetworkStatus(false));
+
+checkInternet();
+setInterval(checkInternet, 5000);
+
+  window.saveCategoriesToFirebase = async function(updatedList, successMessage = "✅ Category Updated Successfully !") {
+  try {
+    showSyncStatus("🔄 Syncing Categories...");
+
+    await setDoc(window.configDocRef, {
+  categoriesList: updatedList
+}, { merge: true });
+    
+    showSyncStatus(successMessage);
+
+  } catch (e) {
+    console.error("Firebase category save error:", e);
+
+    showSyncStatus("❌ Failed to Sync Firebase !", 5000);
+  }
+};
 
   window.addSong = async function() {
     const title = document.getElementById('songTitle').value.trim();
@@ -2025,29 +2250,65 @@ if(
          return showCustomAlert(
      "⚠️ මෙම Lyrics එක දැනටමත් '" +
     duplicateSong.title +
-    "' නමින් ඇතුලත් කර ඇත!"
+    "' නමින් ඇතුලත් කර ඇත !"
          );
     }   
     const id = window.editId ? window.editId.toString() : Date.now().toString();
     
 
  
+const oldSong = window.songs.find(s => s.id == window.editId);
+const oldPlaylistId = window.oldPlaylistId;
+
 const songData = {
   title,
   artist,
   category: selectedCats,
   playlist: selectedPlaylist,
   lyrics,
-  originalYoutube: document.getElementById('originalYoutube').value.trim(),
-  karaokeYoutube: document.getElementById('karaokeYoutube').value.trim(),
-  views: window.editId
-    ? (window.songs.find(s => s.id == window.editId)?.views || 0)
-    : 0
+  originalYoutube,
+  karaokeYoutube,
+  views: oldSong?.views || 0,
+  added: oldSong?.added || Date.now()
 };
 
-    try {
-      document.getElementById('syncStatus').innerText = "Syncing with Firebase Cloud...";
-      await setDoc(doc(db, "lyricsSongs", id), songData);
+try {
+
+  showSyncStatus("🔄 Syncing Firebase...");
+
+  await setDoc(doc(db, "lyricsSongs", id), songData);
+
+  // මෙතනින් පටන් Playlist Remove / Add code
+
+
+if (
+    oldPlaylistId &&
+    oldPlaylistId !== selectedPlaylist
+) {
+
+    const oldPlaylist = window.playlists.find(
+        p => p.id === oldPlaylistId
+    );
+
+    if (oldPlaylist) {
+
+        const updatedSongs = (oldPlaylist.songs || []).filter(
+            songId => songId !== id
+        );
+
+        await updateDoc(
+            doc(db, "playlists", oldPlaylist.id),
+            {
+                songs: updatedSongs
+            }
+        );
+
+        oldPlaylist.songs = updatedSongs;
+
+    }
+
+
+}
       if (selectedPlaylist) {
 
   const playlist = window.playlists.find(
@@ -2060,29 +2321,60 @@ const songData = {
 
     if (!songIds.includes(id)) {
 
-      await updateDoc(
+    const updatedSongs = [...songIds, id];
+
+    await updateDoc(
         doc(db, "playlists", playlist.id),
         {
-          songs: [...songIds, id]
+            songs: updatedSongs
         }
-      );
+    );
 
-    }
+    // Local memory එකත් update කරන්න
+    playlist.songs = updatedSongs;
+
+}
 
   }
   
 }
-      document.getElementById('syncStatus').innerText = "Saved to Firebase Data Server!";
-      
-      resetForm();
-      closeSidebarDrawer();
+      const isEditing = !!window.editId;
+
+resetForm();
+closeSidebarDrawer();
+
+if (isEditing) {
+
+    showSyncStatus("✅ Song Updated Successfully !");
+
+    showCustomAlert(
+        "✅ Song එක සාර්ථකව Update කරන ලදී !",
+        "Updated !"
+    );
+
+} else {
+
+    showSyncStatus("✅ Song Added Successfully !");
+
+    showCustomAlert(
+        "✅ Song එක සාර්ථකව එකතු කරන ලදී !",
+        "Added !"
+    );
+
+}
+
     } catch (error) {
-      showCustomAlert("❌ Firebase දත්ත ගබඩාවට සුරැකීමට නොහැකි විය!");
+      console.error("Firebase save error:", error);
+      showCustomAlert(
+        "❌ Firebase දත්ත ගබඩාවෙහි ගැටලුවක් මතු වී ඇත !"
+      );
     }
   };
 
   window.deleteSongFromFirebase = async function(id) {
   try {
+
+    showSyncStatus("🔄 Syncing Firebase...");
 
     for (const playlist of window.playlists) {
 
@@ -2102,11 +2394,21 @@ const songData = {
 
     await deleteDoc(doc(db, "lyricsSongs", id.toString()));
 
+    showSyncStatus("✅ Song Deleted Successfully!");
+
     closeLyricsModal();
 
+    showCustomAlert(
+      "✅ Song එක සාර්ථකව Delete කරන ලදී !",
+      "Deleted !"
+    );
+
   } catch (error) {
-    showCustomAlert("❌ Firebase එකෙන් මකා දැමීමට නොහැකි විය!");
+
+    showCustomAlert("❌ Firebase දත්ත ගබඩාවෙහි ගැටලුවක් මතු වී ඇත !");
+
   }
+
 };
 
   window.updateArtistDatabaseName = async function(oldName, newName) {
@@ -2120,7 +2422,7 @@ const songData = {
 });
     if(affectedSongs.length === 0) return;
     
-    document.getElementById('syncStatus').innerText = "Updating artist names...";
+    showSyncStatus("🔄 Syncing Artist...");
     try {
       const promises = [];
       for(let song of affectedSongs) {
@@ -2137,15 +2439,14 @@ const songData = {
         );
       }
       await Promise.all(promises);
-      document.getElementById('syncStatus').innerText = "Artist sync complete!";
-      showCustomAlert(`✅ ගීත ${affectedSongs.length} ක Artist නම සාර්ථකව වෙනස් කරන ලදී!`);
+      showSyncStatus("✅ Artist Updated Successfully !");
+      showCustomAlert(`✅ ගීත ${affectedSongs.length} ක Artist නම සාර්ථකව වෙනස් කරන ලදී !`);
     } catch (error) {
-      showCustomAlert("❌ Firebase දත්ත වෙනස් කිරීමට නොහැකි විය!");
+      showCustomAlert("❌ Firebase දත්ත ගබඩාවෙහි ගැටලුවක් මතු වී ඇත !");
     }
   };
 
   window.updateCategoryInsideSongs = async function(oldName, newName) {
-    document.getElementById('syncStatus').innerText = "Updating categories in songs...";
     try {
       const promises = [];
       for(let song of window.songs) {
@@ -2162,14 +2463,13 @@ const songData = {
         }
       }
       await Promise.all(promises);
-      document.getElementById('syncStatus').innerText = "Songs category update complete!";
     } catch (e) {
       console.error(e);
     }
   };
 
   window.removeCategoryFromSongs = async function(categoryToDelete) {
-    document.getElementById('syncStatus').innerText = "Deleting songs belonging to deleted category...";
+    showSyncStatus("🔄 Syncing Categories...");
     try {
       const promises = [];
       for(let song of window.songs) {
@@ -2190,7 +2490,7 @@ const songData = {
         }
       }
       await Promise.all(promises);
-      document.getElementById('syncStatus').innerText = "Category and its songs updated/deleted completely!";
+      showSyncStatus("✅ Category Deleted Successfully !");
     } catch (e) {
       console.error(e);
     }
@@ -2202,32 +2502,23 @@ const songData = {
 let currentlyViewingId = null;
 let currentFilter = 'All'; 
 let specialFilter = "all"; 
-let favoriteNewSongs =
-JSON.parse(
-localStorage.getItem("favoriteNewSongs")
-|| "[]"
-);
-
-let favoriteOldSongs =
-JSON.parse(
-localStorage.getItem("favoriteOldSongs")
-|| "[]"
-);
+let favoriteNewSongs =[];
+let favoriteOldSongs =[];
 let sortableInstance = null;
 let reorderMode = false;
 window.selectedArtistFilter = 'All'; 
 
-window.allArtistsList = []; 
+window.allArtistsList =  
 window.allCategoriesList = ["NEW KARAOKE SONGS", "OLD KARAOKE SONGS", "OLD KARAOKE DANCE", "NEW KARAOKE DANCE", "WEDDING SONGS"];
 
-const CORRECT_PASSWORD = "2643";
+const CORRECT_PASSWORD = "0000"; // Replace with your actual password
 
 /* --- 🛠️ CUSTOM DIALOG ENGINE 🛠️ --- */
 function closeCustomDialog() {
   document.getElementById('customDialogModal').style.display = 'none';
 }
 
-function showCustomAlert(message, title = "Notification") {
+function showCustomAlert(message, title = "Notification ! ") {
   document.activeElement.blur();
 
   document.getElementById('dialogIcon').innerText = "ℹ️";
@@ -2419,7 +2710,7 @@ function handlePasswordVerification() {
     passwordSuccessCallback = null;
   } else {
     const errorElement = document.getElementById('passwordErrorMsg');
-    errorElement.innerText = "❌ වැරදි මුරපදයක්! නැවත උත්සාහ කරන්න.";
+    errorElement.innerText = "❌ වැරදි මුරපදයක් ! නැවත උත්සාහ කරන්න.";
     document.getElementById('customPasswordInput').value = '';
     document.getElementById('customPasswordInput').focus();
   }
@@ -2674,31 +2965,56 @@ if(specialFilter === "recent"){
 
 }
  // තිරය මත සින්දු පෙන්වීම
- if(filtered.length === 0) {  
- grid.innerHTML = `  
- <div class="no-results">  
- <div style="font-size: 45px; margin-bottom: 10px;">🔍</div>  
- <h3 style="color: #475569; font-weight: 600; font-size: 16px;">එවැනි ගීතයක් හමු නොවීය!</h3>  
- <p style="color: #94a3b8; font-size: 13px; margin-top: 5px;">කරුණාකර වෙනත් නමකින් සොයා බලන්න.</p>  
- </div>`;  
- } else {  
- grid.innerHTML = '';  
- filtered.forEach(song => {
+if(filtered.length === 0) {
 
-  const div = document.createElement('div');
-  div.className = 'song-card';
+  if (specialFilter === "fav_new" || specialFilter === "fav_old") {
 
-  div.innerHTML = `
-    <strong>${song.title}</strong>
-    <small style="color:#64748b">${song.artist}</small>
-  `;
+    grid.innerHTML = `
+      <div class="no-results">
+        <div style="font-size:45px; margin-bottom:10px;">🎵</div>
+        <h3 style="color:#475569;font-weight:600;font-size:16px;">
+          Favorite Songs නැත !
+        </h3>
+        <p style="color:#94a3b8;font-size:13px;margin-top:5px;">
+          තවම Favorite List එකට සින්දු එකතු කර නැත.
+        </p>
+      </div>`;
+  } else {
 
-  div.onclick = () => openLyrics(song.id);
-  grid.appendChild(div);
+    grid.innerHTML = `
+      <div class="no-results">
+        <div style="font-size:45px; margin-bottom:10px;">🔍</div>
+        <h3 style="color:#475569;font-weight:600;font-size:16px;">
+          එවැනි ගීතයක් හමු නොවීය !
+        </h3>
+        <p style="color:#94a3b8;font-size:13px;margin-top:5px;">
+          කරුණාකර වෙනත් නමකින් සොයා බලන්න.
+        </p>
+      </div>`;
+  }
 
-});
- }  
- renderCategoryBar();  
+} else {
+
+  grid.innerHTML = '';
+
+  filtered.forEach(song => {
+
+    const div = document.createElement('div');
+    div.className = 'song-card';
+
+    div.innerHTML = `
+      <strong>${song.title}</strong>
+      <small style="color:#64748b">${song.artist}</small>
+    `;
+
+    div.onclick = () => openLyrics(song.id);
+    grid.appendChild(div);
+
+  });
+
+}
+
+renderCategoryBar();  
 }
  
 function renderCategoryBar() {  
@@ -2813,30 +3129,38 @@ function resetForm() {
  document.getElementById('mainBtn').innerText =
  "Save Song";
 }
- 
+
+
 function openLyrics(id){
- window.currentlyViewingId = id;
- const song = window.songs.find(s => s.id == id);
- const isFav =
-favoriteNewSongs.includes(song.id) ||
-favoriteOldSongs.includes(song.id);
+  window.currentlyViewingId = id;
+  const song = window.songs.find(s => s.id == id);
 
-document.getElementById("favBtn").innerText =
-isFav
-? "Favorited"
-: "Favorite";
- window.updateDoc(
-   window.doc(window.db, "lyricsSongs", id.toString()),
-   {
-     views: window.increment(1)
-   }
- ).catch(() => {});
+  // Views +1
+  song.views = (song.views || 0) + 1;
 
- currentlyViewingId = id;
+  const isFav =
+    favoriteNewSongs.includes(song.id) ||
+    favoriteOldSongs.includes(song.id);
 
- loadYoutubePlayers(song);
- // Reset karaoke buttons
-document.getElementById("karaokePlayBtn").textContent = "▶";
+  document.getElementById("favBtn").innerText =
+    isFav ? "Favorited" : "Favorite";
+
+  window.updateDoc(
+    window.doc(window.db, "lyricsSongs", id.toString()),
+    {
+      views: window.increment(1)
+    }
+  ).catch(() => {});
+
+  // Modal එකේ Views පෙන්නන්න
+  document.getElementById("modalViews").textContent = song.views;
+
+  currentlyViewingId = id;
+
+  loadYoutubePlayers(song);
+
+  // Reset karaoke buttons
+  document.getElementById("karaokePlayBtn").textContent = "▶";
 
 const miniBtn = document.getElementById("karaokeMiniBtn");
 if (miniBtn) {
@@ -2849,7 +3173,18 @@ if (miniBtn) {
 
  document.getElementById('modalLyrics').innerText =
  song.lyrics;
-    
+ 
+ const date = new Date(Number(song.id));
+
+const year = date.getFullYear();
+const month = date.toLocaleString("en-US", { month: "long" });
+const day = String(date.getDate()).padStart(2, "0");
+
+document.getElementById("modalAddedDate").textContent =
+`${year} ${month} ${day}`;
+
+document.getElementById("modalViews").textContent = song.views || 0;
+
  const lyricsContainer = document.getElementById('modalLyrics');
  lyricsContainer.scrollTop = 0;
 
@@ -2862,16 +3197,16 @@ if (miniBtn) {
    requestPassword(() => {
 
      window.editId = song.id;
+window.oldPlaylistId = song.playlist;
+document.getElementById('songTitle').value = song.title;
+document.getElementById('songArtist').value = song.artist;
+document.getElementById('songLyrics').value = song.lyrics;
+document.getElementById('originalYoutube').value = song.originalYoutube || '';
+document.getElementById('karaokeYoutube').value = song.karaokeYoutube || '';
 
-     document.getElementById('songTitle').value = song.title;
-     document.getElementById('songArtist').value = song.artist;
-     document.getElementById('songLyrics').value = song.lyrics;
-     document.getElementById('originalYoutube').value = song.originalYoutube || '';
-     document.getElementById('karaokeYoutube').value = song.karaokeYoutube || '';
+document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false);
 
-     document.querySelectorAll('input[name="songCat"]').forEach(cb => cb.checked = false);
-
-     if(song.category){
+if(song.category){
   document.querySelectorAll('input[name="songCat"]').forEach(cb => {
     if(song.category.includes(cb.value)){
       cb.checked = true;
@@ -2936,7 +3271,7 @@ document.querySelector(".mobile-sidebar-menu")
  document.getElementById('modalDeleteBtn').onclick = () => {  
    requestPassword(() => {
      showCustomConfirm(
-       "මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද?",
+       "📌 මෙම ගීතය සදහටම මකා දැමීමට වග බලා ගන්නද ?",
        () => {
          window.deleteSongFromFirebase(song.id);
        },
@@ -2961,7 +3296,17 @@ document.getElementById('modalLyrics').addEventListener('scroll', function() {
  const footer = document.getElementById('modalFooter');  
  if (this.scrollTop > 20) { footer.classList.add('reveal'); } else { footer.classList.remove('reveal'); }  
 });  
- 
+
+function getSongDate(id) {
+  const date = new Date(Number(id));
+
+  const year = date.getFullYear();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year} ${month} ${day}`;
+}
+
 function closeLyricsModal(){
 
   /* 🎵 ORIGINAL CLOUDINARY STOP */
@@ -3045,13 +3390,14 @@ function filterByCategory(cat){
 
 /* ARTIST MANAGEMENT LOGICS */
 function triggerArtistManager() {
-  requestPassword(() => {
-    document.getElementById('headerActionMenu').classList.remove('active');
-    document.getElementById('artistManagerModal').style.display = 'flex';
-    document.getElementById('artistManagerSearch').value = '';
-    renderArtistManagerList();
-  });
+
+  document.getElementById('headerActionMenu').classList.remove('active');
+  document.getElementById('artistManagerModal').style.display = 'flex';
+  document.getElementById('artistManagerSearch').value = '';
+  renderArtistManagerList();
+
 }
+
 function closeArtistManagerModal() { document.getElementById('artistManagerModal').style.display = 'none'; }
 
 function renderArtistManagerList() {
@@ -3068,53 +3414,120 @@ function renderArtistManagerList() {
   }
   
   filteredArtists.forEach(artist => {
-    const div = document.createElement('div'); div.className = 'manage-item-row';
-    div.innerHTML = `<span class="manage-item-text">${artist}</span><button class="manage-action-btn" onclick="editArtistNameDirect('${artist.replace(/'/g, "\\\\'")}')">Edit Name</button>`;
+    const div = document.createElement('div');
+    div.className = 'manage-item-row';
+
+    div.innerHTML = `
+        <span class="manage-item-text">${artist}</span>
+        <button class="manage-action-btn"
+        onclick="verifyEditArtist('${artist.replace(/'/g, "\\\\'")}')">
+        Edit Name
+        </button>`;
+
     listContainer.appendChild(div);
-  });
+});
+}
+function verifyEditArtist(artist) {
+
+    requestPassword(() => {
+        editArtistNameDirect(artist);
+    });
+
 }
 
-function addNewArtistDirect() {
-  showCustomPrompt("ඇතුලත් කිරීමට අවශ්‍ය නව Artist ගේ නම සඳහන් කරන්න:", "", (name) => {
-    if(!name || name.trim() === "") return;
-    const cleanedName = name.trim();
-    
-    if(window.allArtistsList.includes(cleanedName)) {
-      return showCustomAlert("මෙම Artist දැනටමත් ලියාපදිංචි කර ඇත!", "Duplicate Artist");
+async function addNewArtistDirect() {
+  showCustomPrompt("📌 ඇතුලත් කිරීමට අවශ්‍ය නව Artist ගේ නම සඳහන් කරන්න :", "", async (artistName) => {
+    if (!artistName || artistName.trim() === "") return;
+
+    const cleanedArtist = artistName.trim();
+
+    if (window.allArtistsList.includes(cleanedArtist)) {
+      return showCustomAlert("⚠️ මෙම Artist දැනටමත් පද්ධතියේ පවතී !", "Duplicate Artist");
     }
-    window.allArtistsList.push(cleanedName);
-    window.allArtistsList.sort();
-    renderArtistManagerList();
+
+    window.allArtistsList.push(cleanedArtist);
+
+    await window.saveArtistsToFirebase(window.allArtistsList,"✅ Artist Added Successfully !");
+
     updateArtistDropdownOptions();
-    showCustomAlert(`"${cleanedName}" සාර්ථකව එක් කරන ලදී!`, "Success");
+    renderArtistManagerList();
+    renderSongs();
+
+    showCustomAlert(`✅ "${cleanedArtist}" Artist සාර්ථකව එක් කරන ලදී !`, "Success !");
+
   }, "Add Artist");
+}
+function verifyAddArtist() {
+
+    requestPassword(() => {
+        addNewArtistDirect();
+    });
+
 }
 
 function editArtistNameDirect(oldName) {
-  showCustomPrompt(`"${oldName}" සඳහා නව නම ඇතුළත් කරන්න:`, oldName, (newName) => {
-    if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
+  showCustomPrompt(`📌 "${oldName}" Artist සඳහා නව නමක් ඇතුළත් කරන්න :`, oldName, (newName) => {
+
+    if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
+
     const finalNewName = newName.trim();
-    
-    // මෙතැනදී අන්තිමට "Yes, Confirm" සහ false (Danger නොවන බව) එකතු කර ඇත
-    showCustomConfirm(`"${oldName}" නම ඇතුළත් සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
-      window.allArtistsList = window.allArtistsList.map(a => a === oldName ? finalNewName : a);
-      window.allArtistsList.sort();
-      renderArtistManagerList();
-      updateArtistDropdownOptions();
-      renderSongs();
-      window.updateArtistDatabaseName(oldName, finalNewName);
-    }, "Update Artist Name", "Yes, Confirm", false);
-  }, "Edit Artist Name");
+
+    showCustomConfirm(
+      `📌 "${oldName}" Artist යටතේ ඇති සියලුම ගීත "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද ?`,
+      () => {
+
+        window.allArtistsList =
+          window.allArtistsList.map(a => a === oldName ? finalNewName : a);
+
+        updateArtistDropdownOptions();
+        renderArtistManagerList();
+        renderSongs();
+
+        window.saveArtistsToFirebase(window.allArtistsList);
+        window.updateArtistDatabaseName(oldName, finalNewName);
+
+        showCustomAlert(`✅ Artist නම "${finalNewName}" ලෙස වෙනස් කරන ලදී !`, "Updated !");
+
+      },
+      "Update Artist",
+      "Yes, Confirm",
+      false
+    );
+
+  }, "Edit Artist");
 }
+
+window.saveArtistsToFirebase = async function(updatedList, successMessage = "✅ Artists Updated Successfully !") {
+  try {
+    console.log("Saving artists:", updatedList);
+    console.log("Config ref:", window.configDocRef);
+
+    showSyncStatus("🔄 Syncing Artists...");
+
+    await setDoc(window.configDocRef, {
+      artistsList: updatedList
+    }, { merge: true });
+
+    console.log("Firestore save success");
+
+    showSyncStatus(successMessage);
+
+  } catch (e) {
+    console.error("Firebase artist save error:", e.message);
+    console.error(e);
+
+    showSyncStatus("❌ Failed to Sync Firebase !", 5000);
+  }
+};
 
 /* CATEGORY MANAGEMENT LOGICS */
 function triggerCategoryManager() {
-  requestPassword(() => {
-    document.getElementById('headerActionMenu').classList.remove('active');
-    document.getElementById('categoryManagerModal').style.display = 'flex';
-    document.getElementById('categoryManagerSearch').value = '';
-    renderCategoryManagerList();
-  });
+
+  document.getElementById('headerActionMenu').classList.remove('active');
+  document.getElementById('categoryManagerModal').style.display = 'flex';
+  document.getElementById('categoryManagerSearch').value = '';
+  renderCategoryManagerList();
+
 }
 function closeCategoryManagerModal() { document.getElementById('categoryManagerModal').style.display = 'none'; }
 
@@ -3136,57 +3549,72 @@ function renderCategoryManagerList() {
     div.innerHTML = `
       <span class="manage-item-text">${cat}</span>
       <div class="manage-btns-group">
-        <button class="manage-action-btn" onclick="editCategoryNameDirect('${cat.replace(/'/g, "\\\\'")}')">Edit</button>
-        <button class="manage-delete-btn" onclick="deleteCategoryDirect('${cat.replace(/'/g, "\\\\'")}')">Delete</button>
+        <button class="manage-action-btn"onclick="verifyEditCategory('${cat.replace(/'/g, "\\\\'")}')">Edit</button>
+        <button class="manage-delete-btn"onclick="verifyDeleteCategory('${cat.replace(/'/g, "\\\\'")}')">Delete</button>
       </div>
     `;
     listContainer.appendChild(div);
   });
 }
 
+function verifyEditCategory(category) {
+
+    requestPassword(() => {
+        editCategoryNameDirect(category);
+    });
+
+}
+
 function addNewCategoryDirect() {
-  showCustomPrompt("ඇතුලත් කිරීමට අවශ්‍ය නව Category එකෙහි නම සඳහන් කරන්න:", "", (catName) => {
+  showCustomPrompt("📌 ඇතුලත් කිරීමට අවශ්‍ය නව Category හි නම සඳහන් කරන්න :", "", async (catName) => {
     if(!catName || catName.trim() === "") return;
     const cleanedCat = catName.trim().toUpperCase(); 
     
     if(window.allCategoriesList.includes(cleanedCat)) {
-      return showCustomAlert("මෙම Category එක දැනටමත් පද්ධතියේ පවතී!", "Duplicate Category");
+      return showCustomAlert("⚠️ මෙම Category එක දැනටමත් පද්ධතියේ පවතී !", "Duplicate Category");
     }
     window.allCategoriesList.push(cleanedCat);
     
-    localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
-    window.saveCategoriesToFirebase(window.allCategoriesList);
+    await window.saveCategoriesToFirebase(window.allCategoriesList,"✅ Category Added Successfully !");
     
     initCategoryChecklist();
     renderCategoryManagerList();
     renderSongs(); 
-    showCustomAlert(`"${cleanedCat}" ප්‍රවර්ගය සාර්ථකව එක් කරන ලදී!`, "Success");
+    showCustomAlert(`✅ "${cleanedCat}" Category සාර්ථකව එක් කරන ලදී !`, "Success !");
   }, "Add Category");
 }
 
+function verifyAddCategory() {
+
+    requestPassword(() => {
+        addNewCategoryDirect();
+    });
+
+}
+
 function editCategoryNameDirect(oldName) {
-  showCustomPrompt(`"${oldName}" Category එක සඳහා නව නමක් ඇතුළත් කරන්න:`, oldName, (newName) => {
+  showCustomPrompt(`📌 "${oldName}" Category සඳහා නව නමක් ඇතුළත් කරන්න :`, oldName, (newName) => {
     if(!newName || newName.trim() === "" || newName.trim() === oldName) return;
     const finalNewName = newName.trim().toUpperCase();
     
     // මෙතැනදීත් අන්තිමට "Yes, Confirm" සහ false එකතු කර ඇත
-    showCustomConfirm(`"${oldName}" ප්‍රවර්ගය යටතේ ඇති සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද?`, () => {
+    showCustomConfirm(
+  `📌 "${oldName}" Category යටතේ ඇති සියලුම ගීත ද "${finalNewName}" ලෙස වෙනස් කිරීමට එකඟද ?`,
+  async () => {
       window.allCategoriesList = window.allCategoriesList.map(c => c === oldName ? finalNewName : c);
-      localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
       initCategoryChecklist();
       renderCategoryManagerList();
       renderSongs();
-      window.saveCategoriesToFirebase(window.allCategoriesList);
+      await window.saveCategoriesToFirebase(window.allCategoriesList,"✅ Category Updated Successfully !");
       window.updateCategoryInsideSongs(oldName, finalNewName);
-      showCustomAlert(`Category නම "${finalNewName}" ලෙස වෙනස් කරන ලදී!`, "Updated");
+      showCustomAlert(`✅ Category නම "${finalNewName}" ලෙස වෙනස් කරන ලදී !`, "Updated !");
     }, "Update Category", "Yes, Confirm", false);
   }, "Edit Category Name");
 }
 
 function deleteCategoryDirect(catName) {
-  showCustomConfirm(`"${catName}" ප්‍රවර්ගය පද්ධතියෙන් සම්පූර්ණයෙන්ම මකා දැමීමට අවශ්‍යද?\n\n⚠️ අවධානයට: මෙම ප්‍රවර්ගයට පමණක් අයත් සියලුම ගීතද මෙහිදී ස්වයංක්‍රීයව Firebase වෙතින් සදහටම මකා දැමෙනු ඇත!`, () => {
+  showCustomConfirm(`📌 "${catName}" Category පද්ධතියෙන් සම්පූර්ණයෙන්ම මකා දැමීමට අවශ්‍යද ?\n\n⚠️ අවධානයට : මෙම Category එකට පමණක් අයත් සියලුම ගීතද මෙහිදී ස්වයංක්‍රීයව Firebase වෙතින් සදහටම මකා දැමෙනු ඇත !`, async () => {
     window.allCategoriesList = window.allCategoriesList.filter(c => c !== catName);
-    localStorage.setItem('lyricsCategories', JSON.stringify(window.allCategoriesList));
     
     if(currentFilter === catName) currentFilter = 'All';
     
@@ -3194,13 +3622,21 @@ function deleteCategoryDirect(catName) {
     renderCategoryManagerList();
     renderSongs();
     
-    window.saveCategoriesToFirebase(window.allCategoriesList);
+    await window.saveCategoriesToFirebase(window.allCategoriesList,"✅ Category Deleted Successfully !");
     window.removeCategoryFromSongs(catName); 
     
-    showCustomAlert(`"${catName}" ප්‍රවර්ගය සහ ඊට අදාල ගීත සාර්ථකව මකා දමන ලදී!`, "Deleted");
+    showCustomAlert(`✅ "${catName}" Category සහ ඊට අදාල ගීත සාර්ථකව මකා දමන ලදී !`, "Deleted !");
   }, "Delete Category Completely");
 }
-  
+
+function verifyDeleteCategory(catName) {
+
+    requestPassword(() => {
+        deleteCategoryDirect(catName);
+    });
+
+}
+
 function copyLyrics() {
  const lyrics = document.getElementById('modalLyrics').innerText;
  
@@ -3219,7 +3655,7 @@ function copyLyrics() {
    copyBtn.style.background = "#10b981";
    setTimeout(() => { copyBtn.innerText = "Copy"; copyBtn.style.background = "#06b6d4"; }, 2000);
  } catch (err) {
-   showCustomAlert("Copy කිරීමට නොහැකි විය! කරුණාකර අතින් Select කර Copy කරගන්න.");
+   showCustomAlert("⚠️ Copy කිරීමට නොහැකි විය ! කරුණාකර අතින් Select කර Copy කරගන්න.");
  }
  
  document.body.removeChild(textarea); // සාදාගත් තාවකාලික කොටුව ඉවත් කිරීම
@@ -3228,32 +3664,15 @@ function copyLyrics() {
 window.addEventListener('scroll', handleScrollDisplay, true);
 
 
-window.onload = async () => {
+window.songs = [];
 
-  window.songs =
-  JSON.parse(
-    localStorage.getItem('lyricsSongs')
-  ) || [];
-
-  window.allCategoriesList =
-  JSON.parse(
-    localStorage.getItem('lyricsCategories')
-  ) || [
-    "NEW KARAOKE SONGS",
-    "OLD KARAOKE SONGS",
-    "OLD KARAOKE DANCE",
-    "NEW KARAOKE DANCE",
-    "WEDDING SONGS"
-  ];
-
-  await loadFavoritesFromFirebase();
-
-  extractDynamicMetadata();
-  renderSongs();
-
-  initCategoryChecklist();
-
-};
+window.allCategoriesList = [
+  "NEW KARAOKE SONGS",
+  "OLD KARAOKE SONGS",
+  "OLD KARAOKE DANCE",
+  "NEW KARAOKE DANCE",
+  "WEDDING SONGS"
+];
 
 // Lyrics ටයිප් කරද්දී මුල් වචන 3 Title එකට Auto වැටීමේ කේතය
 document.getElementById('songLyrics').addEventListener('input', function() {
@@ -3971,11 +4390,6 @@ window.toggleTheme = function(){
   const isDark =
   document.body.classList.contains("dark-mode");
 
-  localStorage.setItem(
-    "theme",
-    isDark ? "dark" : "light"
-  );
-
   if(window.innerWidth <= 768){
 
     document.getElementById("dotsMenuBtn").click();
@@ -3984,25 +4398,12 @@ window.toggleTheme = function(){
 
 }
 
-window.addEventListener("load",()=>{
-
-  const savedTheme =
-  localStorage.getItem("theme");
-
-  if(savedTheme === "dark"){
-
-    document.body.classList.add("dark-mode");
-
-  }
-
-});
-
 async function createPlaylist(){
 
   requestPassword(() => {
 
     showCustomPrompt(
-      "Enter playlist name",
+      "📌 ඇතුලත් කිරීමට අවශ්‍ය නව Playlist හි නම සඳහන් කරන්න : ",
       "",
       async (name) => {
 
@@ -4010,7 +4411,7 @@ async function createPlaylist(){
           return;
 
         showCustomAlert(
-          "🎵 Playlist Created"
+          "✅ Playlist සාර්ථකව එක් කරන ලදී !"
         );
 
         setTimeout(() => {
@@ -4058,7 +4459,7 @@ async function createPlaylist(){
         );
 
       },
-      "Create Playlist"
+      "Add Playlist"
     );
 
   });
@@ -4379,7 +4780,7 @@ async function togglePlaylistSong(
       );
 
       showCustomAlert(
-        "Playlist එකෙන් අයින් කළා"
+        "✅ Playlist එකෙන් අයින් කළා !"
       );
 
     } else {
@@ -4415,7 +4816,7 @@ async function togglePlaylistSong(
       );
 
       showCustomAlert(
-        "✅ Playlist එකට එකතු කළා"
+        "✅ Playlist එකට එකතු කළා !"
       );
 
     }
@@ -4425,7 +4826,9 @@ async function togglePlaylistSong(
     addSongToPlaylist();
 
     if(window.currentPlaylistId === playlist.id){
-      openPlaylist(playlist.id);
+      verifyPassword(() => {
+    openPlaylist(playlist.id);
+});
     }
 
     loadPlaylists();
@@ -4491,7 +4894,7 @@ async function saveSongToPlaylist(
   closePlaylistPicker();
 
   showCustomAlert(
-    "✅ Playlist එකට එකතු කළා"
+    "✅ Playlist එකට එකතු කළා !"
   );
 
 }
@@ -4508,7 +4911,7 @@ async function renamePlaylist(id){
     if(!playlist) return;
 
     showCustomPrompt(
-      "Enter new playlist name",
+      "📌 Playlist සඳහා නව නමක් ඇතුළත් කරන්න :",
       playlist.name,
       async (newName) => {
 
@@ -4527,11 +4930,11 @@ async function renamePlaylist(id){
         );
 
         showCustomAlert(
-          "✅ Playlist Renamed"
+          "✅ Playlist නම සාර්ථකව වෙනස් කරන ලදී !"
         );
 
       },
-      "Rename Playlist"
+      "Edit Playlist Name"
     );
 
   });
@@ -4550,7 +4953,7 @@ async function deletePlaylist(id){
     if(!playlist) return;
 
     showCustomConfirm(
-      `Delete "${playlist.name}" ?`,
+      `📌 "${playlist.name}" Playlist පද්ධතියෙන් සම්පූර්ණයෙන්ම මකා දැමීමට අවශ්‍යද ?`,
       async () => {
 
         await window.deleteDoc(
@@ -4562,11 +4965,11 @@ async function deletePlaylist(id){
         );
 
         showCustomAlert(
-          "✅ Playlist Deleted"
+          "✅ Playlist සාර්ථකව මකා දමන ලදී !"
         );
 
       },
-      "Delete Playlist"
+      "Delete Playlist !"
     );
 
   });
@@ -4712,15 +5115,116 @@ function addSongToFavorite(){
 
   }
 
-  localStorage.setItem(
-    isNewSong
-    ? "favoriteNewSongs"
-    : "favoriteOldSongs",
-    JSON.stringify(favList)
-  );
-
   saveFavoritesToFirebase();
 
+}
+
+// ===== APP LOCK =====
+
+const APP_PASSWORD = "0000"; // Change this to your desired password
+
+function unlockApp() {
+
+    const pass = document.getElementById("appLockPassword").value.trim() ;
+    const error = document.getElementById("appLockError");
+
+    if (pass === APP_PASSWORD) {
+
+    showLockMessage("✅ Unlock Successful !", "success");
+
+    setTimeout(() => {
+        document.getElementById("appLockOverlay").style.display = "none";
+        document.getElementById("appLockPassword").value = "";
+    }, 2000);
+
+} else {
+
+    showLockMessage("❌ Incorrect Password", "error");
+
+    document.getElementById("appLockPassword").value = "";
+
+    const box = document.getElementById("appLockBox");
+    box.classList.remove("errorShake");
+    void box.offsetWidth;
+    box.classList.add("errorShake");
+
+    setTimeout(() => {
+        document.getElementById("appLockPassword").focus();
+    }, 100);
+
+}
+
+}
+
+// Enter Key Support
+document.getElementById("appLockPassword").addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+        unlockApp();
+    }
+
+});
+
+// හැම Page Load එකකම Lock වෙන්න
+window.addEventListener("load", ()=>{
+
+    const input = document.getElementById("appLockPassword");
+
+    document.getElementById("appLockOverlay").style.display = "flex";
+    input.value = "";
+    document.getElementById("appLockError").textContent = "";
+
+    // Cursor එක Password field එකට යවයි
+    setTimeout(() => {
+        input.focus();
+        input.click();
+        input.setSelectionRange(0, 0);
+    }, 200);
+  error.textContent = "Incorrect Password";
+document.getElementById("appLockPassword").value = "";
+
+setTimeout(() => {
+    document.getElementById("appLockPassword").focus();
+}, 100);
+
+});
+
+function showLockMessage(message, type) {
+
+    const msg = document.getElementById("appLockError");
+
+    msg.textContent = message;
+    msg.className = "";
+    msg.classList.add(type);
+
+    // Fade In
+    msg.classList.add("show");
+
+    // Fade Out
+    setTimeout(() => {
+        msg.classList.remove("show");
+    }, 1500);
+
+}
+
+let syncStatusTimer;
+
+function showSyncStatus(message, duration = 5000) {
+    const status = document.getElementById("syncStatus");
+
+    clearTimeout(syncStatusTimer);
+
+    status.innerText = message;
+    status.style.opacity = "1";
+
+    syncStatusTimer = setTimeout(() => {
+        status.style.opacity = "0";
+
+        setTimeout(() => {
+            status.innerText = "";
+        }, 500);
+
+    }, duration);
 }
 
 
