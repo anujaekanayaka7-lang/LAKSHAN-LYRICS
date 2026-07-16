@@ -1057,18 +1057,6 @@ html, body {
     padding-right: 10px;
   }
 
-  .left-sidebar {
-  
-
-  .left-sidebar{
-    height:calc(100vh - 70px) !important;
-    padding-bottom:60px !important; /* කැමති නම් 70px හෝ 80px */
-  }
-
-}
-
-
-
   /* සාමාන්‍ය div වල scrollbar හැංගීමට පමණක් මෙය යොදන්න */
 div, textarea, #modalLyrics, .artist-list-container, .checkbox-list {  
   -ms-overflow-style: none;  
@@ -2010,24 +1998,47 @@ window.loadFavoritesFromFirebase = loadFavoritesFromFirebase;
   enableIndexedDbPersistence(db).catch((err) => {
       console.warn("Firestore persistence failed:", err.code);
   });
-  const lyricsBox = document.getElementById("songLyrics");
+const lyricsBox = document.getElementById("songLyrics");
 const titleBox = document.getElementById("songTitle");
 
-lyricsBox.addEventListener("paste", function () {
+let lastGeneratedTitle = "";
 
-    setTimeout(() => {
+function updateAutoTitle() {
 
-        const text = lyricsBox.value.trim();
+    const text = lyricsBox.value;
 
-        if (!text) return;
+    // Lyrics හිස් නම් Title එකත් හිස් කරන්න
+    if (text.trim() === "") {
+        titleBox.value = "";
+        lastGeneratedTitle = "";
+        return;
+    }
 
-        const firstLine = text.split("\n")[0].trim();
+    const firstLine = text.split("\n")[0].trim();
+    const autoTitle = firstLine
+        .split(/\s+/)
+        .filter(word => word.length)
+        .slice(0, 3)
+        .join(" ");
 
-        titleBox.value = firstLine.split(/\s+/).slice(0, 3).join(" ");
+    // User Title එක edit කරලා නැත්නම් විතරක් update කරන්න
+    if (
+        titleBox.value === "" ||
+        titleBox.value === lastGeneratedTitle
+    ) {
+        titleBox.value = autoTitle;
+    }
 
-    }, 0);
+    lastGeneratedTitle = autoTitle;
+}
 
+lyricsBox.addEventListener("input", updateAutoTitle);
+
+lyricsBox.addEventListener("paste", () => {
+    setTimeout(updateAutoTitle, 0);
 });
+
+
   window.currentPlaylistId = null;
   window.songs = [];
   window.playlists = [];
@@ -2236,7 +2247,7 @@ if(
   !karaokeYoutube
 ){
   return showCustomAlert(
-    "⚠️ Song Title, Artist, Categories, Playlist, Karaoke Link, Original Link සහ Lyrics සියල්ල පිරවිය යුතුය!"
+    "⚠️ Song Title, Artist, Categories, Playlist, Karaoke Link, Original Link සහ Lyrics සියල්ල පිරවිය යුතුය !"
   );
 }
     // Duplicate Lyrics Check
@@ -2248,9 +2259,9 @@ if(
 
     if(duplicateSong){
          return showCustomAlert(
-     "⚠️ මෙම Lyrics එක දැනටමත් '" +
+     "⚠️ මෙම Lyrics එක දැනටමත් ' " +
     duplicateSong.title +
-    "' නමින් ඇතුලත් කර ඇත !"
+    " ' නමින් ඇතුලත් කර ඇත !"
          );
     }   
     const id = window.editId ? window.editId.toString() : Date.now().toString();
