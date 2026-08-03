@@ -5202,108 +5202,106 @@ function showCopiedState(button) {
 
 window.editLyrics = function () {
 
-    isEditMode = true;
-    editingSongId = currentSongId;
+    openAdminPassword(function () {
 
-    const song = allSongs.find(s => s.id === currentSongId);
+        isEditMode = true;
+        editingSongId = currentSongId;
 
-    if (!song) {
+        const song = allSongs.find(s => s.id === currentSongId);
 
-    showError(
-        "Song Not Found !",
-        "අදාළ ගීතය සොයාගත නොහැකි විය&nbsp;&nbsp;!"
-    );
+        if (!song) {
 
-    return;
-
-}
-
-    // Load dropdowns
-    loadCategoryDropdown();
-    loadPlaylistDropdown();
-
-    // Open popup
-    document.getElementById("addSongModal").classList.add("active");
-
-    // Title & Button
-    document.getElementById("songPopupTitle").textContent = "Edit Song";
-    document.getElementById("songSaveBtn").textContent = "Update Song";
-
-    // Fill Inputs
-    document.getElementById("songTitle").value = song.title || "";
-    document.getElementById("artistName").value = song.artist || "";
-    artistSuggestions.innerHTML = "";
-    artistSuggestions.style.display = "none";
-    document.getElementById("karaokeLink").value = song.karaokeYoutube || "";
-    document.getElementById("originalLink").value = song.originalYoutube || "";
-    document.getElementById("lyrics").value = song.lyrics || "";
-
-    setTimeout(() => {
-
-        // ==========================
-        // Categories
-        // ==========================
-        document.querySelectorAll("#categoryOptions input").forEach(cb => {
-            cb.checked = (song.category || []).includes(cb.dataset.name);
-        });
-
-        const selectedCategories = [...document.querySelectorAll("#categoryOptions input:checked")]
-            .map(cb => cb.dataset.name);
-
-        document.getElementById("categoryPlaceholder").textContent =
-            selectedCategories.length
-                ? selectedCategories.join(", ")
-                : "Select Categories";
-
-
-        // ==========================
-        // Playlist
-        // ==========================
-
-        document.querySelectorAll("#playlistOptions input").forEach(rb => {
-            rb.checked = false;
-        });
-
-        let playlistFound = null;
-
-        // 1. Song එකේ playlist field එක තිබ්බොත් ඒකෙන් හොයනවා
-        if (song.playlist) {
-            playlistFound = window.playlists.find(pl => pl.id === song.playlist);
-        }
-
-        // 2. නැත්නම් playlist.songs array එකෙන් හොයනවා
-        if (!playlistFound) {
-
-            playlistFound = window.playlists.find(pl =>
-                (pl.songs || []).some(id =>
-                    id.toString() === currentSongId.toString() ||
-                    id.toString() === song.id.toString()
-                )
+            showError(
+                "Song Not Found !",
+                "අදාළ ගීතය සොයාගත නොහැකි විය&nbsp;&nbsp;!"
             );
+
+            return;
 
         }
 
-        if (playlistFound) {
+        // Load dropdowns
+        loadCategoryDropdown();
+        loadPlaylistDropdown();
 
-            const radio = document.querySelector(
-                `#playlistOptions input[value="${playlistFound.id}"]`
-            );
+        // Open popup
+        document.getElementById("addSongModal").classList.add("active");
 
-            if (radio) {
-                radio.checked = true;
+        // Title & Button
+        document.getElementById("songPopupTitle").textContent = "Edit Song";
+        document.getElementById("songSaveBtn").textContent = "Update Song";
+
+        // Fill Inputs
+        document.getElementById("songTitle").value = song.title || "";
+        document.getElementById("artistName").value = song.artist || "";
+        artistSuggestions.innerHTML = "";
+        artistSuggestions.style.display = "none";
+        document.getElementById("karaokeLink").value = song.karaokeYoutube || "";
+        document.getElementById("originalLink").value = song.originalYoutube || "";
+        document.getElementById("lyrics").value = song.lyrics || "";
+
+        setTimeout(() => {
+
+            // ==========================
+            // Categories
+            // ==========================
+            document.querySelectorAll("#categoryOptions input").forEach(cb => {
+                cb.checked = (song.category || []).includes(cb.dataset.name);
+            });
+
+            const selectedCategories = [...document.querySelectorAll("#categoryOptions input:checked")]
+                .map(cb => cb.dataset.name);
+
+            document.getElementById("categoryPlaceholder").textContent =
+                selectedCategories.length
+                    ? selectedCategories.join(", ")
+                    : "Select Categories";
+
+            // ==========================
+            // Playlist
+            // ==========================
+            document.querySelectorAll("#playlistOptions input").forEach(rb => {
+                rb.checked = false;
+            });
+
+            let playlistFound = null;
+
+            if (song.playlist) {
+                playlistFound = window.playlists.find(pl => pl.id === song.playlist);
             }
 
-            document.getElementById("playlistPlaceholder").textContent =
-                playlistFound.name;
+            if (!playlistFound) {
+                playlistFound = window.playlists.find(pl =>
+                    (pl.songs || []).some(id =>
+                        id.toString() === currentSongId.toString() ||
+                        id.toString() === song.id.toString()
+                    )
+                );
+            }
 
-        } else {
+            if (playlistFound) {
 
-            document.getElementById("playlistPlaceholder").textContent =
-                "Select Playlist";
+                const radio = document.querySelector(
+                    `#playlistOptions input[value="${playlistFound.id}"]`
+                );
 
-        }
+                if (radio) {
+                    radio.checked = true;
+                }
 
-    }, 700);
+                document.getElementById("playlistPlaceholder").textContent =
+                    playlistFound.name;
+
+            } else {
+
+                document.getElementById("playlistPlaceholder").textContent =
+                    "Select Playlist";
+
+            }
+
+        }, 700);
+
+    });
 
 };
 
@@ -5406,74 +5404,78 @@ window.deleteLyrics = function () {
 
     if (!currentSongId) return;
 
-    showWarning(
-        "Delete Song !",
-        "මෙම ගීතය Delete කිරීමට අවශ්‍යද&nbsp;?",
+    openAdminPassword(function () {
 
-        async function () {
+        showWarning(
+            "Delete Song !",
+            "මෙම ගීතය Delete කිරීමට අවශ්‍යද&nbsp;?",
 
-            try {
+            async function () {
 
-                // Song document එක හොයනවා
-                const songRef = await getSongDocRef(currentSongId);
+                try {
 
-                if (!songRef) {
+                    // Song document එක හොයනවා
+                    const songRef = await getSongDocRef(currentSongId);
 
-                    showError(
-                        "Song Not Found !",
-                        "මෙම ගීතය සොයාගත නොහැකි විය&nbsp;&nbsp;!"
-                    );
+                    if (!songRef) {
 
-                    return;
-
-                }
-
-                // Song data ගන්නවා
-                const songSnap = await getDoc(songRef);
-
-                if (songSnap.exists()) {
-
-                    const song = songSnap.data();
-
-                    // Playlist එකෙන් remove කරනවා
-                    if (song.playlist) {
-
-                        await updateDoc(
-                            doc(db, "playlists", song.playlist),
-                            {
-                                songs: arrayRemove(songRef.id)
-                            }
+                        showError(
+                            "Song Not Found !",
+                            "මෙම ගීතය සොයාගත නොහැකි විය&nbsp;&nbsp;!"
                         );
+
+                        return;
 
                     }
 
+                    // Song data ගන්නවා
+                    const songSnap = await getDoc(songRef);
+
+                    if (songSnap.exists()) {
+
+                        const song = songSnap.data();
+
+                        // Playlist එකෙන් remove කරනවා
+                        if (song.playlist) {
+
+                            await updateDoc(
+                                doc(db, "playlists", song.playlist),
+                                {
+                                    songs: arrayRemove(songRef.id)
+                                }
+                            );
+
+                        }
+
+                    }
+
+                    // Song delete කරනවා
+                    await deleteDoc(songRef);
+
+                    closeSongPopup();
+
+                    currentSongId = null;
+
+                    showSuccess(
+                        "Song Deleted !",
+                        "ගීතය සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී&nbsp;&nbsp;!"
+                    );
+
+                } catch (err) {
+
+                    console.error(err);
+
+                    showError(
+                        "Delete Failed !",
+                        "ගීතය Delete කිරීමට නොහැකි විය&nbsp;&nbsp;!"
+                    );
+
                 }
 
-                // Song delete කරනවා
-                await deleteDoc(songRef);
-
-                closeSongPopup();
-
-                currentSongId = null;
-
-                showSuccess(
-                    "Song Deleted !",
-                    "ගීතය සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී&nbsp;&nbsp;!"
-                );
-
-            } catch (err) {
-
-                console.error(err);
-
-                showError(
-                    "Delete Failed !",
-                    "ගීතය Delete කිරීමට නොහැකි විය&nbsp;&nbsp;!"
-                );
-
             }
+        );
 
-        }
-    );
+    });
 
 };
 
@@ -5548,60 +5550,66 @@ playlistModal.onclick = function(e){
 
 window.selectPlaylist = async function (playlistId) {
 
-    const song = allSongs.find(s => s.id === currentSongId);
+    openAdminPassword(async function () {
 
-    if (!song) return;
-    if (song.playlist === playlistId) return;
+        const song = allSongs.find(s => s.id === currentSongId);
 
-    try {
+        if (!song) return;
+        if (song.playlist === playlistId) return;
 
-        // Old playlist remove
-        if (song.playlist) {
+        try {
 
+            // Old playlist remove
+            if (song.playlist) {
+
+                await updateDoc(
+                    doc(db, "playlists", song.playlist),
+                    {
+                        songs: arrayRemove(song.id)
+                    }
+                );
+
+            }
+
+            // New playlist add
             await updateDoc(
-                doc(db, "playlists", song.playlist),
+                doc(db, "playlists", playlistId),
                 {
-                    songs: arrayRemove(song.id)
+                    songs: arrayUnion(song.id)
                 }
+            );
+
+            // Song document update
+            await updateDoc(
+                doc(db, "lyricsSongs", song.docId),
+                {
+                    playlist: playlistId
+                }
+            );
+
+            // Local update
+            song.playlist = playlistId;
+
+            // Close popup
+            closePlaylistModal();
+
+            showSuccess(
+                "Playlist Updated !",
+                "Playlist එක සාර්ථකව යාවත්කාලීන කරන ලදී&nbsp;&nbsp;!"
+            );
+
+        } catch (e) {
+
+            console.error("Playlist Update Error:", e);
+
+            showError(
+                "Update Failed !",
+                "Playlist එක යාවත්කාලීන කිරීමට නොහැකි විය&nbsp;&nbsp;!"
             );
 
         }
 
-        // New playlist add
-        await updateDoc(
-            doc(db, "playlists", playlistId),
-            {
-                songs: arrayUnion(song.id)
-            }
-        );
-
-        // Song document update
-        await updateDoc(
-            doc(db, "lyricsSongs", song.docId),
-            {
-                playlist: playlistId
-            }
-        );
-
-        // Local update
-        song.playlist = playlistId;
-
-
-        // Close popup
-        closePlaylistModal();
-
-        
-
-    } catch (e) {
-
-    console.error("Playlist Update Error:", e);
-
-    showError(
-        "Update Failed !",
-        `"&nbsp;${playlist.name}&nbsp;"&nbsp;&nbsp;Playlist එක යාවත්කාලීන කිරීමට නොහැකි විය&nbsp;&nbsp;!`
-    );
-
-}
+    });
 
 };
 
