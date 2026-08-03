@@ -7379,18 +7379,24 @@ window.checkAdminPassword = function () {
     const input = document.getElementById("adminPasswordInput");
     const error = document.getElementById("adminPasswordError");
 
-    const password = input.value.trim();
+    const password = input.value;
 
-    if (!password) {
-        error.textContent = "Please enter the password.";
+    const passwordOk =
+        ADMIN_PASSWORD === ""
+            ? password.trim() === ""
+            : password === ADMIN_PASSWORD;
+
+    if (!passwordOk) {
+
+        error.textContent = ADMIN_PASSWORD === ""
+            ? "Please enter the password."
+            : "Incorrect Password!";
+
         input.focus();
-        return;
-    }
-
-    if (password !== ADMIN_PASSWORD) {
-        error.textContent = "Incorrect Password!";
         input.select();
+
         return;
+
     }
 
     const callback = adminSuccessCallback;
