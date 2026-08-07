@@ -466,7 +466,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .powered{margin-top:35px;color:#9ca3af;font-size:12px;letter-spacing:1px}
 
 /* CLOCK */
-.lock-time{font-size:50px;font-weight:700;color:#fff;line-height:1;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 20px rgba(255,255,255,.15)}
+.lock-time{font-size:45px;font-weight:700;color:#fff;line-height:1;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 20px rgba(255,255,255,.15)}
 .lock-date{color:#dbeafe;font-size:14px;margin-bottom:25px}
 
 /* USER */
@@ -3497,20 +3497,15 @@ window.closeSongPopup = function () {
         karaokeDurationTime.textContent = "0:00";
 };
 
-document.querySelectorAll(".song-popup").forEach(popup => {
+document.getElementById("songPopup").addEventListener("click", function (e) {
 
-    popup.addEventListener("click", function (e) {
+    // Mobile width නම් ignore කරන්න
+    if (window.innerWidth <= 768) return;
 
-        // Mobile width නම් ignore කරන්න
-        if (window.innerWidth <= 768) return;
-
-        if (e.target === popup) {
-
-            closeSongPopup();
-
-        }
-
-    });
+    // Song Popup background එක click කළාම විතරක් close කරන්න
+    if (e.target === this) {
+        closeSongPopup();
+    }
 
 });
 
@@ -6588,17 +6583,19 @@ document.addEventListener("keydown", function(e){
 
     if(e.key !== "Enter") return;
 
-
     const modal = document.getElementById("addSongModal");
 
+    if(!modal || !modal.classList.contains("active")) return;
 
-    if(modal && getComputedStyle(modal).display !== "none"){
-
-        e.preventDefault();
-
-        document.getElementById("songSaveBtn").click();
-
+    // Textarea වල Enter = New Line
+    if(e.target.tagName === "TEXTAREA"){
+        return;
     }
+
+    // Input fields වල Enter = Save/Update
+    e.preventDefault();
+
+    document.getElementById("songSaveBtn").click();
 
 });
 
@@ -7439,22 +7436,23 @@ function togglePassword(){
 
 // Live Clock
 
-function updateLockClock(){
+function updateLockClock() {
 
     const now = new Date();
 
     let hour = now.getHours();
     const minute = String(now.getMinutes()).padStart(2, "0");
 
-    // 24-hour → 12-hour
+    const ampm = hour >= 12 ? "PM" : "AM";
+
     hour = hour % 12;
     if (hour === 0) hour = 12;
 
     document.getElementById("lockTime").textContent =
-        `${hour}:${minute}`;
+        `${hour}:${minute} ${ampm}`;
 
     document.getElementById("lockDate").textContent =
-        now.toLocaleDateString([],{
+        now.toLocaleDateString([], {
             weekday: "long",
             day: "numeric",
             month: "long",
