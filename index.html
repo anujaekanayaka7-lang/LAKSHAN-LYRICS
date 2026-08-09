@@ -507,6 +507,98 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .admin-name{font-size:14px;font-weight:700;color:#222}
 .admin-info small{font-size:12px;color:#777}
 
+.playlist-reorder-btn{
+    /* ===== Button Size ===== */
+    width:60px;
+    height:25px;
+
+    /* ===== Button Position ===== */
+    margin-left:auto;
+    margin-top:0px;
+    margin-bottom:5px;
+
+    /* ===== Button Style ===== */
+    background:#ffd043;
+    color:#111;
+    border:none;
+    border-radius:8px;
+
+    /* ===== Text ===== */
+    font-size:12px;
+    font-weight:500;
+
+    /* ===== Layout ===== */
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    /* ===== Other ===== */
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+
+    /* Smooth hover */
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* ===== Hover ===== */
+.playlist-reorder-btn:hover{
+    background:#e0ad00;
+    transform:translateY(-2px);
+}
+
+
+/* ===== Click ===== */
+.playlist-reorder-btn:active{
+    transform:translateY(0) scale(.97);
+}
+
+.playlist-reorder-item{
+    position:relative;
+    cursor:grab;
+    box-sizing:border-box;
+    overflow:hidden;
+}
+
+.playlist-reorder-item:active{
+    cursor:grabbing;
+}
+
+.playlist-reorder-item.dragging{
+    opacity:.55;
+    transform:scale(.98);
+}
+
+.playlist-drag-handle{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+
+    width:24px;
+    height:24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#f4c430;
+    font-size:15px;
+
+    pointer-events:none;
+    z-index:2;
+}
+
+/* Reorder mode එකේ text එක handle එකට වැටෙන්නේ නැති වෙන්න */
+.playlist-reorder-item .song-title,
+.playlist-reorder-item .artist-name{
+    margin-left:38px;
+}
 
 @media (max-width:768px){ 
 
@@ -1800,6 +1892,12 @@ let firstMiniAnimation = true;
 let miniAnimationPlayed = false;
 let initialSyncCompleted = false;
 let unsubscribeSongs = null;
+let preserveScrollPosition = false;
+let previousPage = currentPage;
+let playlistReorderMode = false;
+let playlistReorderOriginalOrder = [];
+let playlistReorderCurrentOrder = [];
+let playlistReorderChanged = false;
 
 window.playlists = [];
 window.karaokeYT = null;
@@ -1964,8 +2062,8 @@ function setMainHeader(title, info){
 
 }
 
-/* ====Mini Header== */
-function setMiniHeader(title = "", info = ""){
+/* ==== Mini Header ==== */
+function setMiniHeader(title = "", info = "", showReorder = false){
 
     if(!title && !info){
         miniHeader.style.display = "none";
@@ -1986,9 +2084,23 @@ function setMiniHeader(title = "", info = ""){
                 ${info}
             </div>
 
+            ${
+                showReorder
+                ? `
+                    <button
+                        class="playlist-reorder-btn"
+                        id="playlistReorderBtn"
+                        type="button"
+                    >
+                        <i class="fa-solid fa-arrow-down-up"></i>
+                        Reorder
+                    </button>
+                `
+                : ""
+            }
+
         </div>
     `;
-
 }
 
 function setContentWrapperSize(page){
@@ -2020,10 +2132,29 @@ function setContentWrapperSize(page){
 
 }
 
-function setContent(content, page = "home"){
+function setContent(content, page = "home") {
 
-     setContentWrapperSize(page);
+    setContentWrapperSize(page);
+
+    // ==========================
+    // Current scroll positions
+    // ==========================
+
+    const desktopWrapper = document.getElementById("contentWrapper");
+
+    const desktopScrollTop = desktopWrapper
+        ? desktopWrapper.scrollTop
+        : 0;
+
+    const homeScrollTop = homeWrapper.scrollTop;
+    const listScrollTop = listWrapper.scrollTop;
+    const searchScrollTop = searchWrapper.scrollTop;
+
+
+    // ==========================
     // Desktop
+    // ==========================
+
     if (window.innerWidth > 768) {
 
         homeWrapper.innerHTML = `
@@ -2036,23 +2167,52 @@ function setContent(content, page = "home"){
         listWrapper.style.display = "none";
         searchWrapper.style.display = "none";
 
-        const contentWrapper = document.getElementById("contentWrapper");
+        requestAnimationFrame(() => {
 
-requestAnimationFrame(() => {
-    if (contentWrapper) contentWrapper.scrollTop = 0;
-    homeWrapper.scrollTop = 0;
-});
+            if (preserveScrollPosition) {
+
+                if (desktopWrapper) {
+                    desktopWrapper.scrollTop = desktopScrollTop;
+                }
+
+                homeWrapper.scrollTop = homeScrollTop;
+
+            } else {
+
+                if (desktopWrapper) {
+                    desktopWrapper.scrollTop = 0;
+                }
+
+                homeWrapper.scrollTop = 0;
+
+            }
+
+        });
+
+        return;
     }
 
+
+    // ==========================
     // Mobile
+    // ==========================
+
     homeWrapper.style.display = "none";
     listWrapper.style.display = "none";
     searchWrapper.style.display = "none";
 
     let target = homeWrapper;
+    let savedScrollTop = homeScrollTop;
 
-    if (page === "list") target = listWrapper;
-    if (page === "search") target = searchWrapper;
+    if (page === "list") {
+        target = listWrapper;
+        savedScrollTop = listScrollTop;
+    }
+
+    if (page === "search") {
+        target = searchWrapper;
+        savedScrollTop = searchScrollTop;
+    }
 
     target.innerHTML = `
         <div class="content-view">
@@ -2062,7 +2222,19 @@ requestAnimationFrame(() => {
 
     target.style.display = "block";
 
-    target.scrollTop = 0;
+    requestAnimationFrame(() => {
+
+        if (preserveScrollPosition) {
+
+            target.scrollTop = savedScrollTop;
+
+        } else {
+
+            target.scrollTop = 0;
+
+        }
+
+    });
 
 }
 
@@ -2133,15 +2305,31 @@ function renderSongsGrid(songs, wrapper = "home") {
         `, wrapper);
 
         return;
-
     }
 
-    let html = '<div class="songs-grid">';
 
-    songs.forEach(song => {
+    let html = '<div class="songs-grid" id="playlistSongsGrid">';
+
+    songs.forEach((song, index) => {
 
         html += `
-            <div class="song-card" onclick="openSongPopup('${song.id}')">
+            <div
+                class="song-card ${playlistReorderMode ? "playlist-reorder-item" : ""}"
+                data-song-id="${song.id}"
+                data-index="${index}"
+                ${playlistReorderMode ? 'draggable="true"' : ""}
+                onclick="${playlistReorderMode ? "" : `openSongPopup('${song.id}')`}"
+            >
+
+                ${
+                    playlistReorderMode
+                    ? `
+                        <div class="playlist-drag-handle">
+                            <i class="fa-solid fa-grip-vertical"></i>
+                        </div>
+                    `
+                    : ""
+                }
 
                 <div class="song-title">
                     ${song.title || "Untitled"}
@@ -2159,6 +2347,122 @@ function renderSongsGrid(songs, wrapper = "home") {
     html += '</div>';
 
     setContent(html, wrapper);
+
+
+    // ==========================
+    // Reorder Drag & Drop
+    // ==========================
+
+    if(playlistReorderMode){
+
+        const grid = document.getElementById("playlistSongsGrid");
+
+        if(!grid) return;
+
+        let draggedItem = null;
+
+
+        grid.querySelectorAll(".playlist-reorder-item").forEach(item => {
+
+            item.addEventListener("dragstart", function(e){
+
+                draggedItem = this;
+
+                this.classList.add("dragging");
+
+                e.dataTransfer.effectAllowed = "move";
+                e.dataTransfer.setData(
+                    "text/plain",
+                    this.dataset.songId
+                );
+
+            });
+
+
+            item.addEventListener("dragend", function(){
+
+    this.classList.remove("dragging");
+
+    draggedItem = null;
+
+    // Current grid order එක ලබාගන්න
+    const currentOrder = Array.from(
+        grid.querySelectorAll(".playlist-reorder-item")
+    ).map(item => item.dataset.songId);
+
+    // Original order එකත් එක්ක compare කරන්න
+    const orderChanged =
+        JSON.stringify(currentOrder) !==
+        JSON.stringify(playlistReorderOriginalOrder);
+
+    if(orderChanged){
+
+        playlistReorderChanged = true;
+
+        const reorderBtn =
+            document.getElementById("playlistReorderBtn");
+
+        if(reorderBtn){
+
+            reorderBtn.innerHTML = `
+                <i class="fa-solid fa-check"></i>
+                Done
+            `;
+
+        }
+
+    }else{
+
+        playlistReorderChanged = false;
+
+        const reorderBtn =
+            document.getElementById("playlistReorderBtn");
+
+        if(reorderBtn){
+
+            reorderBtn.innerHTML = `
+                <i class="fa-solid fa-arrow-down-up"></i>
+                Reorder
+            `;
+
+        }
+
+    }
+
+});
+
+            item.addEventListener("dragover", function(e){
+
+                e.preventDefault();
+
+                if(!draggedItem || draggedItem === this)
+                    return;
+
+                const rect = this.getBoundingClientRect();
+
+                const middle = rect.top + rect.height / 2;
+
+                if(e.clientY < middle){
+
+                    grid.insertBefore(
+                        draggedItem,
+                        this
+                    );
+
+                }else{
+
+                    grid.insertBefore(
+                        draggedItem,
+                        this.nextSibling
+                    );
+
+                }
+
+            });
+
+        });
+
+    }
 
 }
 
@@ -3006,26 +3310,190 @@ window.showPlaylistSongs = function(playlistId){
 
     selectedPlaylist = playlistId;
     currentPage = "playlistSongs";
+
     const playlistSongIds = Array.isArray(playlist.songs)
         ? playlist.songs
         : [];
 
-    const songs = allSongs.filter(song =>
-        playlistSongIds.includes(song.id)
-    );
+    const songs = playlistSongIds
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
 
     mainHeader.style.display = "none";
 
+
     setMiniHeader(
         playlist.name || "Playlist",
-        `${songs.length}&nbsp;&nbsp;Songs Found`
+        `${songs.length}&nbsp;&nbsp;Songs Found`,
+        true
     );
+
+
+    const reorderBtn = document.getElementById("playlistReorderBtn");
+
+    if(reorderBtn){
+
+        reorderBtn.onclick = async function(){
+
+    // ==========================
+    // REORDER MODE ON
+    // ==========================
+
+    if(!playlistReorderMode){
+
+        playlistReorderMode = true;
+        playlistReorderChanged = false;
+
+        playlistReorderOriginalOrder = [...playlistSongIds];
+        playlistReorderCurrentOrder = [...playlistSongIds];
+
+        // මෙතන Done කරන්න එපා
+        this.innerHTML = `
+            <i class="fa-solid fa-arrow-down-up"></i>
+            Reorder
+        `;
+
+        renderSongsGrid(songs, "search");
+
+        return;
+    }
+
+
+    // ==========================
+    // NOTHING CHANGED
+    // ==========================
+
+    if(!playlistReorderChanged){
+
+        playlistReorderMode = false;
+
+        this.innerHTML = `
+            <i class="fa-solid fa-arrow-down-up"></i>
+            Reorder
+        `;
+
+        renderSongsGrid(songs, "search");
+
+        return;
+    }
+
+
+    // ==========================
+    // SAVE
+    // ==========================
+
+    const grid = document.getElementById("playlistSongsGrid");
+
+    if(!grid) return;
+
+    const newOrder = Array.from(
+        grid.querySelectorAll(".playlist-reorder-item")
+    ).map(item => item.dataset.songId);
+
+
+    try{
+
+        this.disabled = true;
+
+        this.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Saving
+        `;
+
+        await updateDoc(
+            doc(db, "playlists", selectedPlaylist),
+            {
+                songs: newOrder
+            }
+        );
+
+        const localPlaylist = allPlaylists.find(
+            p => p.id === selectedPlaylist
+        );
+
+        if(localPlaylist){
+            localPlaylist.songs = [...newOrder];
+        }
+
+        playlistReorderCurrentOrder = [...newOrder];
+
+        playlistReorderOriginalOrder = [];
+
+        playlistReorderChanged = false;
+
+        playlistReorderMode = false;
+
+        this.disabled = false;
+
+        this.innerHTML = `
+            <i class="fa-solid fa-arrow-down-up"></i>
+            Reorder
+        `;
+
+        const updatedSongs = newOrder
+            .map(songId =>
+                allSongs.find(song =>
+                    String(song.id) === String(songId)
+                )
+            )
+            .filter(Boolean);
+
+        renderSongsGrid(updatedSongs, "search");
+
+
+    }catch(error){
+
+        console.error(
+            "Playlist reorder save failed:",
+            error
+        );
+
+        this.disabled = false;
+
+        this.innerHTML = `
+            <i class="fa-solid fa-arrow-down-up"></i>
+            Reorder
+        `;
+
+        showError(
+    "Playlist Reorder Error !",
+    "Playlist එකේ සින්දු අනුපිළිවෙල save කිරීමට නොහැකි විය&nbsp;&nbsp;!"
+);
+
+    }
+
+};
+
+    }
+
 
     renderSongsGrid(songs, "search");
 
 }
 
 
+function exitPlaylistReorderMode(){
+
+    playlistReorderMode = false;
+
+    playlistReorderOriginalOrder = [];
+    playlistReorderCurrentOrder = [];
+
+    const btn = document.getElementById("playlistReorderBtn");
+
+    if(btn){
+        btn.innerHTML = `
+            <i class="fa-solid fa-arrow-down-up"></i>
+            Reorder
+        `;
+    }
+
+}
 
 function loadRecentlyAdded() {
 
@@ -3173,6 +3641,10 @@ function refreshCurrentPage() {
 
     refreshTimer = setTimeout(() => {
 
+        // Firebase update / song update නිසා
+        // එකම tab එක refresh වෙනවා.
+        preserveScrollPosition = true;
+
         switch (currentPage) {
 
             case "songs":
@@ -3228,6 +3700,10 @@ function refreshCurrentPage() {
                 break;
 
         }
+
+        requestAnimationFrame(() => {
+            preserveScrollPosition = false;
+        });
 
     }, 50);
 
