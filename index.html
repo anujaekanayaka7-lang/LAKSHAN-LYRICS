@@ -124,7 +124,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .main-header-info{font-size:12px;font-weight:500;color:#94a3b8;line-height:1;margin-bottom:2px;}
 
 /* Mini Header*/
-.mini-header{display:flex;align-items:flex-end;gap:14px;min-height:42px;}
+.mini-header{display:flex;align-items:flex-end;gap:14px;min-height:42px;width:100%;}
 .mini-header-title{font-size:18px;font-weight:700;color:#111827;line-height:1;margin-left:10px;margin-bottom:14px;}
 .mini-header-info{font-size:12px;font-weight:500;color:#94a3b8;line-height:1;margin-bottom:15px;}
 
@@ -507,98 +507,38 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .admin-name{font-size:14px;font-weight:700;color:#222}
 .admin-info small{font-size:12px;color:#777}
 
-.playlist-reorder-btn{
-    /* ===== Button Size ===== */
-    width:60px;
-    height:25px;
+/* =========================================================
+   DESKTOP PLAYLIST REORDER
+========================================================= */
+.playlist-reorder-btn {display: flex;margin-left: auto;margin-right: 6px;margin-bottom: 10px;height: 28px;padding: 0 12px;border: 1px solid #d8dee7;border-radius: 9px;background: #ffffff;color: #64748b;font-size: 11px;font-weight: 700;cursor: pointer;align-items: center;justify-content: center;gap: 6px;transition: .18s ease;}
+.playlist-reorder-btn:hover {background: #f8fafc;border-color: #536379;color: #64748b;}
+.playlist-reorder-btn.active {background: #ffffff;border-color: #536379;color: #64748b;}
 
-    /* ===== Button Position ===== */
-    margin-left:auto;
-    margin-top:0px;
-    margin-bottom:5px;
+/* Drag Handle */
+.song-drag-handle {display: none;position: absolute;top: 10px;right: 10px;width: 26px;height: 26px;align-items: center;justify-content: center;border-radius: 7px;background: #f1f5f9;color: #94a3b8;cursor: grab;z-index: 5;}
+.song-drag-handle:active {cursor: grabbing;}
 
-    /* ===== Button Style ===== */
-    background:#ffd043;
-    color:#111;
-    border:none;
-    border-radius:8px;
+/* Reorder Mode */
+.songs-grid.playlist-reorder-active .song-card {position: relative;cursor: default;}
+.songs-grid.playlist-reorder-active .song-drag-handle {display: flex;}
+.songs-grid.playlist-reorder-active .song-card:hover {transform: none;}
 
-    /* ===== Text ===== */
-    font-size:12px;
-    font-weight:500;
+/* =========================================================
+   PLAYLIST DRAG VISUAL
+========================================================= */
+.song-card.sortable-ghost {opacity: 0.30 !important;border: 2px dashed #94a3b8 !important;background: #f8fafc !important;}
+.song-card.sortable-chosen {box-shadow:0 8px 25px rgba(0,0,0,.12) !important;}
 
-    /* ===== Layout ===== */
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-
-    /* ===== Other ===== */
-    cursor:pointer;
-    white-space:nowrap;
-    flex-shrink:0;
-
-    /* Smooth hover */
-    transition:
-        background .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
-}
+/* Desktop dragged card */
+.song-card.sortable-drag {opacity: 1 !important;z-index: 9999 !important;cursor: grabbing !important;background: #ffffff !important;transform: scale(1.03) !important;box-shadow:0 18px 40px rgba(0,0,0,.22) !important;}
 
 
-/* ===== Hover ===== */
-.playlist-reorder-btn:hover{
-    background:#e0ad00;
-    transform:translateY(-2px);
-}
+/* =========================================================
+   MOBILE / CAPACITOR DRAGGED SONG
+========================================================= */
 
+.sortable-fallback {opacity: 1 !important;visibility: visible !important;display: block !important;position: fixed !important;z-index: 999999 !important;pointer-events: none !important;box-sizing: border-box !important;background: #ffffff !important;color: inherit !important;border-radius: 12px !important;box-shadow:0 18px 45px rgba(0, 0, 0, .28) !important;transform:scale(1.03) !important;overflow: hidden !important;}
 
-/* ===== Click ===== */
-.playlist-reorder-btn:active{
-    transform:translateY(0) scale(.97);
-}
-
-.playlist-reorder-item{
-    position:relative;
-    cursor:grab;
-    box-sizing:border-box;
-    overflow:hidden;
-}
-
-.playlist-reorder-item:active{
-    cursor:grabbing;
-}
-
-.playlist-reorder-item.dragging{
-    opacity:.55;
-    transform:scale(.98);
-}
-
-.playlist-drag-handle{
-    position:absolute;
-    left:10px;
-    top:50%;
-    transform:translateY(-50%);
-
-    width:24px;
-    height:24px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:#f4c430;
-    font-size:15px;
-
-    pointer-events:none;
-    z-index:2;
-}
-
-/* Reorder mode එකේ text එක handle එකට වැටෙන්නේ නැති වෙන්න */
-.playlist-reorder-item .song-title,
-.playlist-reorder-item .artist-name{
-    margin-left:38px;
-}
 
 @media (max-width:768px){ 
 
@@ -797,7 +737,22 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 .audio-play-btn{display:flex;align-items:center;justify-content:center;width:46px;height:30px;border:none;border-radius:14px;background:#050505;color:#fff;font-size:15px;cursor:pointer;transition:.2s}
 .audio-play-btn:hover{background:#111827;transform:scale(1.05)}
 
+.song-card.sortable-ghost {opacity: 0.35 !important;visibility: visible !important;display: block !important;border: 2px dashed #94a3b8 !important;background: #f8fafc !important;}
 
+.songs-grid.playlist-reorder-active
+.song-card {position: relative;}
+
+/* =========================================================
+   MOBILE VISIBLE DRAG CLONE
+========================================================= */
+.playlist-mobile-drag-clone {position: fixed !important;display: block !important;visibility: visible !important;opacity: 1 !important;z-index: 9999999 !important;pointer-events: none !important;box-sizing: border-box !important;background: #ffffff !important;border-radius: 12px !important;box-shadow:0 15px 40px rgba(0, 0, 0, .30) !important;transform:scale(1.04) !important;overflow: hidden !important;}
+
+/* Keep everything inside the dragged card visible */
+.playlist-mobile-drag-clone * {visibility: visible !important;}
+
+/* Don't allow cloned handle to interfere */
+.playlist-mobile-drag-clone
+.song-drag-handle {pointer-events: none !important;}
 
 }
 
@@ -1810,7 +1765,7 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script type="module">
 
@@ -1895,9 +1850,10 @@ let unsubscribeSongs = null;
 let preserveScrollPosition = false;
 let previousPage = currentPage;
 let playlistReorderMode = false;
-let playlistReorderOriginalOrder = [];
-let playlistReorderCurrentOrder = [];
-let playlistReorderChanged = false;
+let playlistSortable = null;
+let playlistReorderDirty = false;
+let playlistOriginalOrder = [];
+let playlistJustDragged = false;
 
 window.playlists = [];
 window.karaokeYT = null;
@@ -2062,16 +2018,45 @@ function setMainHeader(title, info){
 
 }
 
-/* ==== Mini Header ==== */
-function setMiniHeader(title = "", info = "", showReorder = false){
+/* ====Mini Header== */
+/* =========================================================
+   MINI HEADER
+========================================================= */
 
-    if(!title && !info){
+function setMiniHeader(title = "", info = "") {
+
+    if (!title && !info) {
+
         miniHeader.style.display = "none";
         miniHeader.innerHTML = "";
+
+        playlistReorderMode = false;
+
+        if (playlistSortable) {
+            playlistSortable.destroy();
+            playlistSortable = null;
+        }
+
         return;
     }
 
     miniHeader.style.display = "block";
+
+    const isPlaylistPage =
+        currentPage === "playlistSongs";
+
+    const reorderButton = isPlaylistPage
+        ? `
+            <button
+                id="playlistReorderBtn"
+                class="playlist-reorder-btn"
+                onclick="togglePlaylistReorderMode()"
+            >
+                <i class="fas fa-arrows-up-down"></i>
+                <span>Reorder</span>
+            </button>
+        `
+        : "";
 
     miniHeader.innerHTML = `
         <div class="mini-header">
@@ -2084,23 +2069,11 @@ function setMiniHeader(title = "", info = "", showReorder = false){
                 ${info}
             </div>
 
-            ${
-                showReorder
-                ? `
-                    <button
-                        class="playlist-reorder-btn"
-                        id="playlistReorderBtn"
-                        type="button"
-                    >
-                        <i class="fa-solid fa-arrow-down-up"></i>
-                        Reorder
-                    </button>
-                `
-                : ""
-            }
+            ${reorderButton}
 
         </div>
     `;
+
 }
 
 function setContentWrapperSize(page){
@@ -2288,6 +2261,20 @@ window.showSongsPage = function() {
 
 function renderSongsGrid(songs, wrapper = "home") {
 
+    /* ==========================================
+       Destroy old Sortable instance
+    ========================================== */
+
+    if (playlistSortable) {
+        playlistSortable.destroy();
+        playlistSortable = null;
+    }
+
+
+    /* ==========================================
+       Empty Songs
+    ========================================== */
+
     if (songs.length === 0) {
 
         setContent(`
@@ -2308,163 +2295,1101 @@ function renderSongsGrid(songs, wrapper = "home") {
     }
 
 
-    let html = '<div class="songs-grid" id="playlistSongsGrid">';
+    /* ==========================================
+       Songs Grid
+    ========================================== */
 
-    songs.forEach((song, index) => {
+    let html = `
+        <div class="songs-grid ${
+
+            currentPage === "playlistSongs" &&
+playlistReorderMode
+
+                ? "playlist-reorder-active"
+
+                : ""
+
+        }">
+    `;
+
+
+    songs.forEach(song => {
 
         html += `
+
             <div
-                class="song-card ${playlistReorderMode ? "playlist-reorder-item" : ""}"
+                class="song-card"
                 data-song-id="${song.id}"
-                data-index="${index}"
-                ${playlistReorderMode ? 'draggable="true"' : ""}
-                onclick="${playlistReorderMode ? "" : `openSongPopup('${song.id}')`}"
+                onclick="handleSongCardClick(event, '${song.id}')"
             >
 
-                ${
-                    playlistReorderMode
-                    ? `
-                        <div class="playlist-drag-handle">
-                            <i class="fa-solid fa-grip-vertical"></i>
-                        </div>
-                    `
-                    : ""
-                }
+                <!-- Drag Handle -->
+                <div
+                    class="song-drag-handle"
+                    title="Drag to reorder"
+                >
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+
 
                 <div class="song-title">
                     ${song.title || "Untitled"}
                 </div>
+
 
                 <div class="artist-name">
                     ${song.artist || "Unknown Artist"}
                 </div>
 
             </div>
+
         `;
 
     });
 
+
     html += '</div>';
+
+
+    /* ==========================================
+       Render
+    ========================================== */
 
     setContent(html, wrapper);
 
 
-    // ==========================
-    // Reorder Drag & Drop
-    // ==========================
+    /* ==========================================
+       Initialize Sortable
+    ========================================== */
 
-    if(playlistReorderMode){
+    if (
+        currentPage === "playlistSongs" &&
+playlistReorderMode
+    ) {
 
-        const grid = document.getElementById("playlistSongsGrid");
+        requestAnimationFrame(() => {
 
-        if(!grid) return;
-
-        let draggedItem = null;
-
-
-        grid.querySelectorAll(".playlist-reorder-item").forEach(item => {
-
-            item.addEventListener("dragstart", function(e){
-
-                draggedItem = this;
-
-                this.classList.add("dragging");
-
-                e.dataTransfer.effectAllowed = "move";
-                e.dataTransfer.setData(
-                    "text/plain",
-                    this.dataset.songId
-                );
-
-            });
-
-
-            item.addEventListener("dragend", function(){
-
-    this.classList.remove("dragging");
-
-    draggedItem = null;
-
-    // Current grid order එක ලබාගන්න
-    const currentOrder = Array.from(
-        grid.querySelectorAll(".playlist-reorder-item")
-    ).map(item => item.dataset.songId);
-
-    // Original order එකත් එක්ක compare කරන්න
-    const orderChanged =
-        JSON.stringify(currentOrder) !==
-        JSON.stringify(playlistReorderOriginalOrder);
-
-    if(orderChanged){
-
-        playlistReorderChanged = true;
-
-        const reorderBtn =
-            document.getElementById("playlistReorderBtn");
-
-        if(reorderBtn){
-
-            reorderBtn.innerHTML = `
-                <i class="fa-solid fa-check"></i>
-                Done
-            `;
-
-        }
-
-    }else{
-
-        playlistReorderChanged = false;
-
-        const reorderBtn =
-            document.getElementById("playlistReorderBtn");
-
-        if(reorderBtn){
-
-            reorderBtn.innerHTML = `
-                <i class="fa-solid fa-arrow-down-up"></i>
-                Reorder
-            `;
-
-        }
-
-    }
-
-});
-
-            item.addEventListener("dragover", function(e){
-
-                e.preventDefault();
-
-                if(!draggedItem || draggedItem === this)
-                    return;
-
-                const rect = this.getBoundingClientRect();
-
-                const middle = rect.top + rect.height / 2;
-
-                if(e.clientY < middle){
-
-                    grid.insertBefore(
-                        draggedItem,
-                        this
-                    );
-
-                }else{
-
-                    grid.insertBefore(
-                        draggedItem,
-                        this.nextSibling
-                    );
-
-                }
-
-            });
+            initPlaylistSortable();
 
         });
 
     }
 
 }
+
+/* =========================================================
+   SONG CARD CLICK
+========================================================= */
+
+window.handleSongCardClick = function(event, songId) {
+
+    /* -----------------------------------------
+       REORDER MODE
+       Do not open songs while reordering
+    ----------------------------------------- */
+
+    if (playlistReorderMode) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Just finished dragging
+       Prevent accidental click
+    ----------------------------------------- */
+
+    if (playlistJustDragged) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Drag handle clicked
+    ----------------------------------------- */
+
+    if (
+        event.target &&
+        event.target.closest &&
+        event.target.closest(
+            ".song-drag-handle"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       Normal song click
+    ----------------------------------------- */
+
+    openSongPopup(songId);
+
+};
+
+/* =========================================================
+   PLAYLIST SORTABLE JS
+========================================================= */
+
+function initPlaylistSortable() {
+
+    /* -----------------------------------------
+       Safety checks
+    ----------------------------------------- */
+
+    if (currentPage !== "playlistSongs") {
+        return;
+    }
+
+    if (!playlistReorderMode) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Get visible playlist grid
+    ----------------------------------------- */
+
+    const grids = [
+        ...document.querySelectorAll(
+            ".songs-grid"
+        )
+    ];
+
+    const grid = grids.find(grid => {
+
+        const style =
+            window.getComputedStyle(grid);
+
+        return (
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            grid.getClientRects().length > 0
+        );
+
+    });
+
+
+    if (!grid) {
+
+        console.warn(
+            "Playlist grid not found"
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       Destroy previous Sortable
+    ----------------------------------------- */
+
+    if (playlistSortable) {
+
+        playlistSortable.destroy();
+
+        playlistSortable = null;
+
+    }
+
+
+    /* -----------------------------------------
+       Device
+    ----------------------------------------- */
+
+    const isMobile =
+        window.innerWidth <= 768;
+
+
+    /* -----------------------------------------
+       Create Sortable
+    ----------------------------------------- */
+
+    playlistSortable = new Sortable(
+        grid,
+        {
+
+            /* ---------------------------------
+               Animation
+            --------------------------------- */
+
+            animation:
+                isMobile ? 220 : 180,
+
+            easing:
+                "cubic-bezier(0.2, 0.8, 0.2, 1)",
+
+
+            /* ---------------------------------
+               Drag classes
+            --------------------------------- */
+
+            ghostClass:
+                "sortable-ghost",
+
+            chosenClass:
+                "sortable-chosen",
+
+            dragClass:
+                "sortable-drag",
+
+
+            /* ---------------------------------
+               Drag ONLY from handle
+            --------------------------------- */
+
+            handle:
+                ".song-drag-handle",
+
+            draggable:
+                ".song-card",
+
+
+            /* ---------------------------------
+               Mobile touch
+            --------------------------------- */
+
+            delay:
+                isMobile ? 220 : 0,
+
+            delayOnTouchOnly:
+                true,
+
+            touchStartThreshold:
+                isMobile ? 8 : 5,
+
+            fallbackTolerance:
+                isMobile ? 4 : 3,
+
+
+            /* ---------------------------------
+               IMPORTANT
+
+               Desktop = normal drag
+               Mobile = fallback drag
+            --------------------------------- */
+
+            forceFallback:
+                isMobile,
+
+            fallbackOnBody:
+                true,
+
+            fallbackClass:
+                "sortable-fallback",
+
+            fallbackTolerance:
+    3,
+
+            scroll:
+    true,
+
+scrollSensitivity:
+    80,
+
+scrollSpeed:
+    12,
+
+
+bubbleScroll:
+    true,
+
+
+            /* ---------------------------------
+               Position
+            --------------------------------- */
+
+            swapThreshold:
+                0.65,
+
+            invertSwap:
+                false,
+
+
+            /* ---------------------------------
+               START
+            --------------------------------- */
+
+            onStart: function(evt) {
+
+    grid.classList.add(
+        "playlist-dragging"
+    );
+
+    document.body.classList.add(
+        "playlist-is-dragging"
+    );
+
+    playlistJustDragged = true;
+
+
+    /* =========================================
+       MOBILE DRAG VISUAL
+    ========================================= */
+
+    if (isMobile) {
+
+        const original =
+            evt.item;
+
+
+        /* Remove old clone */
+
+        const oldClone =
+            document.querySelector(
+                ".playlist-mobile-drag-clone"
+            );
+
+        if (oldClone) {
+            oldClone.remove();
+        }
+
+
+        /* Create visible clone */
+
+        const clone =
+            original.cloneNode(true);
+
+
+        clone.classList.add(
+            "playlist-mobile-drag-clone"
+        );
+
+
+        /* Get original position */
+
+        const rect =
+            original.getBoundingClientRect();
+
+
+        /* Copy size */
+
+        clone.style.width =
+            rect.width + "px";
+
+        clone.style.height =
+            rect.height + "px";
+
+
+        /* Copy position */
+
+        clone.style.left =
+            rect.left + "px";
+
+        clone.style.top =
+            rect.top + "px";
+
+
+        /* Add to body */
+
+        document.body.appendChild(
+            clone
+        );
+
+
+        /* Save reference */
+
+        window.playlistMobileDragClone =
+            clone;
+
+
+        /* Hide the clone's own drag handle */
+
+        const cloneHandle =
+            clone.querySelector(
+                ".song-drag-handle"
+            );
+
+        if (cloneHandle) {
+
+            cloneHandle.style.pointerEvents =
+                "none";
+
+        }
+
+
+        /* =====================================
+           Follow finger
+        ===================================== */
+
+        const moveClone =
+            function(event) {
+
+                const touch =
+                    event.touches[0];
+
+                if (!touch) {
+                    return;
+                }
+
+
+                clone.style.left =
+                    (
+                        touch.clientX -
+                        rect.width / 2
+                    ) + "px";
+
+
+                clone.style.top =
+                    (
+                        touch.clientY -
+                        25
+                    ) + "px";
+
+            };
+
+
+        window.playlistMobileDragMove =
+            moveClone;
+
+
+        document.addEventListener(
+            "touchmove",
+            moveClone,
+            {
+                passive: true
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       Mobile vibration
+    ========================================= */
+
+    if (
+        isMobile &&
+        navigator.vibrate
+    ) {
+
+        try {
+
+            navigator.vibrate(20);
+
+        } catch (e) {}
+
+    }
+
+},
+
+
+            /* ---------------------------------
+               MOVE
+            --------------------------------- */
+
+            onMove: function(evt) {
+
+                return true;
+
+            },
+
+
+            /* ---------------------------------
+               END
+            --------------------------------- */
+
+            onEnd: function(evt) {
+/* =========================================
+   Remove mobile drag clone
+========================================= */
+
+if (isMobile) {
+
+    if (
+        window.playlistMobileDragClone
+    ) {
+
+        window.playlistMobileDragClone.remove();
+
+        window.playlistMobileDragClone =
+            null;
+
+    }
+
+
+    if (
+        window.playlistMobileDragMove
+    ) {
+
+        document.removeEventListener(
+            "touchmove",
+            window.playlistMobileDragMove
+        );
+
+        window.playlistMobileDragMove =
+            null;
+
+    }
+
+}
+                grid.classList.remove(
+                    "playlist-dragging"
+                );
+
+                document.body.classList.remove(
+                    "playlist-is-dragging"
+                );
+
+
+                /* -----------------------------
+                   Current order
+                ----------------------------- */
+
+                const currentOrder = [
+
+                    ...grid.querySelectorAll(
+                        ".song-card"
+                    )
+
+                ].map(card =>
+                    String(
+                        card.dataset.songId
+                    )
+                );
+
+
+                /* -----------------------------
+                   Check whether changed
+                ----------------------------- */
+
+                playlistReorderDirty =
+                    JSON.stringify(
+                        currentOrder
+                    ) !==
+                    JSON.stringify(
+                        playlistOriginalOrder
+                    );
+
+
+                console.log(
+                    "Playlist new order:",
+                    currentOrder
+                );
+
+                console.log(
+                    "Playlist dirty:",
+                    playlistReorderDirty
+                );
+
+
+                /* -----------------------------
+                   Prevent accidental click
+                ----------------------------- */
+
+                setTimeout(() => {
+
+                    playlistJustDragged =
+                        false;
+
+                }, 350);
+
+            }
+
+        }
+    );
+
+
+    console.log(
+        "Playlist Sortable initialized:",
+        isMobile
+            ? "MOBILE"
+            : "DESKTOP"
+    );
+
+}
+
+/* =========================================================
+   SAVE PLAYLIST SONG ORDER
+========================================================= */
+
+async function savePlaylistSongOrder() {
+
+    /* -----------------------------------------
+       Check selected playlist
+    ----------------------------------------- */
+
+    if (!selectedPlaylist) {
+
+        throw new Error(
+            "No playlist selected"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       Find visible playlist grid
+    ----------------------------------------- */
+
+    const grids = [
+        ...document.querySelectorAll(
+            ".songs-grid"
+        )
+    ];
+
+    const grid = grids.find(grid => {
+
+        const style =
+            window.getComputedStyle(grid);
+
+        return (
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            grid.getClientRects().length > 0
+        );
+
+    });
+
+
+    if (!grid) {
+
+        throw new Error(
+            "Playlist grid not found"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       Get current song order
+    ----------------------------------------- */
+
+    const orderedSongIds = [
+
+        ...grid.querySelectorAll(
+            ".song-card"
+        )
+
+    ].map(card =>
+        String(
+            card.dataset.songId
+        )
+    );
+
+
+    console.log(
+        "Saving playlist order:",
+        orderedSongIds
+    );
+
+
+    /* -----------------------------------------
+       Find playlist
+    ----------------------------------------- */
+
+    const playlist =
+        allPlaylists.find(
+            p =>
+                String(p.id) ===
+                String(selectedPlaylist)
+        );
+
+
+    if (!playlist) {
+
+        throw new Error(
+            "Playlist not found"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       Preserve existing song ID type
+       -----------------------------------------
+       
+       If Firebase originally contains
+       numbers → keep numbers.
+
+       If Firebase originally contains
+       strings → keep strings.
+    ----------------------------------------- */
+
+    const originalSongs =
+        Array.isArray(playlist.songs)
+            ? playlist.songs
+            : [];
+
+
+    const originalMap = new Map(
+
+        originalSongs.map(songId => [
+
+            String(songId),
+
+            songId
+
+        ])
+
+    );
+
+
+    const firebaseOrder =
+        orderedSongIds.map(songId => {
+
+            return originalMap.has(songId)
+
+                ? originalMap.get(songId)
+
+                : songId;
+
+        });
+
+
+    /* -----------------------------------------
+       SAVE TO FIREBASE
+    ----------------------------------------- */
+
+    await updateDoc(
+
+        doc(
+            db,
+            "playlists",
+            selectedPlaylist
+        ),
+
+        {
+            songs: firebaseOrder
+        }
+
+    );
+
+
+    /* -----------------------------------------
+       Update local playlist
+    ----------------------------------------- */
+
+    playlist.songs =
+        [...firebaseOrder];
+
+
+    /* -----------------------------------------
+       Update original order
+    ----------------------------------------- */
+
+    playlistOriginalOrder =
+        orderedSongIds.map(String);
+
+
+    playlistReorderDirty =
+        false;
+
+
+    console.log(
+        "Playlist order saved successfully."
+    );
+
+}
+
+/* =========================================================
+   TOGGLE PLAYLIST REORDER MODE
+========================================================= */
+
+window.togglePlaylistReorderMode = async function() {
+
+    /* -----------------------------------------
+       Only playlist songs page
+    ----------------------------------------- */
+
+    if (currentPage !== "playlistSongs") {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Get visible grid
+    ----------------------------------------- */
+
+    const grids = [
+        ...document.querySelectorAll(
+            ".songs-grid"
+        )
+    ];
+
+    const grid = grids.find(grid => {
+
+        const style =
+            window.getComputedStyle(grid);
+
+        return (
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            grid.getClientRects().length > 0
+        );
+
+    });
+
+
+    /* =====================================================
+       REORDER → ON
+    ===================================================== */
+
+    if (!playlistReorderMode) {
+
+        if (!grid) {
+
+            console.warn(
+                "Playlist grid not found"
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------
+           Turn ON
+        ------------------------------------- */
+
+        playlistReorderMode = true;
+
+        playlistReorderDirty = false;
+
+
+        /* -------------------------------------
+           Save original order
+        ------------------------------------- */
+
+        playlistOriginalOrder = [
+
+            ...grid.querySelectorAll(
+                ".song-card"
+            )
+
+        ].map(card =>
+            String(
+                card.dataset.songId
+            )
+        );
+
+
+        console.log(
+            "Original playlist order:",
+            playlistOriginalOrder
+        );
+
+
+        /* -------------------------------------
+           Add reorder class
+        ------------------------------------- */
+
+        grid.classList.add(
+            "playlist-reorder-active"
+        );
+
+
+        /* -------------------------------------
+           Change button
+        ------------------------------------- */
+
+        const button =
+            document.getElementById(
+                "playlistReorderBtn"
+            );
+
+
+        if (button) {
+
+            button.classList.add(
+                "active"
+            );
+
+            button.innerHTML = `
+                <i class="fas fa-check"></i>
+                <span>Done</span>
+            `;
+
+        }
+
+
+        /* -------------------------------------
+           Initialize Sortable
+        ------------------------------------- */
+
+        requestAnimationFrame(() => {
+
+            initPlaylistSortable();
+
+        });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       REORDER → DONE
+    ===================================================== */
+
+
+    /* -----------------------------------------
+       No changes
+    ----------------------------------------- */
+
+    if (!playlistReorderDirty) {
+
+        playlistReorderMode = false;
+
+
+        if (playlistSortable) {
+
+            playlistSortable.destroy();
+
+            playlistSortable = null;
+
+        }
+
+
+        if (grid) {
+
+            grid.classList.remove(
+                "playlist-reorder-active"
+            );
+
+        }
+
+
+        const button =
+            document.getElementById(
+                "playlistReorderBtn"
+            );
+
+
+        if (button) {
+
+            button.classList.remove(
+                "active"
+            );
+
+            button.innerHTML = `
+                <i class="fas fa-arrows-up-down"></i>
+                <span>Reorder</span>
+            `;
+
+        }
+
+
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Saving
+    ----------------------------------------- */
+
+    const button =
+        document.getElementById(
+            "playlistReorderBtn"
+        );
+
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.innerHTML = `
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Saving...</span>
+        `;
+
+    }
+
+
+    try {
+
+        /* -------------------------------------
+           STEP 4 will save Firebase here
+        ------------------------------------- */
+
+        await savePlaylistSongOrder();
+
+
+        /* -------------------------------------
+           Exit reorder mode
+        ------------------------------------- */
+
+        playlistReorderMode = false;
+
+        playlistReorderDirty = false;
+
+
+        if (playlistSortable) {
+
+            playlistSortable.destroy();
+
+            playlistSortable = null;
+
+        }
+
+
+        if (grid) {
+
+            grid.classList.remove(
+                "playlist-reorder-active"
+            );
+
+        }
+
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.classList.remove(
+                "active"
+            );
+
+            button.innerHTML = `
+                <i class="fas fa-arrows-up-down"></i>
+                <span>Reorder</span>
+            `;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Playlist reorder save error:",
+            error
+        );
+
+
+        /* -------------------------------------
+           Keep reorder mode ON
+        ------------------------------------- */
+
+        playlistReorderMode = true;
+
+        playlistReorderDirty = true;
+
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.classList.add(
+                "active"
+            );
+
+            button.innerHTML = `
+                <i class="fas fa-check"></i>
+                <span>Done</span>
+            `;
+
+        }
+
+
+        alert(
+            "Playlist order save කිරීමට නොහැකි විය. නැවත Done ඔබන්න."
+        );
+
+    }
+
+};
 
 loadSongs();
 loadPlaylists();
@@ -3304,196 +4229,78 @@ window.showPlaylistsPage = function(){
 
 window.showPlaylistSongs = function(playlistId){
 
-    const playlist = allPlaylists.find(p => p.id === playlistId);
+    const playlist =
+        allPlaylists.find(
+            p => p.id === playlistId
+        );
 
-    if(!playlist) return;
+    if (!playlist) return;
+
 
     selectedPlaylist = playlistId;
+
     currentPage = "playlistSongs";
 
-    const playlistSongIds = Array.isArray(playlist.songs)
-        ? playlist.songs
-        : [];
 
-    const songs = playlistSongIds
-        .map(songId =>
-            allSongs.find(song =>
-                String(song.id) === String(songId)
-            )
-        )
-        .filter(Boolean);
-
-
-    mainHeader.style.display = "none";
-
-
-    setMiniHeader(
-        playlist.name || "Playlist",
-        `${songs.length}&nbsp;&nbsp;Songs Found`,
-        true
-    );
-
-
-    const reorderBtn = document.getElementById("playlistReorderBtn");
-
-    if(reorderBtn){
-
-        reorderBtn.onclick = async function(){
-
-    // ==========================
-    // REORDER MODE ON
-    // ==========================
-
-    if(!playlistReorderMode){
-
-        playlistReorderMode = true;
-        playlistReorderChanged = false;
-
-        playlistReorderOriginalOrder = [...playlistSongIds];
-        playlistReorderCurrentOrder = [...playlistSongIds];
-
-        // මෙතන Done කරන්න එපා
-        this.innerHTML = `
-            <i class="fa-solid fa-arrow-down-up"></i>
-            Reorder
-        `;
-
-        renderSongsGrid(songs, "search");
-
-        return;
-    }
-
-
-    // ==========================
-    // NOTHING CHANGED
-    // ==========================
-
-    if(!playlistReorderChanged){
-
-        playlistReorderMode = false;
-
-        this.innerHTML = `
-            <i class="fa-solid fa-arrow-down-up"></i>
-            Reorder
-        `;
-
-        renderSongsGrid(songs, "search");
-
-        return;
-    }
-
-
-    // ==========================
-    // SAVE
-    // ==========================
-
-    const grid = document.getElementById("playlistSongsGrid");
-
-    if(!grid) return;
-
-    const newOrder = Array.from(
-        grid.querySelectorAll(".playlist-reorder-item")
-    ).map(item => item.dataset.songId);
-
-
-    try{
-
-        this.disabled = true;
-
-        this.innerHTML = `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Saving
-        `;
-
-        await updateDoc(
-            doc(db, "playlists", selectedPlaylist),
-            {
-                songs: newOrder
-            }
-        );
-
-        const localPlaylist = allPlaylists.find(
-            p => p.id === selectedPlaylist
-        );
-
-        if(localPlaylist){
-            localPlaylist.songs = [...newOrder];
-        }
-
-        playlistReorderCurrentOrder = [...newOrder];
-
-        playlistReorderOriginalOrder = [];
-
-        playlistReorderChanged = false;
-
-        playlistReorderMode = false;
-
-        this.disabled = false;
-
-        this.innerHTML = `
-            <i class="fa-solid fa-arrow-down-up"></i>
-            Reorder
-        `;
-
-        const updatedSongs = newOrder
-            .map(songId =>
-                allSongs.find(song =>
-                    String(song.id) === String(songId)
-                )
-            )
-            .filter(Boolean);
-
-        renderSongsGrid(updatedSongs, "search");
-
-
-    }catch(error){
-
-        console.error(
-            "Playlist reorder save failed:",
-            error
-        );
-
-        this.disabled = false;
-
-        this.innerHTML = `
-            <i class="fa-solid fa-arrow-down-up"></i>
-            Reorder
-        `;
-
-        showError(
-    "Playlist Reorder Error !",
-    "Playlist එකේ සින්දු අනුපිළිවෙල save කිරීමට නොහැකි විය&nbsp;&nbsp;!"
-);
-
-    }
-
-};
-
-    }
-
-
-    renderSongsGrid(songs, "search");
-
-}
-
-
-function exitPlaylistReorderMode(){
+    /* Reset reorder mode */
 
     playlistReorderMode = false;
 
-    playlistReorderOriginalOrder = [];
-    playlistReorderCurrentOrder = [];
+    if (playlistSortable) {
 
-    const btn = document.getElementById("playlistReorderBtn");
+        playlistSortable.destroy();
 
-    if(btn){
-        btn.innerHTML = `
-            <i class="fa-solid fa-arrow-down-up"></i>
-            Reorder
-        `;
+        playlistSortable = null;
+
     }
 
-}
+
+    const playlistSongIds =
+        Array.isArray(playlist.songs)
+            ? playlist.songs
+            : [];
+
+
+    /* IMPORTANT:
+       Keep Firebase array order
+    */
+
+    const songs = playlistSongIds
+
+        .map(songId =>
+
+            allSongs.find(song =>
+                String(song.id) ===
+                String(songId)
+            )
+
+        )
+
+        .filter(Boolean);
+
+
+    mainHeader.style.display =
+        "none";
+
+
+    setMiniHeader(
+
+        playlist.name ||
+        "Playlist",
+
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+
+    );
+
+
+    renderSongsGrid(
+        songs,
+        "search"
+    );
+
+};
+
+
 
 function loadRecentlyAdded() {
 
