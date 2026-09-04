@@ -1430,6 +1430,19 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
     autocapitalize="off"
     spellcheck="false">
 
+<div id="weddingKaraokeGroup" style="display:none;">
+
+    <input
+        id="weddingKaraokeLink"
+        class="form-input"
+        placeholder="Wedding Karaoke Song Link"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false">
+
+</div>
+
 <input
     id="originalLink"
     class="form-input"
@@ -3591,6 +3604,13 @@ window.renderCategoriesList = function (categories) {
 
 window.showCategorySongs = function (category) {
     selectedCategory = category;
+
+    if (String(category).trim().toLowerCase() === "wedding songs") {
+        openedFromWeddingSongs = true;
+    } else {
+        openedFromWeddingSongs = false;
+    }
+
     currentPage = "categorySongs";
     const songs = allSongs.filter(song =>
         Array.isArray(song.category)
@@ -3630,22 +3650,17 @@ window.showCategoriesPage = function () {
     mainHeader.classList.add("mobile-gap");
 }
 
-    const categories = [...categoriesList].sort((a, b) => {
+    const categoryOrder = [
+    "NEW KARAOKE SONGS",
+    "OLD KARAOKE SONGS",
+    "NEW KARAOKE DANCE",
+    "OLD KARAOKE DANCE",
+    "WEDDING SONGS"
+];
 
-        const aCount = allSongs.filter(song =>
-            Array.isArray(song.category)
-                ? song.category.includes(a)
-                : song.category === a
-        ).length;
-
-        const bCount = allSongs.filter(song =>
-            Array.isArray(song.category)
-                ? song.category.includes(b)
-                : song.category === b
-        ).length;
-
-        return bCount - aCount; // වැඩි songs තියෙන එක උඩට
-    });
+const categories = [...categoriesList].sort((a, b) => {
+    return categoryOrder.indexOf(a) - categoryOrder.indexOf(b);
+});
 
     setMainHeader(
         "Categories",
@@ -4809,8 +4824,12 @@ window.showAddSongPage = function () {
     document.getElementById("songTitle").value = "";
     document.getElementById("artistName").value = "";
     document.getElementById("karaokeLink").value = "";
+    document.getElementById("weddingKaraokeLink").value = "";
     document.getElementById("originalLink").value = "";
     document.getElementById("lyrics").value = "";
+
+    // Hide Wedding Karaoke input
+    document.getElementById("weddingKaraokeGroup").style.display = "none";
 
     // Hide Artist Suggestions
     artistSuggestions.innerHTML = "";
@@ -4882,19 +4901,51 @@ function loadCategoryDropdown(){
 
 }
 
+
 document.getElementById("categoryOptions").addEventListener("change", function () {
 
     const checked = this.querySelectorAll("input:checked");
     const placeholder = document.getElementById("categoryPlaceholder");
 
     if (checked.length === 0) {
+
         placeholder.textContent = "Select Categories";
+
+    } else if (checked.length === 1) {
+
+        placeholder.textContent =
+            checked[0].dataset.name;
+
+    } else {
+
+        placeholder.textContent =
+            `${checked.length} Selected`;
+
     }
-    else if (checked.length === 1) {
-        placeholder.textContent = checked[0].dataset.name;
-    }
-    else {
-        placeholder.textContent = `${checked.length} Selected`;
+
+
+    // ==========================================
+    // Wedding Songs selected?
+    // ==========================================
+
+    const weddingSelected = [...checked].some(checkbox =>
+        (checkbox.dataset.name || "").trim().toLowerCase() === "wedding songs"
+    );
+
+
+    // ==========================================
+    // Show / Hide Wedding Karaoke Link
+    // ==========================================
+
+    const weddingKaraokeGroup =
+        document.getElementById("weddingKaraokeGroup");
+
+
+    if (weddingKaraokeGroup) {
+
+        weddingKaraokeGroup.style.display =
+            weddingSelected ? "block" : "none";
+
     }
 
 });
@@ -5712,6 +5763,7 @@ window.saveSong = async function () {
     const title = document.getElementById("songTitle").value.trim();
     const artist = document.getElementById("artistName").value.trim();
     const karaokeYoutube = document.getElementById("karaokeLink").value.trim();
+    const weddingKaraokeYoutube = document.getElementById("weddingKaraokeLink").value.trim();
     const originalYoutube = document.getElementById("originalLink").value.trim();
     const lyrics = document.getElementById("lyrics").value.trim();
 
@@ -5769,6 +5821,21 @@ if (!karaokeYoutube) {
     showError(
         "Karaoke Link Required !",
         "කරුණාකර Karaoke Link එක ඇතුළත් කරන්න&nbsp;&nbsp;!"
+    );
+
+    return;
+}
+
+const hasWeddingCategory =
+    category.some(name =>
+        name.trim().toLowerCase() === "wedding songs"
+    );
+
+if (hasWeddingCategory && !weddingKaraokeYoutube) {
+
+    showError(
+        "Wedding Karaoke Link Required !",
+        "කරුණාකර Wedding Karaoke Link එක ඇතුළත් කරන්න&nbsp;&nbsp;!"
     );
 
     return;
@@ -5839,6 +5906,7 @@ if (duplicateSong) {
                 artist: artist,
                 category: category,
                 karaokeYoutube: karaokeYoutube,
+                weddingKaraokeYoutube: weddingKaraokeYoutube,
                 lyrics: lyrics,
                 originalYoutube: originalYoutube,
                 playlist: playlistId,
@@ -6635,25 +6703,51 @@ window.editLyrics = function () {
         artistSuggestions.innerHTML = "";
         artistSuggestions.style.display = "none";
         document.getElementById("karaokeLink").value = song.karaokeYoutube || "";
+        document.getElementById("weddingKaraokeLink").value = song.weddingKaraokeYoutube || "";
         document.getElementById("originalLink").value = song.originalYoutube || "";
         document.getElementById("lyrics").value = song.lyrics || "";
 
         setTimeout(() => {
 
             // ==========================
-            // Categories
-            // ==========================
-            document.querySelectorAll("#categoryOptions input").forEach(cb => {
-                cb.checked = (song.category || []).includes(cb.dataset.name);
-            });
+// Categories
+// ==========================
+document.querySelectorAll("#categoryOptions input").forEach(cb => {
 
-            const selectedCategories = [...document.querySelectorAll("#categoryOptions input:checked")]
-                .map(cb => cb.dataset.name);
+    cb.checked = (song.category || []).includes(cb.dataset.name);
 
-            document.getElementById("categoryPlaceholder").textContent =
-                selectedCategories.length
-                    ? selectedCategories.join(", ")
-                    : "Select Categories";
+});
+
+
+const selectedCategories =
+    [...document.querySelectorAll("#categoryOptions input:checked")]
+        .map(cb => cb.dataset.name);
+
+
+document.getElementById("categoryPlaceholder").textContent =
+    selectedCategories.length
+        ? selectedCategories.join(", ")
+        : "Select Categories";
+
+
+// ==========================
+// Wedding Karaoke Link
+// ==========================
+const weddingKaraokeGroup =
+    document.getElementById("weddingKaraokeGroup");
+
+const weddingSelected =
+    selectedCategories.some(category =>
+        (category || "").trim().toLowerCase() === "wedding songs"
+    );
+
+
+if (weddingKaraokeGroup) {
+
+    weddingKaraokeGroup.style.display =
+        weddingSelected ? "block" : "none";
+
+}
 
             // ==========================
             // Playlist
@@ -7040,12 +7134,16 @@ async function getSongDocRef(songId) {
     return null;
 }
 
-
+let openedFromWeddingSongs = false;
 function loadYoutubePlayers(song) {
 
     const originalLink = song.originalYoutube || "";
-    const karaokeLink = song.karaokeYoutube || "";
-
+    const isWeddingCategory =
+    currentPage === "categorySongs" &&
+    String(selectedCategory || "").trim().toLowerCase() === "wedding songs";
+    const karaokeLink = isWeddingCategory
+    ? (song.weddingKaraokeYoutube || song.karaokeYoutube || "")
+    : (song.karaokeYoutube || "");
     const originalAudio = document.getElementById("originalAudio");
     const karaokeAudio = document.getElementById("karaokeAudio");
 
@@ -8597,7 +8695,7 @@ function resetPlayers() {
 // LOCK SCREEN
 // ===========================
 
-const APP_PASSWORD = "";
+const APP_PASSWORD = "2002";
 const loadingFill = document.getElementById("loadingFill");
 const loadingPercent = document.getElementById("loadingPercent");
 const loadingText = document.getElementById("loadingText");
@@ -8768,7 +8866,7 @@ window.addEventListener("load", () => {
    Admin Password System
 ========================================= */
 
-const ADMIN_PASSWORD = ""; // මෙතන password එක වෙනස් කරන්න
+const ADMIN_PASSWORD = "2002"; // මෙතන password එක වෙනස් කරන්න
 
 let adminSuccessCallback = null;
 
