@@ -544,7 +544,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
     margin: 20px 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     transform: translateY(-15px);
 }
 
@@ -559,7 +559,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
     padding: 15px 18px;
 
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #dbdde0;
     border-radius: 10px;
 
     cursor: pointer;
@@ -618,7 +618,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 
 .notes-artist-group {
     padding: 16px 8px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #cdcfd3;
 }
 
 .notes-artist-title {
@@ -646,7 +646,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 
 .notes-song-title {
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 550;
     color: #1f2937;
     margin-bottom: 6px;
 }
@@ -3782,19 +3782,25 @@ window.showArtistSongs = function(artist){
             .includes(artist)
     );
 
-    // Main Header එක හංගන්න
+    // Main Header hide
     mainHeader.style.display = "none";
 
-    // Mini Header එක පෙන්නන්න
+    // Search bar → Search songs...
+    updateSearchUI();
+
+    // Clear old artist search text
+    searchInput.value = "";
+    searchInputMobile.value = "";
+
+    // Artist mini header
     setMiniHeader(
         artist,
         `${songs.length}&nbsp;&nbsp;Songs Found`
     );
-    
-    renderSongsGrid(songs, "search");
-    
 
-}
+    // Show artist songs
+    renderSongsGrid(songs, "search");
+};
 
 window.showArtistsPage = function () {
 
@@ -3868,7 +3874,13 @@ window.showCategorySongs = function (category) {
     }
 
     currentPage = "categorySongs";
-    const songs = allSongs.filter(song =>
+
+searchInput.value = "";
+searchInputMobile.value = "";
+
+updateSearchUI();
+
+const songs = allSongs.filter(song =>
         Array.isArray(song.category)
             ? song.category.includes(category)
             : song.category === category
@@ -4511,6 +4523,11 @@ window.showPlaylistSongs = function(playlistId){
     selectedPlaylist = playlistId;
 
     currentPage = "playlistSongs";
+
+searchInput.value = "";
+searchInputMobile.value = "";
+
+updateSearchUI();
 
 
     /* Reset reorder mode */
@@ -6464,15 +6481,26 @@ window.showFavouriteSongs = function (favouriteId) {
 
     currentPage = "favouriteSongs";
 
-    const favourite = allFavourites.find(f => f.id === favouriteId);
+    const favourite = allFavourites.find(
+        f => f.id === favouriteId
+    );
 
     if (!favourite) return;
 
     const songs = allSongs.filter(song =>
-        (favourite.songs || []).includes(song.id)
+        (favourite.songs || []).some(
+            id => String(id) === String(song.id)
+        )
     );
 
     mainHeader.style.display = "none";
+
+    // Search bar → Search songs...
+    updateSearchUI();
+
+    // Old search text clear කරන්න
+    searchInput.value = "";
+    searchInputMobile.value = "";
 
     setMiniHeader(
         favourite.name,
@@ -6482,7 +6510,6 @@ window.showFavouriteSongs = function (favouriteId) {
     renderSongsGrid(songs, "search");
 
 }
-
 
 window.showManageFavouritePage = function () {
 
@@ -8291,6 +8318,56 @@ if (window.innerWidth <= 768) {
 
     switch (currentPage) {
 
+
+        case "artistSongs": {
+
+    const artistSongs = allSongs.filter(song =>
+        (song.artist || "")
+            .split("/")
+            .map(name => name.trim())
+            .includes(selectedArtist)
+    );
+
+    const filteredSongs = artistSongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        const lyrics = String(song.lyrics || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            title.includes(keyword) ||
+            artist.includes(keyword) ||
+            lyrics.includes(keyword)
+        );
+
+    });
+
+    // Artist name + filtered song count
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        selectedArtist,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
+
+    renderSongsGrid(filteredSongs, "search");
+
+    break;
+}
+
         case "songs":
 
             setMainHeader(
@@ -8313,6 +8390,48 @@ if (window.innerWidth <= 768) {
             );
 
             break;
+
+        case "categorySongs": {
+
+    const categorySongs = allSongs.filter(song =>
+        Array.isArray(song.category)
+            ? song.category.includes(selectedCategory)
+            : song.category === selectedCategory
+    );
+
+    setMiniHeader(
+        selectedCategory,
+        `${categorySongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderSongsGrid(categorySongs, "search");
+
+    break;
+}
+
+case "favouriteSongs": {
+
+    const favourite = allFavourites.find(
+        f => f.id === selectedFavourite
+    );
+
+    if (!favourite) break;
+
+    const songs = allSongs.filter(song =>
+        (favourite.songs || []).some(
+            id => String(id) === String(song.id)
+        )
+    );
+
+    setMiniHeader(
+        favourite.name,
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderSongsGrid(songs, "search");
+
+    break;
+}
 
         case "categories":
 
@@ -8342,6 +8461,43 @@ if (window.innerWidth <= 768) {
             renderCategoriesList(categories);
 
             break;
+
+        
+        case "playlistSongs": {
+
+    const playlist = allPlaylists.find(
+        p => String(p.id) === String(selectedPlaylist)
+    );
+
+    if (!playlist) break;
+
+    const playlistSongs = Array.isArray(playlist.songs)
+        ? playlist.songs
+            .map(songId =>
+                allSongs.find(song =>
+                    String(song.id) === String(songId)
+                )
+            )
+            .filter(Boolean)
+        : [];
+
+    setMiniHeader(
+        playlist.name,
+        `${playlistSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (playlistSongs.length === 0) {
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
+
+    renderSongsGrid(
+        playlistSongs,
+        "search"
+    );
+
+    break;
+}
 
         case "playlists":
 
@@ -8975,6 +9131,41 @@ case "notesCategorySongs": {
     break;
 }
 
+
+        case "artistSongs": {
+
+    const artistSongs = allSongs.filter(song =>
+        (song.artist || "")
+            .split("/")
+            .map(name => name.trim())
+            .includes(selectedArtist)
+    );
+
+    const filteredSongs = artistSongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        return title.startsWith(keyword);
+
+    });
+
+    setMiniHeader(
+        selectedArtist,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
+
+    renderSongsGrid(filteredSongs, "search");
+
+    break;
+}
+
         case "artists": {
 
             const filteredArtists = [...artistsList]
@@ -8996,6 +9187,47 @@ case "notesCategorySongs": {
 
             break;
         }
+
+        case "categorySongs": {
+
+    const categorySongs = allSongs.filter(song =>
+        Array.isArray(song.category)
+            ? song.category.includes(selectedCategory)
+            : song.category === selectedCategory
+    );
+
+    const filteredSongs = categorySongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword)
+        );
+
+    });
+
+    setMiniHeader(
+        selectedCategory,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
+
+    renderSongsGrid(filteredSongs, "search");
+
+    break;
+}
+
 
         case "categories": {
 
@@ -9036,6 +9268,60 @@ case "notesCategorySongs": {
             break;
         }
 
+        
+        case "playlistSongs": {
+
+    const playlist = allPlaylists.find(
+        p => String(p.id) === String(selectedPlaylist)
+    );
+
+    if (!playlist) break;
+
+    const playlistSongs = Array.isArray(playlist.songs)
+        ? playlist.songs
+            .map(songId =>
+                allSongs.find(song =>
+                    String(song.id) === String(songId)
+                )
+            )
+            .filter(Boolean)
+        : [];
+
+    const filteredSongs = playlistSongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword)
+        );
+
+    });
+
+    setMiniHeader(
+        playlist.name,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
+
+    renderSongsGrid(
+        filteredSongs,
+        "search"
+    );
+
+    break;
+}
+
         case "playlists": {
 
             const filteredPlaylists = allPlaylists.filter(playlist =>
@@ -9058,6 +9344,60 @@ case "notesCategorySongs": {
 
             break;
         }
+
+case "favouriteSongs": {
+
+    const favourite = allFavourites.find(
+        f => f.id === selectedFavourite
+    );
+
+    if (!favourite) break;
+
+    const favouriteSongs = allSongs.filter(song =>
+        (favourite.songs || []).some(
+            id => String(id) === String(song.id)
+        )
+    );
+
+    const filteredSongs = favouriteSongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword)
+        );
+
+    });
+
+    setMiniHeader(
+        favourite.name,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+
+        showEmptyState(
+            "No Songs Found",
+            "search"
+        );
+
+        break;
+    }
+
+    renderSongsGrid(
+        filteredSongs,
+        "search"
+    );
+
+    break;
+}
 
         case "favourites": {
 
@@ -9597,10 +9937,25 @@ function updateSearchUI() {
         noResults = "No Artists Found";
         break;
 
+   case "artistSongs":
+    placeholder = "Search songs...";
+    noResults = "No Songs Found";
+    break;
+
     case "categories":
-        placeholder = "Search categories...";
-        noResults = "No Categories Found";
-        break;
+    placeholder = "Search categories...";
+    noResults = "No Categories Found";
+    break;
+
+    case "categorySongs":
+    placeholder = "Search songs...";
+    noResults = "No Songs Found";
+    break;
+
+case "playlistSongs":
+    placeholder = "Search songs...";
+    noResults = "No Songs Found";
+    break;
 
     case "playlists":
         placeholder = "Search playlists...";
@@ -9611,6 +9966,11 @@ function updateSearchUI() {
         placeholder = "Search favourites...";
         noResults = "No Favourites Found";
         break;
+
+case "favouriteSongs":
+    placeholder = "Search songs...";
+    noResults = "No Songs Found";
+    break;
 
     case "notes":
     placeholder = "Search notes...";
@@ -9628,12 +9988,12 @@ case "notesCategoryLinks":
     break;
 
 case "notesPlaylistSongs":
-    placeholder = "Search songs, artists or links...";
+    placeholder = "Search songs...";
     noResults = "No Songs Found";
     break;
 
 case "notesCategorySongs":
-    placeholder = "Search songs, artists or links...";
+    placeholder = "Search songs...";
     noResults = "No Songs Found";
     break;
 
@@ -10162,7 +10522,10 @@ window.openNotesCategoryLinks = function () {
 window.showNotesCategorySongs = function (category) {
 
     currentPage = "notesCategorySongs";
-    currentNotesCategory = category;
+currentNotesCategory = category;
+
+updateSearchUI();
+clearSearch();
 
     const songs = allSongs.filter(song =>
         Array.isArray(song.category)
@@ -10330,7 +10693,10 @@ window.showNotesPlaylistSongs = function (playlistId) {
     if (!playlist) return;
 
     currentPage = "notesPlaylistSongs";
-    currentNotesPlaylistId = playlistId;
+currentNotesPlaylistId = playlistId;
+
+updateSearchUI();
+clearSearch();
 
     const playlistSongIds = Array.isArray(playlist.songs)
         ? playlist.songs
