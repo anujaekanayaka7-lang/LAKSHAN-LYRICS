@@ -2119,6 +2119,54 @@ function updateNetworkStatus(html, className) {
 
 }
 
+let capacitorNetworkConnected = navigator.onLine;
+
+async function initCapacitorNetwork() {
+
+    if (!window.Capacitor) return;
+
+    const Network = window.Capacitor.Plugins.Network;
+
+    if (!Network) return;
+
+    const status = await Network.getStatus();
+
+    capacitorNetworkConnected = status.connected;
+
+    await Network.addListener(
+        "networkStatusChange",
+        status => {
+
+            capacitorNetworkConnected = status.connected;
+
+            if (status.connected) {
+
+                updateNetworkStatus(
+                    `
+                    <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                    Syncing
+                    `,
+                    "status-pill connecting"
+                );
+
+                loadSongs();
+
+            } else {
+
+                updateNetworkStatus(
+                    `
+                    <i class="fa-solid fa-circle-xmark"></i>
+                    Offline
+                    `,
+                    "status-pill offline"
+                );
+
+            }
+
+        }
+    );
+}
+
 function loadSongs() {
 
     // Syncing
@@ -2140,7 +2188,7 @@ unsubscribeSongs = onSnapshot(
 
         (snapshot) => {
 
-    if (snapshot.metadata.fromCache && !navigator.onLine) {
+    if (snapshot.metadata.fromCache && !capacitorNetworkConnected) {
 
         updateNetworkStatus(
             `
@@ -3611,7 +3659,7 @@ window.togglePlaylistReorderMode = async function() {
     }
 
 };
-
+initCapacitorNetwork();
 loadSongs();
 loadPlaylists();
 loadRecentlyAdded();
