@@ -539,6 +539,205 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 
 .sortable-fallback {opacity: 1 !important;visibility: visible !important;display: block !important;position: fixed !important;z-index: 999999 !important;pointer-events: none !important;box-sizing: border-box !important;background: #ffffff !important;color: inherit !important;border-radius: 12px !important;box-shadow:0 18px 45px rgba(0, 0, 0, .28) !important;transform:scale(1.03) !important;overflow: hidden !important;}
 
+.notes-menu {
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform: translateY(-15px);
+}
+
+.notes-menu-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 15px 18px;
+
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.notes-menu-card:hover {
+    transform: translateY(-4px);
+    border-color: #8b5cf6;
+    box-shadow: 0 12px 25px rgba(0,0,0,.08);
+}
+
+.notes-menu-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f1f5f9;
+    color: #475569;
+
+    font-size: 17px;
+    flex-shrink: 0;
+}
+
+.notes-menu-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.notes-menu-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.notes-menu-info {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.notes-menu-arrow {
+    color: #94a3b8;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.notes-links-list {
+    width: 100%;
+}
+
+.notes-artist-group {
+    padding: 16px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.notes-artist-title {
+    font-size: 16px;
+    font-weight: 1000;
+    color: #030007;
+    margin-bottom: 12px;
+    letter-spacing: .3px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.notes-song {
+    padding: 11px 13px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    background: #fafafa;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.notes-song:hover {
+    background: #eeeeee;
+    transform: translateX(2px);
+}
+
+.notes-song-title {
+    font-size: 15px;
+    font-weight: 400;
+    color: #1f2937;
+    margin-bottom: 6px;
+}
+
+.notes-karaoke-link {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 2px 0;
+
+    font-size: 13px;
+    font-weight: 400;
+    color: #183afc !important;
+
+    text-decoration: underline !important;
+    text-decoration-color: #183afc;
+    text-underline-offset: 3px;
+
+    word-break: break-all;
+    text-align: left;
+    cursor: pointer;
+
+    transition: background .2s ease;
+}
+
+.notes-karaoke-link:hover {
+    background: #eeeeee;
+    color: #183afc !important;
+    text-decoration: underline !important;
+}
+
+.notes-title-row {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.notes-song-title {
+    flex: 1;
+    min-width: 0;
+
+    font-size: 15px;
+    font-weight: 400;
+    color: #1f2937;
+    margin-bottom: 6px;
+}
+
+.notes-copy-btn {
+    flex: 0 0 22px;
+
+    width: 22px;
+    height: 22px;
+
+    margin: -3px 0 0 0;
+    padding: 0;
+
+    border: none;
+    border-radius: 5px;
+
+    background: transparent;
+    color: #64748b;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.notes-copy-btn:hover {
+    background: #e2e8f0;
+    color: #111827;
+}
+
+.notes-copy-btn svg {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2;
+}
+
+.notes-link-cards .category-icon {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+
+
 
 @media (max-width:768px){ 
 
@@ -928,6 +1127,13 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
                             <i data-lucide="history"></i><span>Recently Played</span>
                         </a>
                     </li>
+
+                    <li class="nav-item" id="navNotes">
+                        <a href="javascript:void(0)" onclick="showNotesPage()">
+                             <i data-lucide="notebook-pen"></i> <span>Notes [ Karaoke Links ]</span>
+                        </a>
+                    </li>
+
                 </ul>
 
                 <hr class="sidebar-divider">
@@ -1614,7 +1820,7 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
             + Add New Favourite
         </button>
 
-        <input id="favouriteSearch"
+        <put id="favouriteSearch"
                name="favourite_search_input"
                type="text"
                class="artist-search"
@@ -1837,6 +2043,8 @@ let allPlaylists = [];
 let selectedArtist = null;
 let selectedPlaylist = null;
 let currentPage = "songs";
+let currentNotesPlaylistId = null;
+let currentNotesCategory = "";
 let selectedCategory = null;
 let refreshTimer = null;
 let allCategories = [];
@@ -8109,6 +8317,204 @@ if (window.innerWidth <= 768) {
 
             break;
 
+
+        case "notes": {
+
+    setMainHeader(
+        "Notes",
+        "2&nbsp;&nbsp;Note Types"
+    );
+
+    setContent(`
+        <div class="notes-menu">
+
+            <div class="notes-menu-card"
+                 onclick="openNotesPlaylistLinks()">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="list-music"></i>
+                </div>
+
+                <div class="notes-menu-text">
+                    <div class="notes-menu-title">
+                        Playlist Links
+                    </div>
+
+                    <div class="notes-menu-info">
+                        Playlist karaoke links
+                    </div>
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+
+            <div class="notes-menu-card"
+                 onclick="openNotesCategoryLinks()">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="folder"></i>
+                </div>
+
+                <div class="notes-menu-text">
+                    <div class="notes-menu-title">
+                        Category Links
+                    </div>
+
+                    <div class="notes-menu-info">
+                        Category karaoke links
+                    </div>
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+
+        </div>
+    `, "list");
+
+    lucide.createIcons();
+
+    break;
+}
+
+case "notesPlaylistLinks": {
+
+    setMainHeader(
+        "Playlist Links",
+        `${allPlaylists.length}&nbsp;&nbsp;Playlists Found`
+    );
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    allPlaylists.forEach(playlist => {
+
+        const count = Array.isArray(playlist.songs)
+            ? playlist.songs.length
+            : 0;
+
+        html += createCollectionCard(
+            (playlist.name || "Untitled Playlist").toUpperCase(),
+            count,
+            '<i class="fas fa-list"></i>',
+            `showNotesPlaylistSongs('${playlist.id}')`
+        );
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+
+    lucide.createIcons();
+
+    break;
+}
+
+case "notesCategoryLinks": {
+
+    const categoryOrder = [
+        "NEW KARAOKE SONGS",
+        "OLD KARAOKE SONGS",
+        "NEW KARAOKE DANCE",
+        "OLD KARAOKE DANCE",
+        "WEDDING SONGS"
+    ];
+
+    const categories = [...categoriesList].sort((a, b) => {
+        return categoryOrder.indexOf(a) - categoryOrder.indexOf(b);
+    });
+
+    setMainHeader(
+        "Category Links",
+        `${categories.length}&nbsp;&nbsp;Categories Found`
+    );
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    categories.forEach(category => {
+
+        const count = allSongs.filter(song =>
+            Array.isArray(song.category)
+                ? song.category.includes(category)
+                : song.category === category
+        ).length;
+
+        html += createCollectionCard(
+            category.toUpperCase(),
+            count,
+            '<i class="far fa-folder"></i>',
+            `showNotesCategorySongs('${category.replace(/'/g, "\\'")}')`
+        );
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+
+    lucide.createIcons();
+
+    break;
+}
+
+case "notesPlaylistSongs": {
+
+    const playlist = allPlaylists.find(
+        p => String(p.id) === String(currentNotesPlaylistId)
+    );
+
+    if (!playlist) break;
+
+    const playlistSongIds = Array.isArray(playlist.songs)
+        ? playlist.songs
+        : [];
+
+    const songs = playlistSongIds
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        playlist.name || "Playlist",
+        `${songs.length}&nbsp;&nbsp;Songs`
+    );
+
+    renderNotesLinks(songs, false);
+
+    break;
+}
+
+
+case "notesCategorySongs": {
+
+    const songs = allSongs.filter(song =>
+        Array.isArray(song.category)
+            ? song.category.includes(currentNotesCategory)
+            : song.category === currentNotesCategory
+    );
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        currentNotesCategory,
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderNotesLinks(
+        songs,
+        currentNotesCategory === "WEDDING SONGS"
+    );
+
+    break;
+}
         case "recentlyAdded":
 
             setMainHeader(
@@ -8152,6 +8558,341 @@ if (window.innerWidth <= 768) {
     // ===============================
     switch (currentPage) {
 
+        case "notes": {
+
+    const filteredPlaylists = allPlaylists.filter(playlist =>
+        String(playlist.name || "")
+            .toLowerCase()
+            .startsWith(keyword)
+    );
+
+    const filteredCategories = categoriesList.filter(category =>
+        String(category || "")
+            .toLowerCase()
+            .startsWith(keyword)
+    );
+
+    const filteredSongs = allSongs.filter(song => {
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        const categoryNames = Array.isArray(song.category)
+            ? song.category
+            : [song.category];
+
+        const categoryMatch = categoryNames.some(category =>
+            String(category || "")
+                .toLowerCase()
+                .trim()
+                .startsWith(keyword)
+        );
+
+        const normalLink = String(
+            song.karaokeYoutube || ""
+        )
+            .toLowerCase()
+            .trim();
+
+        const weddingLink = String(
+            song.weddingKaraokeYoutube || ""
+        )
+            .toLowerCase()
+            .trim();
+
+        const playlistMatch = allPlaylists.some(playlist =>
+            Array.isArray(playlist.songs) &&
+            playlist.songs.some(id =>
+                String(id) === String(song.id)
+            ) &&
+            String(playlist.name || "")
+                .toLowerCase()
+                .trim()
+                .startsWith(keyword)
+        );
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword) ||
+            categoryMatch ||
+            playlistMatch ||
+            normalLink.includes(keyword) ||
+            weddingLink.includes(keyword)
+        );
+    });
+
+    const totalResults =
+        filteredPlaylists.length +
+        filteredCategories.length +
+        filteredSongs.length;
+
+    setMainHeader(
+        "Notes",
+        `${totalResults.toLocaleString()}&nbsp;&nbsp;Results Found`
+    );
+
+    if (totalResults === 0) {
+        showEmptyState("No Notes Found", "list");
+        break;
+    }
+
+    let html = `<div class="notes-menu">`;
+
+    // ===============================
+    // PLAYLISTS
+    // ===============================
+    filteredPlaylists.forEach(playlist => {
+
+        const count = Array.isArray(playlist.songs)
+            ? playlist.songs.length
+            : 0;
+
+        html += `
+            <div class="notes-menu-card"
+                 onclick="showNotesPlaylistSongs('${playlist.id}')">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="list-music"></i>
+                </div>
+
+                <div class="notes-menu-text">
+
+                    <div class="notes-menu-title">
+                        ${playlist.name || "Untitled Playlist"}
+                    </div>
+
+                    <div class="notes-menu-info">
+                        ${count}&nbsp;&nbsp;Songs
+                    </div>
+
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+        `;
+    });
+
+    // ===============================
+    // CATEGORIES
+    // ===============================
+    filteredCategories.forEach(category => {
+
+        html += `
+            <div class="notes-menu-card"
+                 onclick="showNotesCategorySongs('${category.replace(/'/g, "\\'")}')">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="folder"></i>
+                </div>
+
+                <div class="notes-menu-text">
+
+                    <div class="notes-menu-title">
+                        ${category}
+                    </div>
+
+                    <div class="notes-menu-info">
+                        Category Links
+                    </div>
+
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+        `;
+    });
+
+    // ===============================
+    // SONG RESULTS
+    // ===============================
+    filteredSongs.forEach(song => {
+
+        // Find Playlist
+        const playlist = allPlaylists.find(pl =>
+            Array.isArray(pl.songs) &&
+            pl.songs.some(id =>
+                String(id) === String(song.id)
+            )
+        );
+
+        const playlistName = playlist
+            ? playlist.name
+            : "";
+
+        // =================================
+        // NORMAL KARAOKE LINK CARD
+        // =================================
+        if (song.karaokeYoutube) {
+
+            html += `
+                <div class="notes-song">
+
+                    <div class="notes-title-row">
+
+                        <div class="notes-song-title">
+                            ${song.title || "Untitled"}
+                        </div>
+
+                        <button
+                            class="notes-copy-btn"
+                            onclick="copyNotesLink(
+                                '${song.karaokeYoutube.replace(/'/g, "\\'")}',
+                                this
+                            ); event.stopPropagation();"
+                            title="Copy Link"
+                        >
+                            <i data-lucide="copy"></i>
+                        </button>
+
+                    </div>
+
+                    <div style="
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:6px;
+">
+    Artist: <span style="font-weight:550;">
+    ${song.artist || "Unknown Artist"}
+</span>
+</div>
+
+                    ${
+                        playlistName
+                            ? `
+                            <div style="
+                                font-size:12px;
+                                color:#64748b;
+                                margin-bottom:6px;
+                            ">
+                                Playlist:
+                                <span style="font-weight:550;">
+    ${playlistName}
+</span>
+                            </div>
+                            `
+                            : ""
+                    }
+
+                    <div style="
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:6px;
+    white-space:normal;
+">
+    Karaoke&nbsp;&nbsp;Link:
+    <a
+        href="${song.karaokeYoutube}"
+        target="_blank"
+        onclick="event.stopPropagation();"
+        style="
+            display:inline !important;
+            color:#2563eb;
+            text-decoration:underline;
+            cursor:pointer;
+        "
+    >${song.karaokeYoutube}</a>
+</div>
+
+</div>
+            `;
+        }
+
+        // =================================
+        // WEDDING KARAOKE LINK CARD
+        // =================================
+        if (song.weddingKaraokeYoutube) {
+
+            html += `
+                <div class="notes-song">
+
+                    <div class="notes-title-row">
+
+                        <div class="notes-song-title">
+                            ${song.title || "Untitled"}
+                        </div>
+
+                        <button
+                            class="notes-copy-btn"
+                            onclick="copyNotesLink(
+                                '${song.weddingKaraokeYoutube.replace(/'/g, "\\'")}',
+                                this
+                            ); event.stopPropagation();"
+                            title="Copy Link"
+                        >
+                            <i data-lucide="copy"></i>
+                        </button>
+
+                    </div>
+
+                    <div style="
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:6px;
+">
+    Artist: <span style="font-weight:550;">
+    ${song.artist || "Unknown Artist"}
+</span>
+</div>
+
+                    ${
+                        playlistName
+                            ? `
+                            <div style="
+                                font-size:12px;
+                                color:#64748b;
+                                margin-bottom:6px;
+                            ">
+                                Playlist:
+                                <span style="font-weight:550;">
+    ${playlistName}
+</span>
+                            </div>
+                            `
+                            : ""
+                    }
+
+                    <div style="
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:6px;
+">
+    Wedding&nbsp;&nbsp;Karaoke&nbsp;&nbsp;Link:
+    <a
+        href="${song.weddingKaraokeYoutube}"
+        target="_blank"
+        onclick="event.stopPropagation();"
+        style="
+            display:inline;
+            font-size:12px;
+            color:#2563eb;
+            text-decoration:underline;
+            cursor:pointer;
+        "
+    >${song.weddingKaraokeYoutube}</a>
+</div>
+
+</div>
+            `;
+        }
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+    lucide.createIcons();
+
+    break;
+}
         case "songs": {
 
     const filteredSongs = allSongs.filter(song => {
@@ -8395,6 +9136,202 @@ case "recentlyPlayed": {
     break;
 }
 
+case "notesPlaylistLinks": {
+
+    const filteredPlaylists = allPlaylists.filter(playlist =>
+        String(playlist.name || "")
+            .toLowerCase()
+            .startsWith(keyword)
+    );
+
+    setMainHeader(
+        "Playlist Links",
+        `${filteredPlaylists.length}&nbsp;&nbsp;Playlists Found`
+    );
+
+    if (filteredPlaylists.length === 0) {
+        showEmptyState("No Playlists Found", "list");
+        break;
+    }
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    filteredPlaylists.forEach(playlist => {
+
+        const count = Array.isArray(playlist.songs)
+            ? playlist.songs.length
+            : 0;
+
+        html += createCollectionCard(
+            (playlist.name || "Untitled Playlist").toUpperCase(),
+            count,
+            '<i class="fas fa-list"></i>',
+            `showNotesPlaylistSongs('${playlist.id}')`
+        );
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+    lucide.createIcons();
+
+    break;
+}
+
+
+case "notesCategoryLinks": {
+
+    const categoryOrder = [
+        "NEW KARAOKE SONGS",
+        "OLD KARAOKE SONGS",
+        "NEW KARAOKE DANCE",
+        "OLD KARAOKE DANCE",
+        "WEDDING SONGS"
+    ];
+
+    const filteredCategories = [...categoriesList]
+        .filter(category =>
+            category.toLowerCase().startsWith(keyword)
+        )
+        .sort((a, b) =>
+            categoryOrder.indexOf(a) - categoryOrder.indexOf(b)
+        );
+
+    setMainHeader(
+        "Category Links",
+        `${filteredCategories.length}&nbsp;&nbsp;Categories Found`
+    );
+
+    if (filteredCategories.length === 0) {
+        showEmptyState("No Categories Found", "list");
+        break;
+    }
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    filteredCategories.forEach(category => {
+
+        const count = allSongs.filter(song =>
+            Array.isArray(song.category)
+                ? song.category.includes(category)
+                : song.category === category
+        ).length;
+
+        html += createCollectionCard(
+            category.toUpperCase(),
+            count,
+            '<i class="far fa-folder"></i>',
+            `showNotesCategorySongs('${category.replace(/'/g, "\\'")}')`
+        );
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+    lucide.createIcons();
+
+    break;
+}
+
+
+case "notesPlaylistSongs": {
+
+    const playlist = allPlaylists.find(
+        p => String(p.id) === String(currentNotesPlaylistId)
+    );
+
+    if (!playlist) break;
+
+    const playlistSongIds = Array.isArray(playlist.songs)
+        ? playlist.songs
+        : [];
+
+    const songs = playlistSongIds
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    const filteredSongs = songs.filter(song => {
+
+        const title = String(song.title || "").toLowerCase();
+        const artist = String(song.artist || "").toLowerCase();
+        const link = String(song.karaokeYoutube || "").toLowerCase();
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword) ||
+            link.includes(keyword)
+        );
+    });
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        playlist.name || "Playlist",
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "list");
+        break;
+    }
+
+    renderNotesLinks(filteredSongs, false);
+
+    break;
+}
+
+
+case "notesCategorySongs": {
+
+    const songs = allSongs.filter(song =>
+        Array.isArray(song.category)
+            ? song.category.includes(currentNotesCategory)
+            : song.category === currentNotesCategory
+    );
+
+    const isWedding = currentNotesCategory === "WEDDING SONGS";
+
+    const filteredSongs = songs.filter(song => {
+
+        const title = String(song.title || "").toLowerCase();
+        const artist = String(song.artist || "").toLowerCase();
+
+        const link = String(
+            isWedding
+                ? (song.weddingKaraokeYoutube || song.karaokeYoutube || "")
+                : (song.karaokeYoutube || "")
+        ).toLowerCase();
+
+        return (
+            title.startsWith(keyword) ||
+            artist.startsWith(keyword) ||
+            link.includes(keyword)
+        );
+    });
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        currentNotesCategory,
+        `${filteredSongs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+        showEmptyState("No Songs Found", "list");
+        break;
+    }
+
+    renderNotesLinks(filteredSongs, isWedding);
+
+    break;
+}
+
     }
 
 }
@@ -8626,6 +9563,31 @@ function updateSearchUI() {
         placeholder = "Search favourites...";
         noResults = "No Favourites Found";
         break;
+
+    case "notes":
+    placeholder = "Search notes...";
+    noResults = "No Notes Found";
+    break;
+
+case "notesPlaylistLinks":
+    placeholder = "Search playlists...";
+    noResults = "No Playlists Found";
+    break;
+
+case "notesCategoryLinks":
+    placeholder = "Search categories...";
+    noResults = "No Categories Found";
+    break;
+
+case "notesPlaylistSongs":
+    placeholder = "Search songs, artists or links...";
+    noResults = "No Songs Found";
+    break;
+
+case "notesCategorySongs":
+    placeholder = "Search songs, artists or links...";
+    noResults = "No Songs Found";
+    break;
 
 }
 
@@ -8975,6 +9937,378 @@ adminPasswordModal.addEventListener("click", function (e) {
         });
 
     }
+
+window.showNotesPage = function () {
+
+    currentPage = "notes";
+
+    setActiveNav("navNotes");
+
+    if (typeof setActiveBottomNav === "function") {
+        setActiveBottomNav("");
+    }
+
+    updateSearchUI();
+    clearSearch();
+
+    mainHeader.style.display = "block";
+
+    setMiniHeader();
+
+    setMainHeader(
+        "Notes",
+        "2&nbsp;&nbsp;Note Types"
+    );
+
+    setContent(`
+        <div class="notes-menu">
+
+            <div class="notes-menu-card"
+                 onclick="openNotesPlaylistLinks()">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="list-music"></i>
+                </div>
+
+                <div class="notes-menu-text">
+                    <div class="notes-menu-title">
+                        Playlist Links
+                    </div>
+
+                    <div class="notes-menu-info">
+                        Playlist karaoke links
+                    </div>
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+
+
+            <div class="notes-menu-card"
+                 onclick="openNotesCategoryLinks()">
+
+                <div class="notes-menu-icon">
+                    <i data-lucide="folder"></i>
+                </div>
+
+                <div class="notes-menu-text">
+                    <div class="notes-menu-title">
+                        Category Links
+                    </div>
+
+                    <div class="notes-menu-info">
+                        Category karaoke links
+                    </div>
+                </div>
+
+                <i data-lucide="chevron-right"
+                   class="notes-menu-arrow"></i>
+
+            </div>
+
+        </div>
+    `, "list");
+
+    
+
+    lucide.createIcons();
+};
+
+window.openNotesPlaylistLinks = function () {
+
+    currentPage = "notesPlaylistLinks";
+
+    updateSearchUI();
+    clearSearch();
+
+    mainHeader.style.display = "block";
+
+    setMiniHeader();
+
+    setMainHeader(
+        "Playlist Links",
+        `${allPlaylists.length}&nbsp;&nbsp;Playlists Found`
+    );
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    allPlaylists.forEach(playlist => {
+
+        const count = Array.isArray(playlist.songs)
+            ? playlist.songs.length
+            : 0;
+
+        html += createCollectionCard(
+            (playlist.name || "Untitled Playlist").toUpperCase(),
+            count,
+            '<i class="fas fa-list"></i>',
+            `showNotesPlaylistSongs('${playlist.id}')`
+        );
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+
+    lucide.createIcons();
+};
+
+
+window.openNotesCategoryLinks = function () {
+
+    currentPage = "notesCategoryLinks";
+
+    updateSearchUI();
+    clearSearch();
+
+    mainHeader.style.display = "block";
+
+    setMiniHeader();
+
+    const categoryOrder = [
+        "NEW KARAOKE SONGS",
+        "OLD KARAOKE SONGS",
+        "NEW KARAOKE DANCE",
+        "OLD KARAOKE DANCE",
+        "WEDDING SONGS"
+    ];
+
+    const categories = [...categoriesList].sort((a, b) => {
+        return categoryOrder.indexOf(a) - categoryOrder.indexOf(b);
+    });
+
+    setMainHeader(
+        "Category Links",
+        `${categories.length}&nbsp;&nbsp;Categories Found`
+    );
+
+    let html = `<div class="categories-grid notes-link-cards">`;
+
+    categories.forEach(category => {
+
+        const count = allSongs.filter(song =>
+            Array.isArray(song.category)
+                ? song.category.includes(category)
+                : song.category === category
+        ).length;
+
+        html += createCollectionCard(
+    category.toUpperCase(),
+    count,
+    '<i class="far fa-folder"></i>',
+    `showNotesCategorySongs('${category.replace(/'/g, "\\'")}')`
+);
+
+    });
+
+    html += `</div>`;
+
+    setContent(html, "list");
+
+    lucide.createIcons();
+};
+
+window.showNotesCategorySongs = function (category) {
+
+    currentPage = "notesCategorySongs";
+    currentNotesCategory = category;
+
+    const songs = allSongs.filter(song =>
+        Array.isArray(song.category)
+            ? song.category.includes(category)
+            : song.category === category
+    );
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        category,
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderNotesLinks(
+    songs,
+    category === "WEDDING SONGS"
+);
+
+};
+
+function renderNotesLinks(songs, isWedding = false) {
+
+    let html = `<div class="notes-links-list">`;
+
+    const grouped = {};
+
+    songs.forEach(song => {
+
+        const artist = song.artist || "UNKNOWN ARTIST";
+
+        if (!grouped[artist]) {
+            grouped[artist] = [];
+        }
+
+        grouped[artist].push(song);
+    });
+
+
+    Object.keys(grouped).forEach(artist => {
+
+        html += `
+            <div class="notes-artist-group">
+
+                <div class="notes-artist-title">
+                    ${artist.toUpperCase()}
+                </div>
+        `;
+
+
+        grouped[artist].forEach(song => {
+
+            const links = [];
+
+if (isWedding) {
+
+    if (song.weddingKaraokeYoutube) {
+        links.push({
+            url: song.weddingKaraokeYoutube
+        });
+    }
+
+} else {
+
+    if (song.karaokeYoutube) {
+        links.push({
+            url: song.karaokeYoutube
+        });
+    }
+
+}
+
+if (links.length === 0) return;
+
+            html += `
+    <div class="notes-song">
+
+        <div class="notes-title-row">
+
+            <div class="notes-song-title">
+                ${song.title || "Untitled"}
+            </div>
+
+            <button
+                class="notes-copy-btn"
+                onclick="copyNotesLink('${links[0]?.url?.replace(/'/g, "\\'") || ""}', this); event.stopPropagation();"
+                title="Copy Link"
+            >
+                <i data-lucide="copy"></i>
+            </button>
+
+        </div>
+
+        ${links.map(link => `
+    <div class="notes-link-row">
+
+        <a
+            class="notes-karaoke-link"
+            href="${link.url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            onclick="event.stopPropagation();"
+        >
+            ${link.url}
+        </a>
+
+    </div>
+`).join("")}
+
+        </div>
+            `;
+
+        });
+
+
+        html += `
+            </div>
+        `;
+
+    });
+
+
+    html += `</div>`;
+
+    setContent(html, "list");
+    lucide.createIcons();
+}
+
+window.copyNotesLink = async function (link, btn) {
+
+    try {
+
+        await navigator.clipboard.writeText(link);
+
+        btn.setAttribute("title", "Copied!");
+
+        btn.innerHTML = `<i data-lucide="check"></i>`;
+
+        lucide.createIcons();
+
+        setTimeout(() => {
+
+            btn.setAttribute("title", "Copy Link");
+
+            btn.innerHTML = `<i data-lucide="copy"></i>`;
+
+            lucide.createIcons();
+
+        }, 1200);
+
+    } catch (error) {
+
+        console.error("Copy failed:", error);
+
+    }
+
+};
+
+window.showNotesPlaylistSongs = function (playlistId) {
+
+    const playlist = allPlaylists.find(
+        p => String(p.id) === String(playlistId)
+    );
+
+    if (!playlist) return;
+
+    currentPage = "notesPlaylistSongs";
+    currentNotesPlaylistId = playlistId;
+
+    const playlistSongIds = Array.isArray(playlist.songs)
+        ? playlist.songs
+        : [];
+
+    const songs = playlistSongIds
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    mainHeader.style.display = "none";
+
+    setMiniHeader(
+        playlist.name || "Playlist",
+        `${songs.length}&nbsp;&nbsp;Songs`
+    );
+
+    renderNotesLinks(songs, false);
+
+};
+
+
+
 
 </script>
 
