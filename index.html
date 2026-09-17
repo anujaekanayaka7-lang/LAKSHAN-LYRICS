@@ -6296,16 +6296,78 @@ if (newArtists.length !== artistsList.length) {
             }
 
             // Add to new playlist
-            if (playlistId) {
+            // Add song after the last song of the same artist
+if (playlistId && !wasEditing) {
 
-                await updateDoc(
-                    doc(db, "playlists", playlistId),
-                    {
-                        songs: arrayUnion(docId)
-                    }
-                );
+    const playlistRef = doc(db, "playlists", playlistId);
 
+    const playlistSnap = await getDoc(playlistRef);
+
+    if (playlistSnap.exists()) {
+
+        const currentSongs =
+            playlistSnap.data().songs || [];
+
+        // Playlist එකේ දැනට තියෙන songs හොයාගන්න
+        const playlistSongs = currentSongs
+            .map(id =>
+                allSongs.find(song =>
+                    String(song.id) === String(id)
+                )
+            )
+            .filter(Boolean);
+
+        // අලුත් song එකේ artist
+        const newArtist = artist
+            .trim()
+            .toLowerCase();
+
+        // එකම artist ගේ අන්තිම song එක හොයන්න
+        let lastArtistIndex = -1;
+
+        playlistSongs.forEach((song, index) => {
+
+            const songArtists = (song.artist || "")
+                .split("/")
+                .map(a => a.trim().toLowerCase());
+
+            if (songArtists.includes(newArtist)) {
+                lastArtistIndex = index;
             }
+
+        });
+
+        // New song ID එක දැනට තියෙනවා නම් ඉවත් කරන්න
+        const newSongs = currentSongs.filter(
+            id => String(id) !== String(docId)
+        );
+
+        if (lastArtistIndex === -1) {
+
+            // මේ artist ගේ song එකක් නැත්නම් අන්තිමට
+            newSongs.push(docId);
+
+        } else {
+
+            // මේ artist ගේ අන්තිම song එකට පස්සේ
+            newSongs.splice(
+                lastArtistIndex + 1,
+                0,
+                docId
+            );
+
+        }
+
+        await updateDoc(
+            playlistRef,
+            {
+                songs: newSongs
+            }
+        );
+
+    }
+
+}
 
         }
 
