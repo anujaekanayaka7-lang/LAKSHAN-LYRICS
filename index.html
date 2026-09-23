@@ -4646,7 +4646,7 @@ function loadMostViewed() {
 window.showMostViewedPage = function () {
 
     setActiveNav("navMostViewed");
-
+    clearBottomNavActive();
     currentPage = "mostViewed";
     updateSearchUI();
     clearSearch();
@@ -4669,7 +4669,7 @@ window.showMostViewedPage = function () {
 window.showRecentlyAddedPage = function () {
 
     setActiveNav("navRecentlyAdded");
-
+    clearBottomNavActive();
     currentPage = "recentlyAdded";
     updateSearchUI();
     clearSearch();
@@ -4854,7 +4854,7 @@ async function updateRecentlyPlayed(songId) {
 window.showRecentlyPlayedPage = function () {
 
     setActiveNav("navRecentlyPlayed");
-
+    clearBottomNavActive();
     currentPage = "recentlyPlayed";
     updateSearchUI();
     clearSearch();
@@ -9964,6 +9964,14 @@ function setActiveBottomNav(id) {
     if (activeItem) {
         activeItem.classList.add("active");
     }
+
+}
+
+function clearBottomNavActive() {
+
+    document.querySelectorAll(".mobile-bottom-nav a").forEach(item => {
+        item.classList.remove("active");
+    });
 
 }
 
