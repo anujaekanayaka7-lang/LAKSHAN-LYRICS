@@ -735,12 +735,22 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
     color: #475569;
 }
 
-
-
+body {
+    background-image: url("images/background-art.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
 
 @media (max-width:768px){ 
 
+ body {
+        background-size: auto 100%;
+        background-position: center top;
+        background-attachment: scroll;
+    }
+        
 html,
 body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
@@ -752,6 +762,20 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
   .mobile-bottom-nav{padding-bottom: max(8px, env(safe-area-inset-bottom));height: calc(70px + env(safe-area-inset-bottom));}
   .main-content{padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: calc(75px + env(safe-area-inset-bottom));}
 
+}
+
+/* Keyboard open - keep original look as much as possible */
+
+#splashScreen.keyboard-active .aurora {
+    animation-play-state: paused !important;
+}
+
+#splashScreen.keyboard-active .splash-content {
+    animation-play-state: paused !important;
+}
+
+#splashScreen.keyboard-active #lockPassword {
+    transition: none !important;
 }
 
 .mobile-header{display:flex}
@@ -10305,6 +10329,18 @@ function togglePassword(){
         : "password";
 
 }
+
+// Keyboard performance mode
+const lockInput = document.getElementById("lockPassword");
+const splashScreen = document.getElementById("splashScreen");
+
+lockInput.addEventListener("focus", () => {
+    splashScreen.classList.add("keyboard-active");
+});
+
+lockInput.addEventListener("blur", () => {
+    splashScreen.classList.remove("keyboard-active");
+});
 
 // Live Clock
 
