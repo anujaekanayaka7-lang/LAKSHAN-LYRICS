@@ -2035,7 +2035,6 @@ const db = getFirestore(app);
    Global Variables
 ========================================================== */
 let allSongs = [];
-let songsRandomizedOnOpen = false;
 let artistsListener = null;
 let recentlyAddedSongs = [];
 let mostViewedSongs = [];
@@ -2203,13 +2202,18 @@ unsubscribeSongs = onSnapshot(
 
     }
 
-            allSongs = [];
+            // Firebase data load
+const oldOrder = new Map(
+    allSongs.map((song, index) => [song.id, index])
+);
+
+const newSongs = [];
 
 snapshot.forEach((docSnap) => {
 
     const data = docSnap.data();
 
-    allSongs.push({
+    newSongs.push({
         ...data,
         id: data.id || docSnap.id,
         docId: docSnap.id
@@ -2217,10 +2221,28 @@ snapshot.forEach((docSnap) => {
 
 });
 
-// App එක අලුතින් open/refresh කළ පළමු වතාවේ විතරක් random කරන්න
-if (!songsRandomizedOnOpen) {
-    allSongs = shuffleSongs(allSongs);
-    songsRandomizedOnOpen = true;
+// First load = Random
+if (allSongs.length === 0) {
+
+    allSongs = shuffleSongs(newSongs);
+
+} else {
+
+    // පරණ Random order එකම තියාගන්න
+    allSongs = newSongs.sort((a, b) => {
+
+        const aIndex = oldOrder.has(a.id)
+            ? oldOrder.get(a.id)
+            : 999999;
+
+        const bIndex = oldOrder.has(b.id)
+            ? oldOrder.get(b.id)
+            : 999999;
+
+        return aIndex - bIndex;
+
+    });
+
 }
 
             document.getElementById("statSongsCount").textContent = allSongs.length;
