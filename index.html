@@ -2035,6 +2035,7 @@ const db = getFirestore(app);
    Global Variables
 ========================================================== */
 let allSongs = [];
+let songsRandomizedOnOpen = false;
 let artistsListener = null;
 let recentlyAddedSongs = [];
 let mostViewedSongs = [];
@@ -2204,17 +2205,23 @@ unsubscribeSongs = onSnapshot(
 
             allSongs = [];
 
-            snapshot.forEach((docSnap) => {
+snapshot.forEach((docSnap) => {
 
-                const data = docSnap.data();
+    const data = docSnap.data();
 
-                allSongs.push({
-                    ...data,
-                    id: data.id || docSnap.id,
-                    docId: docSnap.id
-                });
+    allSongs.push({
+        ...data,
+        id: data.id || docSnap.id,
+        docId: docSnap.id
+    });
 
-            });
+});
+
+// App එක අලුතින් open/refresh කළ පළමු වතාවේ විතරක් random කරන්න
+if (!songsRandomizedOnOpen) {
+    allSongs = shuffleSongs(allSongs);
+    songsRandomizedOnOpen = true;
+}
 
             document.getElementById("statSongsCount").textContent = allSongs.length;
 
@@ -2528,6 +2535,23 @@ window.showSongsPage = function() {
 
 }
 
+// ==========================================
+// RANDOM SONG ORDER
+// ==========================================
+function shuffleSongs(songs) {
+
+    const shuffled = [...songs];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [shuffled[i], shuffled[j]] =
+        [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+}
 function renderSongsGrid(songs, wrapper = "home") {
 
     /* ==========================================
@@ -5320,6 +5344,9 @@ const songTitle = document.getElementById("songTitle");
 const lyrics = document.getElementById("lyrics");
 
 lyrics.addEventListener("input", function () {
+
+    // Edit කරනකොට Song Name වෙනස් කරන්න එපා
+    if (isEditMode) return;
 
     const words = this.value
         .replace(/\n/g, " ")
