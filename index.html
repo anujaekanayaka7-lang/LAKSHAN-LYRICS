@@ -38,9 +38,48 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 /* Layout Structure*/
 .app-container{display:flex;width:100%;height:100%;overflow:hidden;}
 
-/* Sidebar Styling*/
-.sidebar{width:260px;background:#fff;margin:18px;margin-right:0;border:1px solid #e2e8f0;border-radius:20px;padding:24px 16px;display:flex;flex-direction:column;justify-content:space-between;height:calc(100vh - 36px);position:sticky;top:18px;word-spacing: 2px;}
-   
+.sidebar{
+    width:260px;
+
+    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790181238/ChatGPT_Image_Sep_23_2026_10_01_19_PM_ycl2fo.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    margin:18px;
+    margin-right:0;
+
+    border:1px solid rgba(255,255,255,0.8);
+    border-radius:20px;
+
+    padding:24px 16px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    height:calc(100vh - 36px);
+    position:sticky;
+    top:18px;
+
+    word-spacing:2px;
+
+    overflow:hidden;
+
+    /* Important */
+    isolation:isolate;
+}
+
+/* Background photo opacity */
+.sidebar::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:rgba(255,255,255,0.65);
+
+    z-index:-1;
+}
 /* Brand Section */
 .brand{display:flex;align-items:center;gap:12px;padding:0 12px 24px}
 .brand-icon{width:40px;height:40px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
@@ -69,7 +108,26 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 /* Header */
 #mainHeader{min-height:42px;transform:translateY(-14px)}
 #miniHeader{display:none;min-height:42px;transform:translateY(-2px)}
-#contentWrapper{flex:1;min-height:0;overflow-y:auto;background:#fff;border:1px solid #d5dae0;border-radius:18px;padding:12px;scrollbar-width:none;-ms-overflow-style:none}
+#contentWrapper{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    background:rgba(255,255,255,0.60);
+    border:1px solid #d5dae0;
+    border-radius:18px;
+    padding:12px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+
+    position:relative;
+
+    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790182532/ChatGPT_Image_Sep_23_2026_10_19_59_PM_aktjio.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-blend-mode:screen;
+}
+
 #contentWrapper::-webkit-scrollbar{display:none}
 #contentArea{width:100%}
 
@@ -502,7 +560,23 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .header-right{display:flex;align-items:center;gap:16px}
 #networkStatusIndicator{margin-left:auto;margin-right:-20px}
 .admin-profile{margin-top:-17px;display:flex;align-items:center;gap:10px;padding:6px 12px}
-.admin-profile img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #ececec}
+/* =========================================
+   ADMIN PROFILE PHOTO - ALL DEVICES
+   ========================================= */
+
+.admin-profile img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+
+    border: none !important;
+
+    box-shadow:
+        0 0 8px rgba(77, 166, 255, 0.35),
+        0 0 18px rgba(155, 124, 255, 0.22),
+        0 0 28px rgba(155, 124, 255, 0.10) !important;
+}
 .admin-info{display:flex;flex-direction:column;line-height:1.2}
 .admin-name{font-size:14px;font-weight:700;color:#222}
 .admin-info small{font-size:12px;color:#777}
@@ -735,21 +809,284 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
     color: #475569;
 }
 
-body {
-    background-image: url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790170551/background_desktop-art_re9qwp.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+body{
+    background:#fff;
+
+    position:relative;
+    isolation:isolate;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790171318/background_dektop_kbzbxg.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+
+    opacity:0.50;
+
+    z-index:-1;
+    pointer-events:none;
+}
+
+/* =========================================
+   STAT CARDS - NEW WAVEFORM SHAPE
+   ========================================= */
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
 }
 
 
+/* ===== WAVEFORM ===== */
+
+.stat-card::after {
+    content: "";
+
+    position: absolute;
+    right: 14px;
+    bottom: 13px;
+
+    width: 54px;
+    height: 30px;
+
+    opacity: .20;
+
+    background:
+        linear-gradient(currentColor, currentColor)
+            0 13px / 3px 7px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            6px 9px / 3px 15px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            12px 5px / 3px 23px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            18px 9px / 3px 15px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            24px 2px / 3px 28px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            30px 8px / 3px 17px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            36px 13px / 3px 7px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            42px 7px / 3px 19px no-repeat,
+
+        linear-gradient(currentColor, currentColor)
+            48px 11px / 3px 11px no-repeat;
+}
+
+
+/* ===== SONGS - BLUE ===== */
+
+.stat-card:nth-child(1)::after {
+    color: #4da6ff;
+}
+
+
+/* ===== ARTISTS - PURPLE ===== */
+
+.stat-card:nth-child(2)::after {
+    color: #9b7cff;
+}
+
+
+/* ===== CATEGORIES - GREEN ===== */
+
+.stat-card:nth-child(3)::after {
+    color: #48c98b;
+}
+
+
+/* ===== PLAYLISTS - ORANGE ===== */
+
+.stat-card:nth-child(4)::after {
+    color: #ffad66;
+}
+
+
+/* ===== FAVOURITES - RED ===== */
+
+.stat-card:nth-child(5)::after {
+    color: #ef5b6f;
+}
+
+
+/* ===== VIEWS - PINK ===== */
+
+.stat-card:nth-child(6)::after {
+    color: #f487b5;
+}
+
+
+/* ===== CARD CONTENT ABOVE WAVE ===== */
+
+.stat-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================
+   STAT CARDS - PERMANENT COLORED BORDER
+   ========================================= */
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 16px;
+    background: #ffffff;
+
+    box-shadow: 0 3px 10px rgba(30, 50, 80, 0.05);
+
+    transition: none;
+}
+
+
+/* =========================================
+   1 - SONGS : BLUE
+   ========================================= */
+
+.stat-card:nth-child(1) {
+    border: 1px solid #d7ebff;
+}
+
+.stat-card:nth-child(2) {
+    border: 1px solid #e5ddff;
+}
+
+.stat-card:nth-child(3) {
+    border: 1px solid #d9f3e7;
+}
+
+.stat-card:nth-child(4) {
+    border: 1px solid #ffe5d2;
+}
+
+.stat-card:nth-child(5) {
+    border: 1px solid #f9dce8;
+}
+
+.stat-card:nth-child(6) {
+    border: 1px solid #f5cddd;
+}
+
+/* =========================================
+   STAT CARDS - SOFT PASTEL BACKGROUNDS
+   ========================================= */
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Songs - Soft Blue */
+.stat-card:nth-child(1) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f4f9ff 55%,
+        #edf6ff 100%
+    );
+}
+
+
+/* Artists - Soft Purple */
+.stat-card:nth-child(2) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f8f5ff 55%,
+        #f3efff 100%
+    );
+}
+
+
+/* Categories - Soft Green */
+.stat-card:nth-child(3) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f4fcf8 55%,
+        #edfaf4 100%
+    );
+}
+
+
+/* Playlists - Soft Orange */
+.stat-card:nth-child(4) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fff9f3 55%,
+        #fff3e8 100%
+    );
+}
+
+/* =========================================
+   FAVOURITES - SOFT RED ❤️
+   ========================================= */
+
+.stat-card:nth-child(5) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fff7f7 55%,
+        #ffedef 100%
+    );
+}
+
+
+/* =========================================
+   VIEWS - SOFT PINK 🩷
+   ========================================= */
+
+.stat-card:nth-child(6) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #fff7fa 55%,
+        #ffeaf3 100%
+    );
+}
+
 @media (max-width:768px){ 
 
- body {
-        background-size: auto 100%;
-        background-position: center top;
-        background-attachment: scroll;
+body{
+        background:#fff;
+
+        position:relative;
+        isolation:isolate;
     }
+
+    body::before{
+        content:"";
+        position:fixed;
+        inset:0;
+
+        background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790171435/background_mobile_or1rdl.png");
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+
+        opacity:0.35;
+
+        z-index:-1;
+        pointer-events:none;
+    }
+
         
 html,
 body{width:100%;min-height:100dvh;overflow-x:hidden;}
@@ -798,8 +1135,50 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 .nav-label{padding:0 0 6px}
 
 /* Sidebar */
-.sidebar{position:fixed;top:30px;bottom:125px;left:10px;width:250px;height:auto;margin:0;padding:20px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:10px 0 30px rgba(15,23,42,.12);z-index:10000;transform:translate3d(-110%,0,0);transition:transform .18s ease-out;will-change:transform}
+
+.sidebar{
+    position:fixed;
+    top:30px;
+    bottom:125px;
+    left:10px;
+    width:250px;
+    height:auto;
+    margin:0;
+    padding:20px 12px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+    border-radius:20px;
+    box-shadow:10px 0 30px rgba(15,23,42,.12);
+    z-index:10000;
+
+    transform:translate3d(-110%,0,0);
+    transition:transform .18s ease-out;
+    will-change:transform;
+
+    overflow:hidden;
+    isolation:isolate;
+}
+
+.sidebar::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790181238/ChatGPT_Image_Sep_23_2026_10_01_19_PM_ycl2fo.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    opacity:0.35;
+
+    z-index:-1;
+    pointer-events:none;
+}
+
 .sidebar.active{transform:translate3d(0,0,0)}
+
 
 /* Overlay */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,.60);opacity:0;visibility:hidden;transition:opacity .18s ease;z-index:9999}
@@ -1030,7 +1409,8 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
                 <input
                     type="password"
                     id="lockPassword"
-                    placeholder="Password">
+                    placeholder="Password"
+                    autofocus>
 
             </div>
 
@@ -2128,6 +2508,14 @@ const networkStatusMobile = document.getElementById("networkStatusIndicatorMobil
 const homeWrapper = document.getElementById("homeWrapper");
 const listWrapper = document.getElementById("listWrapper");
 const searchWrapper = document.getElementById("searchWrapper");
+
+const passwordInput = document.getElementById("lockPassword");
+
+if (passwordInput) {
+    requestAnimationFrame(() => {
+        passwordInput.focus();
+    });
+}
 
 function updateNetworkStatus(html, className) {
 
@@ -10373,19 +10761,6 @@ updateLockClock();
 
 setInterval(updateLockClock,1000);
 
-window.addEventListener("load", () => {
-
-    setTimeout(() => {
-
-        const input = document.getElementById("lockPassword");
-
-        if (input) {
-            input.focus();
-        }
-
-    }, 200);
-
-});
 
 /* =========================================
    Admin Password System
