@@ -41,15 +41,10 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .sidebar{
     width:260px;
 
-    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790181238/ChatGPT_Image_Sep_23_2026_10_01_19_PM_ycl2fo.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-
     margin:18px;
     margin-right:0;
 
-    border:1px solid rgba(255,255,255,0.8);
+    border:1px solid #d5dae0;
     border-radius:20px;
 
     padding:24px 16px;
@@ -66,7 +61,6 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 
     overflow:hidden;
 
-    /* Important */
     isolation:isolate;
 }
 
@@ -120,12 +114,6 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
     -ms-overflow-style:none;
 
     position:relative;
-
-    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790182532/ChatGPT_Image_Sep_23_2026_10_19_59_PM_aktjio.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-blend-mode:screen;
 }
 
 #contentWrapper::-webkit-scrollbar{display:none}
@@ -572,10 +560,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 
     border: none !important;
 
-    box-shadow:
-        0 0 8px rgba(77, 166, 255, 0.35),
-        0 0 18px rgba(155, 124, 255, 0.22),
-        0 0 28px rgba(155, 124, 255, 0.10) !important;
+
 }
 .admin-info{display:flex;flex-direction:column;line-height:1.2}
 .admin-name{font-size:14px;font-weight:700;color:#222}
@@ -816,22 +801,6 @@ body{
     isolation:isolate;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790171318/background_dektop_kbzbxg.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-
-    opacity:0.50;
-
-    z-index:-1;
-    pointer-events:none;
-}
 
 /* =========================================
    STAT CARDS - NEW WAVEFORM SHAPE
@@ -936,158 +905,27 @@ body::before{
     z-index: 2;
 }
 
-/* =========================================
-   STAT CARDS - PERMANENT COLORED BORDER
-   ========================================= */
+/* MANAGE LIST ONLY SCROLL */
 
-.stat-card {
-    position: relative;
-    overflow: hidden;
+.manage-scroll {
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    border-radius: 16px;
-    background: #ffffff;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
 
-    box-shadow: 0 3px 10px rgba(30, 50, 80, 0.05);
-
-    transition: none;
+.manage-scroll::-webkit-scrollbar {
+    display: none;
 }
 
 
-/* =========================================
-   1 - SONGS : BLUE
-   ========================================= */
 
-.stat-card:nth-child(1) {
-    border: 1px solid #d7ebff;
-}
-
-.stat-card:nth-child(2) {
-    border: 1px solid #e5ddff;
-}
-
-.stat-card:nth-child(3) {
-    border: 1px solid #d9f3e7;
-}
-
-.stat-card:nth-child(4) {
-    border: 1px solid #ffe5d2;
-}
-
-.stat-card:nth-child(5) {
-    border: 1px solid #f9dce8;
-}
-
-.stat-card:nth-child(6) {
-    border: 1px solid #f5cddd;
-}
-
-/* =========================================
-   STAT CARDS - SOFT PASTEL BACKGROUNDS
-   ========================================= */
-
-.stat-card {
-    position: relative;
-    overflow: hidden;
-}
-
-
-/* Songs - Soft Blue */
-.stat-card:nth-child(1) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #f4f9ff 55%,
-        #edf6ff 100%
-    );
-}
-
-
-/* Artists - Soft Purple */
-.stat-card:nth-child(2) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #f8f5ff 55%,
-        #f3efff 100%
-    );
-}
-
-
-/* Categories - Soft Green */
-.stat-card:nth-child(3) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #f4fcf8 55%,
-        #edfaf4 100%
-    );
-}
-
-
-/* Playlists - Soft Orange */
-.stat-card:nth-child(4) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #fff9f3 55%,
-        #fff3e8 100%
-    );
-}
-
-/* =========================================
-   FAVOURITES - SOFT RED ❤️
-   ========================================= */
-
-.stat-card:nth-child(5) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #fff7f7 55%,
-        #ffedef 100%
-    );
-}
-
-
-/* =========================================
-   VIEWS - SOFT PINK 🩷
-   ========================================= */
-
-.stat-card:nth-child(6) {
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #fff7fa 55%,
-        #ffeaf3 100%
-    );
-}
 
 @media (max-width:768px){ 
-
-body{
-        background:#fff;
-
-        position:relative;
-        isolation:isolate;
-    }
-
-    body::before{
-        content:"";
-        position:fixed;
-        inset:0;
-
-        background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790171435/background_mobile_or1rdl.png");
-        background-size:cover;
-        background-position:center;
-        background-repeat:no-repeat;
-        background-attachment:fixed;
-
-        opacity:0.35;
-
-        z-index:-1;
-        pointer-events:none;
-    }
-
-        
+    
 html,
 body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
@@ -1114,6 +952,7 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 #splashScreen.keyboard-active #lockPassword {
     transition: none !important;
 }
+
 
 .mobile-header{display:flex}
 .mobile-bottom-nav{display:flex}
@@ -1159,22 +998,6 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
     overflow:hidden;
     isolation:isolate;
-}
-
-.sidebar::before{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background-image:url("https://res.cloudinary.com/doxjzgfry/image/upload/v1790181238/ChatGPT_Image_Sep_23_2026_10_01_19_PM_ycl2fo.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-
-    opacity:0.35;
-
-    z-index:-1;
-    pointer-events:none;
 }
 
 .sidebar.active{transform:translate3d(0,0,0)}
@@ -1538,13 +1361,25 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
                         </a>
                     </li>
 
+                    <li class="nav-item" id="navTopHitsNew">
+    <a href="javascript:void(0)" onclick="showTopHitsNewPage()">
+        <i data-lucide="flame"></i><span>Top Hits [ New ]</span>
+    </a>
+</li>
+
+<li class="nav-item" id="navTopHitsOld">
+    <a href="javascript:void(0)" onclick="showTopHitsOldPage()">
+        <i data-lucide="crown"></i><span>Top Hits [ Old ]</span>
+    </a>
+</li>
+
                 </ul>
 
                 <hr class="sidebar-divider">
 
                 <div class="nav-label">MANAGE</div>
 
-                <ul class="nav-menu">
+                <ul class="nav-menu manage-scroll">
                     <li class="nav-item" id="navAddSong">
                         <a href="javascript:void(0)" onclick="showAddSongPage()">
                             <i data-lucide="plus"></i><span>Add Song</span>
