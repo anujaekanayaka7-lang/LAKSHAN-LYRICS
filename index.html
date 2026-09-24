@@ -38,42 +38,9 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 /* Layout Structure*/
 .app-container{display:flex;width:100%;height:100%;overflow:hidden;}
 
-.sidebar{
-    width:260px;
+.sidebar{width:260px;margin:18px;margin-right:0;border:1px solid #d5dae0;border-radius:20px;padding:24px 16px;display:flex;flex-direction:column;justify-content:space-between;height:calc(100vh - 36px);position:sticky;top:18px;word-spacing:2px;overflow:hidden;isolation:isolate}
+.sidebar::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,0.65);z-index:-1}
 
-    margin:18px;
-    margin-right:0;
-
-    border:1px solid #d5dae0;
-    border-radius:20px;
-
-    padding:24px 16px;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-
-    height:calc(100vh - 36px);
-    position:sticky;
-    top:18px;
-
-    word-spacing:2px;
-
-    overflow:hidden;
-
-    isolation:isolate;
-}
-
-/* Background photo opacity */
-.sidebar::before{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background:rgba(255,255,255,0.65);
-
-    z-index:-1;
-}
 /* Brand Section */
 .brand{display:flex;align-items:center;gap:12px;padding:0 12px 24px}
 .brand-icon{width:40px;height:40px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
@@ -102,20 +69,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 /* Header */
 #mainHeader{min-height:42px;transform:translateY(-14px)}
 #miniHeader{display:none;min-height:42px;transform:translateY(-2px)}
-#contentWrapper{
-    flex:1;
-    min-height:0;
-    overflow-y:auto;
-    background:rgba(255,255,255,0.60);
-    border:1px solid #d5dae0;
-    border-radius:18px;
-    padding:12px;
-    scrollbar-width:none;
-    -ms-overflow-style:none;
-
-    position:relative;
-}
-
+#contentWrapper{flex:1;min-height:0;overflow-y:auto;background:rgba(255,255,255,0.60);border:1px solid #d5dae0;border-radius:18px;padding:12px;scrollbar-width:none;-ms-overflow-style:none;position:relative}
 #contentWrapper::-webkit-scrollbar{display:none}
 #contentArea{width:100%}
 
@@ -352,7 +306,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .audio-block{margin-bottom:18px}
 
 /* Audio Label */
-.audio-label{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;word-spacing:2px;font-weight:700;color:#111827}
+.audio-label{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;word-spacing:2px;font-weight:700;color:#111827}
 .audio-label i,.audio-label.original i{color:#000;font-size:12px}
 
 /* Audio Player */
@@ -552,16 +506,7 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
    ADMIN PROFILE PHOTO - ALL DEVICES
    ========================================= */
 
-.admin-profile img {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-
-    border: none !important;
-
-
-}
+.admin-profile img {width: 42px;height: 42px;border-radius: 50%;object-fit: cover;border: none !important;}
 .admin-info{display:flex;flex-direction:column;line-height:1.2}
 .admin-name{font-size:14px;font-weight:700;color:#222}
 .admin-info small{font-size:12px;color:#777}
@@ -598,331 +543,50 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 
 .sortable-fallback {opacity: 1 !important;visibility: visible !important;display: block !important;position: fixed !important;z-index: 999999 !important;pointer-events: none !important;box-sizing: border-box !important;background: #ffffff !important;color: inherit !important;border-radius: 12px !important;box-shadow:0 18px 45px rgba(0, 0, 0, .28) !important;transform:scale(1.03) !important;overflow: hidden !important;}
 
-.notes-menu {
-    width: 100%;
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    transform: translateY(-15px);
-}
-
-.notes-menu-card {
-    width: 100%;
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    padding: 15px 18px;
-
-    background: #ffffff;
-    border: 1px solid #dbdde0;
-    border-radius: 10px;
-
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.notes-menu-card:hover {
-    transform: translateY(-4px);
-    border-color: #8b5cf6;
-    box-shadow: 0 12px 25px rgba(0,0,0,.08);
-}
-
-.notes-menu-icon {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-
-    background: #f1f5f9;
-    color: #475569;
-
-    font-size: 17px;
-    flex-shrink: 0;
-}
-
-.notes-menu-text {
-    flex: 1;
-    min-width: 0;
-}
-
-.notes-menu-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #111827;
-}
-
-.notes-menu-info {
-    margin-top: 4px;
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-.notes-menu-arrow {
-    color: #94a3b8;
-    font-size: 13px;
-    flex-shrink: 0;
-}
-
-.notes-links-list {
-    width: 100%;
-}
-
-.notes-artist-group {
-    padding: 16px 8px;
-    border-bottom: 1px solid #cdcfd3;
-}
-
-.notes-artist-title {
-    font-size: 16px;
-    font-weight: 1000;
-    color: #030007;
-    margin-bottom: 12px;
-    letter-spacing: .3px;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.notes-song {
-    padding: 11px 13px;
-    margin-bottom: 8px;
-    border-radius: 10px;
-    background: #fafafa;
-    transition: background .2s ease, transform .2s ease;
-}
-
-.notes-song:hover {
-    background: #eeeeee;
-    transform: translateX(2px);
-}
-
-.notes-song-title {
-    font-size: 15px;
-    font-weight: 550;
-    color: #1f2937;
-    margin-bottom: 6px;
-}
-
-.notes-karaoke-link {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 2px 0;
-
-    font-size: 13px;
-    font-weight: 400;
-    color: #183afc !important;
-
-    text-decoration: underline !important;
-    text-decoration-color: #183afc;
-    text-underline-offset: 3px;
-
-    word-break: break-all;
-    text-align: left;
-    cursor: pointer;
-
-    transition: background .2s ease;
-}
-
-.notes-karaoke-link:hover {
-    background: #eeeeee;
-    color: #183afc !important;
-    text-decoration: underline !important;
-}
-
-.notes-title-row {
-    width: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.notes-song-title {
-    flex: 1;
-    min-width: 0;
-
-    font-size: 15px;
-    font-weight: 400;
-    color: #1f2937;
-    margin-bottom: 6px;
-}
-
-.notes-copy-btn {
-    flex: 0 0 22px;
-
-    width: 22px;
-    height: 22px;
-
-    margin: -3px 0 0 0;
-    padding: 0;
-
-    border: none;
-    border-radius: 5px;
-
-    background: transparent;
-    color: #64748b;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-}
-
-.notes-copy-btn:hover {
-    background: #e2e8f0;
-    color: #111827;
-}
-
-.notes-copy-btn svg {
-    width: 13px;
-    height: 13px;
-    stroke-width: 2;
-}
-
-.notes-link-cards .category-icon {
-    background: #f1f5f9;
-    color: #475569;
-}
-
-body{
-    background:#fff;
-
-    position:relative;
-    isolation:isolate;
-}
-
-
-/* =========================================
-   STAT CARDS - NEW WAVEFORM SHAPE
-   ========================================= */
-
-.stat-card {
-    position: relative;
-    overflow: hidden;
-}
+.notes-menu{width:100%;margin:20px 0;display:flex;flex-direction:column;gap:15px;transform:translateY(-15px)}
+.notes-menu-card{width:100%;box-sizing:border-box;display:flex;align-items:center;gap:15px;padding:15px 18px;background:#ffffff;border:1px solid #dbdde0;border-radius:10px;cursor:pointer;transition:0.2s ease}
+.notes-menu-card:hover{transform:translateY(-4px);border-color:#8b5cf6;box-shadow:0 12px 25px rgba(0,0,0,.08)}
+.notes-menu-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#f1f5f9;color:#475569;font-size:17px;flex-shrink:0}
+.notes-menu-text{flex:1;min-width:0}
+.notes-menu-title{font-size:15px;font-weight:700;color:#111827}
+.notes-menu-info{margin-top:4px;font-size:12px;color:#94a3b8}
+.notes-menu-arrow{color:#94a3b8;font-size:13px;flex-shrink:0}
+.notes-links-list{width:100%}
+.notes-artist-group{padding:16px 8px;border-bottom:1px solid #cdcfd3}
+.notes-artist-title{font-size:16px;font-weight:1000;color:#030007;margin-bottom:12px;letter-spacing:.3px;text-decoration:underline;text-underline-offset:3px}
+.notes-song{padding:11px 13px;margin-bottom:8px;border-radius:10px;background:#fafafa;transition:background .2s ease,transform .2s ease}
+.notes-song:hover{background:#eeeeee;transform:translateX(2px)}
+.notes-song-title{font-size:15px;font-weight:550;color:#1f2937;margin-bottom:6px}
+.notes-karaoke-link{display:block;width:100%;max-width:100%;margin:0;padding:2px 0;font-size:13px;font-weight:400;color:#183afc !important;text-decoration:underline !important;text-decoration-color:#183afc;text-underline-offset:3px;word-break:break-all;text-align:left;cursor:pointer;transition:background .2s ease}
+.notes-karaoke-link:hover{background:#eeeeee;color:#183afc !important;text-decoration:underline !important}
+.notes-title-row{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.notes-song-title{flex:1;min-width:0;font-size:15px;font-weight:400;color:#1f2937;margin-bottom:6px}
+.notes-copy-btn{flex:0 0 22px;width:22px;height:22px;margin:-3px 0 0 0;padding:0;border:none;border-radius:5px;background:transparent;color:#64748b;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.notes-copy-btn:hover{background:#e2e8f0;color:#111827}
+.notes-copy-btn svg{width:13px;height:13px;stroke-width:2}
+.notes-link-cards .category-icon{background:#f1f5f9;color:#475569}
+body{background:#fff;position:relative;isolation:isolate}
+.stat-card{position:relative;overflow:hidden}
 
 
 /* ===== WAVEFORM ===== */
-
-.stat-card::after {
-    content: "";
-
-    position: absolute;
-    right: 14px;
-    bottom: 13px;
-
-    width: 54px;
-    height: 30px;
-
-    opacity: .20;
-
-    background:
-        linear-gradient(currentColor, currentColor)
-            0 13px / 3px 7px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            6px 9px / 3px 15px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            12px 5px / 3px 23px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            18px 9px / 3px 15px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            24px 2px / 3px 28px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            30px 8px / 3px 17px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            36px 13px / 3px 7px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            42px 7px / 3px 19px no-repeat,
-
-        linear-gradient(currentColor, currentColor)
-            48px 11px / 3px 11px no-repeat;
-}
+.stat-card::after{content:"";position:absolute;right:14px;bottom:13px;width:54px;height:30px;opacity:.20;background:linear-gradient(currentColor,currentColor) 0 13px / 3px 7px no-repeat,linear-gradient(currentColor,currentColor) 6px 9px / 3px 15px no-repeat,linear-gradient(currentColor,currentColor) 12px 5px / 3px 23px no-repeat,linear-gradient(currentColor,currentColor) 18px 9px / 3px 15px no-repeat,linear-gradient(currentColor,currentColor) 24px 2px / 3px 28px no-repeat,linear-gradient(currentColor,currentColor) 30px 8px / 3px 17px no-repeat,linear-gradient(currentColor,currentColor) 36px 13px / 3px 7px no-repeat,linear-gradient(currentColor,currentColor) 42px 7px / 3px 19px no-repeat,linear-gradient(currentColor,currentColor) 48px 11px / 3px 11px no-repeat}
 
 
-/* ===== SONGS - BLUE ===== */
-
-.stat-card:nth-child(1)::after {
-    color: #4da6ff;
-}
-
-
-/* ===== ARTISTS - PURPLE ===== */
-
-.stat-card:nth-child(2)::after {
-    color: #9b7cff;
-}
-
-
-/* ===== CATEGORIES - GREEN ===== */
-
-.stat-card:nth-child(3)::after {
-    color: #48c98b;
-}
-
-
-/* ===== PLAYLISTS - ORANGE ===== */
-
-.stat-card:nth-child(4)::after {
-    color: #ffad66;
-}
-
-
-/* ===== FAVOURITES - RED ===== */
-
-.stat-card:nth-child(5)::after {
-    color: #ef5b6f;
-}
-
-
-/* ===== VIEWS - PINK ===== */
-
-.stat-card:nth-child(6)::after {
-    color: #f487b5;
-}
-
-
-/* ===== CARD CONTENT ABOVE WAVE ===== */
-
-.stat-card > * {
-    position: relative;
-    z-index: 2;
-}
-
-/* MANAGE LIST ONLY SCROLL */
-
-.manage-scroll {
-    max-height: 130px;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.manage-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-
-
+.stat-card:nth-child(1)::after{color:#4da6ff}
+.stat-card:nth-child(2)::after{color:#9b7cff}
+.stat-card:nth-child(3)::after{color:#48c98b}
+.stat-card:nth-child(4)::after{color:#ffad66}
+.stat-card:nth-child(5)::after{color:#ef5b6f}
+.stat-card:nth-child(6)::after{color:#f487b5}
+.stat-card > *{position:relative;z-index:2}
+.manage-scroll{max-height:130px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+.manage-scroll::-webkit-scrollbar{display:none}
+.audio-label{display:flex;align-items:center;gap:8px;line-height:1}
+.audio-label span{line-height:26px}
+.top-hit-star{border:none;background:transparent;color:#999;font-size:22px;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;margin:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.top-hit-star.active{color:#242323 !important}
+.top-hit-star.active i{color:#242323 !important}
 
 @media (max-width:768px){ 
     
@@ -941,18 +605,9 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
 /* Keyboard open - keep original look as much as possible */
 
-#splashScreen.keyboard-active .aurora {
-    animation-play-state: paused !important;
-}
-
-#splashScreen.keyboard-active .splash-content {
-    animation-play-state: paused !important;
-}
-
-#splashScreen.keyboard-active #lockPassword {
-    transition: none !important;
-}
-
+#splashScreen.keyboard-active .aurora {animation-play-state: paused !important;}
+#splashScreen.keyboard-active .splash-content {animation-play-state: paused !important;}
+#splashScreen.keyboard-active #lockPassword {transition: none !important;}
 
 .mobile-header{display:flex}
 .mobile-bottom-nav{display:flex}
@@ -973,33 +628,7 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 .sidebar-divider{margin:8px 0}
 .nav-label{padding:0 0 6px}
 
-/* Sidebar */
-
-.sidebar{
-    position:fixed;
-    top:30px;
-    bottom:125px;
-    left:10px;
-    width:250px;
-    height:auto;
-    margin:0;
-    padding:20px 12px;
-
-    background:#fff;
-
-    border:1px solid #e2e8f0;
-    border-radius:20px;
-    box-shadow:10px 0 30px rgba(15,23,42,.12);
-    z-index:10000;
-
-    transform:translate3d(-110%,0,0);
-    transition:transform .18s ease-out;
-    will-change:transform;
-
-    overflow:hidden;
-    isolation:isolate;
-}
-
+.sidebar{position:fixed;top:30px;bottom:125px;left:10px;width:250px;height:auto;margin:0;padding:20px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:10px 0 30px rgba(15,23,42,.12);z-index:10000;transform:translate3d(-110%,0,0);transition:transform .18s ease-out;will-change:transform;overflow:hidden;isolation:isolate}
 .sidebar.active{transform:translate3d(0,0,0)}
 
 
@@ -1651,9 +1280,15 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
     <div class="audio-block">
 
         <div class="audio-label">
-            <i class="fa-solid fa-microphone-lines"></i>
-            <span>Karaoke Audio Player</span>
-        </div>
+    <i class="fa-solid fa-microphone-lines"></i>
+    <span>Karaoke Audio Player</span>
+
+    <button id="topHitStar" 
+        class="top-hit-star" 
+        onclick="toggleTopHit()"> 
+    <i class="fa-regular fa-star"></i> 
+</button>
+</div>
 
         <div class="audio-player-card">
 
@@ -2290,6 +1925,10 @@ let allCategories = [];
 let artistsList = [];
 let categoriesList = [];
 let allFavourites = [];
+let topHitsNew = [];
+let topHitsOld = [];
+let topHitsNewRandomized = false;
+let topHitsOldRandomized = false;
 let selectedFavourite = null;
 let isEditMode = false;
 let editingSongId = null;
@@ -3961,6 +3600,7 @@ loadRecentlyPlayed();
 loadCategories();
 loadArtists();
 loadFavourites();
+loadTopHits();
 
 window.addEventListener("online", () => {
 
@@ -5262,20 +4902,47 @@ requestAnimationFrame(() => {
     loadYoutubePlayers(song);
 
     // Favourite button update
-    const favouriteBtn = document.getElementById("favoriteBtn");
+const favouriteBtn = document.getElementById("favoriteBtn");
 
-    const newFav = allFavourites.find(f => f.id === "MY NEW FAVOURITE");
-    const oldFav = allFavourites.find(f => f.id === "MY OLD FAVOURITE");
+const newFav = allFavourites.find(f => f.id === "MY NEW FAVOURITE");
+const oldFav = allFavourites.find(f => f.id === "MY OLD FAVOURITE");
 
-    const isFavourite =
-        (newFav?.songs || []).includes(song.id) ||
-        (oldFav?.songs || []).includes(song.id);
+const isFavourite =
+    (newFav?.songs || []).includes(song.id) ||
+    (oldFav?.songs || []).includes(song.id);
 
-    favouriteBtn.textContent = isFavourite ? "Favourited" : "Favourite";
-    favouriteBtn.disabled = false;
+favouriteBtn.textContent = isFavourite ? "Favourited" : "Favourite";
+favouriteBtn.disabled = false;
 
-    // Popup Open
-    document.getElementById("songPopup").classList.add("active");
+
+// ================================
+// TOP HITS STAR UPDATE
+// ================================
+
+const topHitStar =
+    document.getElementById("topHitStar");
+
+if (topHitStar) {
+
+    const isTopHit =
+        topHitsNew.includes(song.id) ||
+        topHitsOld.includes(song.id);
+
+    topHitStar.classList.toggle(
+        "active",
+        isTopHit
+    );
+
+    topHitStar.innerHTML =
+        `<i class="${isTopHit
+            ? "fa-solid"
+            : "fa-regular"
+        } fa-star"></i>`;
+}
+
+
+// Popup Open
+document.getElementById("songPopup").classList.add("active");
 
     // Update Views
     updateDoc(doc(db, "lyricsSongs", song.id), {
@@ -6773,6 +6440,85 @@ function loadFavourites() {
 
 }
 
+function loadTopHits() {
+
+    onSnapshot(
+        collection(db, "topHits"),
+        (snapshot) => {
+
+            let newSongs = [];
+            let oldSongs = [];
+
+            snapshot.forEach(docSnap => {
+
+                const data = docSnap.data();
+
+                if (docSnap.id === "NEW") {
+                    newSongs = data.songs || [];
+                }
+
+                if (docSnap.id === "OLD") {
+                    oldSongs = data.songs || [];
+                }
+
+            });
+
+
+            // ==========================================
+            // TOP HITS NEW - RANDOM FIRST LOAD
+            // ==========================================
+
+            if (!topHitsNewRandomized) {
+
+                topHitsNew = shuffleSongs(newSongs);
+
+                topHitsNewRandomized = true;
+
+            } else {
+
+                topHitsNew = newSongs;
+
+            }
+
+
+            // ==========================================
+            // TOP HITS OLD - RANDOM FIRST LOAD
+            // ==========================================
+
+            if (!topHitsOldRandomized) {
+
+                topHitsOld = shuffleSongs(oldSongs);
+
+                topHitsOldRandomized = true;
+
+            } else {
+
+                topHitsOld = oldSongs;
+
+            }
+
+
+            // ==========================================
+            // REFRESH CURRENT TOP HITS PAGE
+            // ==========================================
+
+            if (currentPage === "topHitsNew") {
+
+                showTopHitsNewPage();
+
+            }
+
+            if (currentPage === "topHitsOld") {
+
+                showTopHitsOldPage();
+
+            }
+
+        }
+    );
+
+}
+
 function isSongFavourite(songId){
 
     return allFavourites.find(f=>f.songId===songId);
@@ -7186,11 +6932,11 @@ window.toggleFavorite = async function () {
     } else {
 
         showError(
-                    "Favourite Failed !",
-                    `Favourite සඳහා එක් කිරීමට නොහැකි විය&nbsp;&nbsp;!`
-                );
-    return;
+            "Favourite Failed !",
+            `Favourite සඳහා එක් කිරීමට නොහැකි විය&nbsp;&nbsp;!`
+        );
 
+        return;
     }
 
     const favDoc = allFavourites.find(f => f.id === favouriteId);
@@ -7198,51 +6944,65 @@ window.toggleFavorite = async function () {
 
     const btn = document.getElementById("favoriteBtn");
 
-    try {
+    // ===============================
+    // ADMIN PASSWORD
+    // ===============================
 
-        if (songs.includes(song.id)) {
+    openAdminPassword(async function () {
 
-    // Button එක මුලින්ම වෙනස් කරන්න
-    btn.textContent = "Favourite";
-    btn.disabled = true;
+        try {
 
-    // ඊට පස්සේ Firestore update කරන්න
-    await updateDoc(
-        doc(db, "favourites", favouriteId),
-        {
-            songs: arrayRemove(song.id)
+            if (songs.includes(song.id)) {
+
+                // ===============================
+                // REMOVE FAVOURITE
+                // ===============================
+
+                btn.textContent = "Favourite";
+                btn.disabled = true;
+
+                await updateDoc(
+                    doc(db, "favourites", favouriteId),
+                    {
+                        songs: arrayRemove(song.id)
+                    }
+                );
+
+                btn.disabled = false;
+
+            } else {
+
+                // ===============================
+                // ADD FAVOURITE
+                // ===============================
+
+                btn.textContent = "Favourited";
+                btn.disabled = true;
+
+                await updateDoc(
+                    doc(db, "favourites", favouriteId),
+                    {
+                        songs: arrayUnion(song.id)
+                    }
+                );
+
+                btn.disabled = false;
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            btn.disabled = false;
+
+            showError(
+                "Favourite Failed !",
+                "Favourite එක යාවත්කාලීන කිරීමට නොහැකි විය&nbsp;&nbsp;!"
+            );
+
         }
-    );
 
-    btn.disabled = false;
-
-} else {
-
-    // Button එක මුලින්ම වෙනස් කරන්න
-    btn.textContent = "Favourited";
-    btn.disabled = true;
-
-    // ඊට පස්සේ Firestore update කරන්න
-    await updateDoc(
-        doc(db, "favourites", favouriteId),
-        {
-            songs: arrayUnion(song.id)
-        }
-    );
-
-    btn.disabled = false;
-}
-
-    } catch (err) {
-
-    console.error(err);
-
-    showError(
-        "Favourite Failed !",
-        "Favourite එක යාවත්කාලීන කිරීමට නොහැකි විය&nbsp;&nbsp;!"
-    );
-
-}
+    });
 
 };
 
@@ -9110,6 +8870,48 @@ case "notesCategorySongs": {
 
             break;
 
+            case "topHitsNew": {
+
+    const songs = topHitsNew
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    setMainHeader(
+        "Top Hits [ New ]",
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderSongsGrid(songs, "search");
+
+    break;
+}
+
+
+case "topHitsOld": {
+
+    const songs = topHitsOld
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    setMainHeader(
+        "Top Hits [ Old ]",
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    renderSongsGrid(songs, "search");
+
+    break;
+}
+
+
     }
 
     return;
@@ -9805,11 +9607,11 @@ if (filteredFavourites.length === 0) {
     );
 
     if (filteredSongs.length === 0) {
-        showEmptyState("No Songs Found");
-        break;
-    }
+    showEmptyState("No Songs Found", "search");
+    break;
+}
 
-    renderSongsGrid(filteredSongs);
+    renderSongsGrid(filteredSongs, "search");
 
     break;
 }
@@ -9838,12 +9640,12 @@ case "mostViewed": {
         `${filteredSongs.length.toLocaleString()}&nbsp;&nbsp;Songs Found`
     );
 
-    if (filteredSongs.length === 0) {
-        showEmptyState("No Songs Found");
-        break;
-    }
+   if (filteredSongs.length === 0) {
+    showEmptyState("No Songs Found", "search");
+    break;
+}
 
-    renderSongsGrid(filteredSongs);
+    renderSongsGrid(filteredSongs, "search");
 
     break;
 }
@@ -9873,9 +9675,94 @@ case "recentlyPlayed": {
     );
 
     if (filteredSongs.length === 0) {
-        showEmptyState("No Songs Found");
-        break;
-    }
+    showEmptyState("No Songs Found", "search");
+    break;
+}
+
+    renderSongsGrid(filteredSongs, "search");
+
+    break;
+}
+
+case "topHitsNew": {
+
+    const songs = topHitsNew
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    const filteredSongs = songs.filter(song => {
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            artist.startsWith(keyword) ||
+            title.startsWith(keyword)
+        );
+
+    });
+
+    setMainHeader(
+        "Top Hits [ New ]",
+        `${filteredSongs.length.toLocaleString()}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+    showEmptyState("No Songs Found", "search");
+    break;
+}
+
+    renderSongsGrid(filteredSongs);
+
+    break;
+}
+
+
+case "topHitsOld": {
+
+    const songs = topHitsOld
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    const filteredSongs = songs.filter(song => {
+
+        const artist = String(song.artist || "")
+            .toLowerCase()
+            .trim();
+
+        const title = String(song.title || "")
+            .toLowerCase()
+            .trim();
+
+        return (
+            artist.startsWith(keyword) ||
+            title.startsWith(keyword)
+        );
+
+    });
+
+    setMainHeader(
+        "Top Hits [ Old ]",
+        `${filteredSongs.length.toLocaleString()}&nbsp;&nbsp;Songs Found`
+    );
+
+    if (filteredSongs.length === 0) {
+    showEmptyState("No Songs Found", "search");
+    break;
+}
 
     renderSongsGrid(filteredSongs);
 
@@ -10360,6 +10247,16 @@ case "notesPlaylistSongs":
 
 case "notesCategorySongs":
     placeholder = "Search songs...";
+    noResults = "No Songs Found";
+    break;
+
+    case "topHitsNew":
+    placeholder = "Search Top Hits [ New ]...";
+    noResults = "No Songs Found";
+    break;
+
+case "topHitsOld":
+    placeholder = "Search Top Hits [ Old ]...";
     noResults = "No Songs Found";
     break;
 
@@ -11085,6 +10982,256 @@ clearSearch();
     renderNotesLinks(songs, false);
 
 };
+
+async function createTopHitsCollection() {
+
+    try {
+
+        await setDoc(
+            doc(db, "topHits", "NEW"),
+            {
+                songs: []
+            },
+            { merge: true }
+        );
+
+        await setDoc(
+            doc(db, "topHits", "OLD"),
+            {
+                songs: []
+            },
+            { merge: true }
+        );
+
+        console.log("Top Hits collection ready!");
+
+    } catch (error) {
+
+        console.error(
+            "Top Hits collection error:",
+            error
+        );
+
+    }
+}
+
+window.toggleTopHit = async function () {
+
+    const song = allSongs.find(
+        s => s.id === currentSongId
+    );
+
+    if (!song) return;
+
+    const star =
+        document.getElementById("topHitStar");
+
+    if (!star) return;
+
+
+    // ==========================================
+    // CHECK FAVOURITE
+    // ==========================================
+
+    const newFav = allFavourites.find(
+        f => f.id === "MY NEW FAVOURITE"
+    );
+
+    const oldFav = allFavourites.find(
+        f => f.id === "MY OLD FAVOURITE"
+    );
+
+    const isFavourite =
+        (newFav?.songs || []).includes(song.id) ||
+        (oldFav?.songs || []).includes(song.id);
+
+
+    if (!isFavourite) {
+
+        showError(
+            "Top Hits Failed !",
+            "මුලින් මේ song එක Favourite කරන්න !"
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // SONG CATEGORY
+    // ==========================================
+
+    const categories = Array.isArray(song.category)
+        ? song.category
+        : [song.category].filter(Boolean);
+
+
+    let topHitId = null;
+
+
+    if (categories.includes("NEW KARAOKE SONGS")) {
+
+        topHitId = "NEW";
+
+    } else if (
+        categories.includes("OLD KARAOKE SONGS")
+    ) {
+
+        topHitId = "OLD";
+
+    } else {
+
+        showError(
+            "Top Hits Failed !",
+            "මෙම song එක New Karaoke හෝ Old Karaoke එකක් නොවේ !"
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET LATEST FIREBASE DATA
+    // ==========================================
+
+    const topHitRef =
+        doc(db, "topHits", topHitId);
+
+
+    try {
+
+        const snapshot =
+            await getDoc(topHitRef);
+
+
+        const data =
+            snapshot.exists()
+                ? snapshot.data()
+                : {};
+
+
+        const currentSongs =
+            Array.isArray(data.songs)
+                ? data.songs
+                : [];
+
+
+        const alreadyAdded =
+            currentSongs.some(
+                id => String(id) === String(song.id)
+            );
+
+
+        // ==========================================
+        // UNMARK
+        // ==========================================
+
+        if (alreadyAdded) {
+
+            await updateDoc(
+                topHitRef,
+                {
+                    songs: arrayRemove(song.id)
+                }
+            );
+
+            star.classList.remove("active");
+
+            star.innerHTML =
+                `<i class="fa-regular fa-star"></i>`;
+
+
+        // ==========================================
+        // MARK
+        // ==========================================
+
+        } else {
+
+            await updateDoc(
+                topHitRef,
+                {
+                    songs: arrayUnion(song.id)
+                }
+            );
+
+            star.classList.add("active");
+
+            star.innerHTML =
+                `<i class="fa-solid fa-star"></i>`;
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Top Hits update failed:",
+            error
+        );
+
+    }
+
+};
+
+window.showTopHitsNewPage = function () {
+
+    setActiveNav("navTopHitsNew");
+    clearBottomNavActive();
+    currentPage = "topHitsNew";
+
+    updateSearchUI();
+    clearSearch();
+
+    mainHeader.style.display = "block";
+
+    const songs = topHitsNew
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    setMainHeader(
+        "Top Hits [ New ]",
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    setMiniHeader();
+
+    renderSongsGrid(songs, "search");
+
+};
+
+window.showTopHitsOldPage = function () {
+
+    setActiveNav("navTopHitsOld");
+    clearBottomNavActive();
+    currentPage = "topHitsOld";
+
+    updateSearchUI();
+    clearSearch();
+
+    mainHeader.style.display = "block";
+
+    const songs = topHitsOld
+        .map(songId =>
+            allSongs.find(song =>
+                String(song.id) === String(songId)
+            )
+        )
+        .filter(Boolean);
+
+    setMainHeader(
+        "Top Hits [ Old ]",
+        `${songs.length}&nbsp;&nbsp;Songs Found`
+    );
+
+    setMiniHeader();
+
+    renderSongsGrid(songs, "search");
+
+};
+
 
 
 
