@@ -42,6 +42,15 @@ html {background: #050816;}
 
 body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:hidden;}
 
+/* Prevent popup title font/layout jump before Google Fonts are ready */
+body:not(.popup-fonts-ready) #popupTitle,
+body:not(.popup-fonts-ready) #songPopupTitle,
+body:not(.popup-fonts-ready) #appPopupTitle,
+body:not(.popup-fonts-ready) #popupInfo,
+body:not(.popup-fonts-ready) #popupMeta {
+    visibility: hidden;
+}
+
 /* Layout Structure*/
 .app-container{display:flex;width:100%;height:100%;overflow:hidden;}
 
@@ -154,7 +163,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .song-popup-card{width:min(var(--popup-width),92%);height:var(--popup-height);background:#fff;border-radius:var(--popup-radius);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 70px rgba(0,0,0,.25);}
 .popup-header{position:relative;padding:20px 22px 12px}
 .popup-header::after{content:"";position:absolute;left:var(--popup-divider-gap);right:var(--popup-divider-gap);bottom:0;height:1px;background:rgba(148,163,184,var(--popup-divider-opacity))}
-#popupTitle{min-height: 1.4em;line-height: 1.4 !important;font-size: 19px !important;font-family: 'Poppins', sans-serif !important;margin-bottom:5px;font-size:var(--popup-title-size);word-spacing:3px;font-weight:600;color:#0f172a}
+#popupTitle{min-height:1.4em;line-height:1.4 !important;font-size:19px !important;font-family:'Poppins',sans-serif !important;margin-bottom:5px;word-spacing:3px;font-weight:600;color:#0f172a;font-synthesis:none;}
 #popupInfo{margin-top:2px;font-size:var(--popup-info-size);word-spacing:1px;font-weight:430;color:#475569;letter-spacing:.2px;text-transform:uppercase;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 #popupMeta{margin-top:3px;font-size:var(--popup-meta-size);font-weight:500;color:#64748b;letter-spacing:.2px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .popup-dot{margin:0 8px}
@@ -167,7 +176,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .popup-footer::before{content:"";position:absolute;left:var(--popup-divider-gap);right:var(--popup-divider-gap);top:0;height:1px;background:rgba(148,163,184,var(--popup-divider-opacity))}
 .popup-header h2,.popup-header p,#popupTitle,#popupInfo,#popupMeta,#popupMeta span{font-family:'Poppins',sans-serif!important}
 @keyframes popupScale{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-#songPopupTitle {font-family: 'Plus Jakarta Sans', sans-serif !important;font-weight: 2000 !important;font-style: normal !important;}
+#songPopupTitle {font-family:'Plus Jakarta Sans',sans-serif !important;font-weight:700 !important;font-style:normal !important;font-synthesis:none;}
 
 /* Artist Suggestions */
 .artist-suggestions{position:absolute;top:44px;left:0;right:0;background:#fff;border:1px solid #dfe6ec;border-radius:12px;max-height:210px;overflow-y:auto;display:none;z-index:9999;box-shadow:0 8px 18px rgba(0,0,0,.08);scrollbar-width:none;-ms-overflow-style:none}
@@ -7945,7 +7954,16 @@ function getYoutubeId(url){
 
 function setSeekBarProgress(bar, value, max) {
 
-    const percent = max ? (value / max) * 100 : 0;
+    if (!bar || !max || !isFinite(value) || !isFinite(max)) return;
+
+    const percent = (value / max) * 100;
+
+    // Tiny movements වලදී unnecessary repaint නවත්වන්න
+    const lastPercent = Number(bar.dataset.lastProgress || -1);
+
+    if (Math.abs(percent - lastPercent) < 0.15) return;
+
+    bar.dataset.lastProgress = percent;
 
     bar.style.background = `linear-gradient(
         to right,
@@ -7954,7 +7972,6 @@ function setSeekBarProgress(bar, value, max) {
         #d8dee8 ${percent}%,
         #d8dee8 100%
     )`;
-
 }
 
 function updateOriginalAudioUI() {
@@ -11240,7 +11257,23 @@ window.showTopHitsOldPage = function () {
 
 };
 
+document.fonts.ready.then(async function () {
 
+    try {
+
+        await Promise.all([
+            document.fonts.load("600 19px Poppins"),
+            document.fonts.load("430 12px Poppins"),
+            document.fonts.load("500 10px Poppins")
+        ]);
+
+    } catch (e) {
+        console.warn("Popup fonts loading:", e);
+    }
+
+    document.body.classList.add("popup-fonts-ready");
+
+});
 
 
 
