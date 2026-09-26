@@ -38,9 +38,8 @@ html {background: #050816;}
 
 #splashScreen {position: fixed !important;inset: 0 !important;width: 100% !important;height: 100% !important;z-index: 999999 !important;background: #050816 !important;}
 .splash-content,
-.splash-content *{
-    font-family:Arial,sans-serif !important;
-}
+.splash-content *{font-family:Arial,sans-serif !important;}
+
 body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:hidden;}
 
 /* Layout Structure*/
@@ -155,7 +154,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .song-popup-card{width:min(var(--popup-width),92%);height:var(--popup-height);background:#fff;border-radius:var(--popup-radius);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 70px rgba(0,0,0,.25);}
 .popup-header{position:relative;padding:20px 22px 12px}
 .popup-header::after{content:"";position:absolute;left:var(--popup-divider-gap);right:var(--popup-divider-gap);bottom:0;height:1px;background:rgba(148,163,184,var(--popup-divider-opacity))}
-#popupTitle{margin-bottom:5px;font-size:var(--popup-title-size);word-spacing:3px;font-weight:600;color:#0f172a}
+#popupTitle{min-height: 1.4em;line-height: 1.4 !important;font-size: 19px !important;font-family: 'Poppins', sans-serif !important;margin-bottom:5px;font-size:var(--popup-title-size);word-spacing:3px;font-weight:600;color:#0f172a}
 #popupInfo{margin-top:2px;font-size:var(--popup-info-size);word-spacing:1px;font-weight:430;color:#475569;letter-spacing:.2px;text-transform:uppercase;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 #popupMeta{margin-top:3px;font-size:var(--popup-meta-size);font-weight:500;color:#64748b;letter-spacing:.2px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .popup-dot{margin:0 8px}
@@ -168,6 +167,7 @@ body{background-color:#f8fafc;color:#334155;display:flex;height:100vh;overflow:h
 .popup-footer::before{content:"";position:absolute;left:var(--popup-divider-gap);right:var(--popup-divider-gap);top:0;height:1px;background:rgba(148,163,184,var(--popup-divider-opacity))}
 .popup-header h2,.popup-header p,#popupTitle,#popupInfo,#popupMeta,#popupMeta span{font-family:'Poppins',sans-serif!important}
 @keyframes popupScale{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+#songPopupTitle {font-family: 'Plus Jakarta Sans', sans-serif !important;font-weight: 2000 !important;font-style: normal !important;}
 
 /* Artist Suggestions */
 .artist-suggestions{position:absolute;top:44px;left:0;right:0;background:#fff;border:1px solid #dfe6ec;border-radius:12px;max-height:210px;overflow-y:auto;display:none;z-index:9999;box-shadow:0 8px 18px rgba(0,0,0,.08);scrollbar-width:none;-ms-overflow-style:none}
@@ -7593,8 +7593,7 @@ function loadYoutubePlayers(song) {
             const originalId = getYoutubeId(originalLink);
 
             if (originalId && window.originalYT) {
-                window.originalYT.loadVideoById(originalId);
-                window.originalYT.pauseVideo();
+                window.originalYT.cueVideoById(originalId);
             }
 
         }
@@ -7614,8 +7613,7 @@ function loadYoutubePlayers(song) {
             const karaokeId = getYoutubeId(karaokeLink);
 
             if (karaokeId && window.karaokeYT) {
-                window.karaokeYT.loadVideoById(karaokeId);
-                window.karaokeYT.pauseVideo();
+                window.karaokeYT.cueVideoById(karaokeId);
             }
 
         }
@@ -8103,7 +8101,7 @@ function youtubeLoop(){
         karaokeDurationTime
     );
 
-    requestAnimationFrame(youtubeLoop);
+    setTimeout(youtubeLoop, 100);
 
 }
 
