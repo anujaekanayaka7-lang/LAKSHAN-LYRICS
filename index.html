@@ -1961,6 +1961,10 @@ let karaokeYT = null;
 let originalYT = null;
 let originalReady = false;
 let karaokeReady = false;
+let currentOriginalYoutubeId = "";
+let currentKaraokeYoutubeId = "";
+let originalYoutubeLoaded = false;
+let karaokeYoutubeLoaded = false;
 let firstMiniAnimation = true;
 let miniAnimationPlayed = false;
 let initialSyncCompleted = false;
@@ -1972,6 +1976,7 @@ let playlistSortable = null;
 let playlistReorderDirty = false;
 let playlistOriginalOrder = [];
 let playlistJustDragged = false;
+
 
 window.playlists = [];
 window.karaokeYT = null;
@@ -7556,7 +7561,13 @@ async function getSongDocRef(songId) {
 
 let openedFromWeddingSongs = false;
 function loadYoutubePlayers(song) {
+    
+    // Reset YouTube loaded state for every new song
+    originalYoutubeLoaded = false;
+    karaokeYoutubeLoaded = false;
 
+    currentOriginalYoutubeId = "";
+    currentKaraokeYoutubeId = "";
     const originalLink = song.originalYoutube || "";
     const isWeddingCategory =
     currentPage === "categorySongs" &&
@@ -7601,9 +7612,9 @@ function loadYoutubePlayers(song) {
 
             const originalId = getYoutubeId(originalLink);
 
-            if (originalId && window.originalYT) {
-                window.originalYT.cueVideoById(originalId);
-            }
+            if (originalId) {
+    currentOriginalYoutubeId = originalId;
+}
 
         }
 
@@ -7621,9 +7632,9 @@ function loadYoutubePlayers(song) {
 
             const karaokeId = getYoutubeId(karaokeLink);
 
-            if (karaokeId && window.karaokeYT) {
-                window.karaokeYT.cueVideoById(karaokeId);
-            }
+            if (karaokeId) {
+    currentKaraokeYoutubeId = karaokeId;
+}
 
         }
 
@@ -7687,21 +7698,30 @@ window.toggleOriginalAudio = async function () {
     }
 
     // YouTube
-    if (!window.originalYT) return;
+if (!window.originalYT) return;
 
-    const state = window.originalYT.getPlayerState();
+const state = window.originalYT.getPlayerState();
 
-    if (state === YT.PlayerState.PLAYING) {
+if (state === YT.PlayerState.PLAYING) {
 
-        window.originalYT.pauseVideo();
-        btn.textContent = "▶";
+    window.originalYT.pauseVideo();
+    btn.textContent = "▶";
 
-    } else {
+} else {
 
-        window.originalYT.playVideo();
-        btn.textContent = "⏸";
+    // Song එක තාම YouTube player එකට load කරලා නැත්නම්
+    if (currentOriginalYoutubeId && !originalYoutubeLoaded) {
 
-    }
+    window.originalYT.loadVideoById(currentOriginalYoutubeId);
+    originalYoutubeLoaded = true;
+
+}
+
+window.originalYT.playVideo();
+
+    btn.textContent = "⏸";
+
+}
 
 };
 
@@ -7790,29 +7810,37 @@ window.toggleKaraokeAudio = async function () {
 
     // ---------------- YouTube ----------------
 
-    if (!window.karaokeYT) return;
+if (!window.karaokeYT) return;
 
-    const state = window.karaokeYT.getPlayerState();
+const state = window.karaokeYT.getPlayerState();
 
-    if (state === YT.PlayerState.PLAYING) {
+if (state === YT.PlayerState.PLAYING) {
 
-        window.karaokeYT.pauseVideo();
+    window.karaokeYT.pauseVideo();
 
-        btn.textContent = "▶";
+    btn.textContent = "▶";
 
-        if (miniBtn) {
-            miniBtn.innerHTML = "▶ Play Karaoke";
-        }
-
-    } else {
-
-        window.karaokeYT.playVideo();
-
-        btn.textContent = "⏸";
-
-        showMiniAnimation();
-
+    if (miniBtn) {
+        miniBtn.innerHTML = "▶ Play Karaoke";
     }
+
+} else {
+
+    // Song එක තාම YouTube player එකට load කරලා නැත්නම්
+    if (currentKaraokeYoutubeId && !karaokeYoutubeLoaded) {
+
+    window.karaokeYT.loadVideoById(currentKaraokeYoutubeId);
+    karaokeYoutubeLoaded = true;
+
+}
+
+window.karaokeYT.playVideo();
+
+    btn.textContent = "⏸";
+
+    showMiniAnimation();
+
+}
 
 };
 
@@ -7827,7 +7855,8 @@ window.onYouTubeIframeAPIReady = function () {
         playerVars: {
             autoplay: 0,
             controls: 0,
-            rel: 0
+            rel: 0,
+            playsinline: 1
         },
 
         events: {
@@ -7870,7 +7899,9 @@ window.onYouTubeIframeAPIReady = function () {
         playerVars: {
             autoplay: 0,
             controls: 0,
-            rel: 0
+            rel: 0,
+            playsinline: 1
+
         },
 
         events: {
@@ -8118,7 +8149,7 @@ function youtubeLoop(){
         karaokeDurationTime
     );
 
-    setTimeout(youtubeLoop, 100);
+    setTimeout(youtubeLoop, 250);
 
 }
 
@@ -10304,6 +10335,10 @@ function clearSearch() {
 }
 
 function resetPlayers() {
+
+    // ===== Reset YouTube loaded state =====
+    originalYoutubeLoaded = false;
+    karaokeYoutubeLoaded = false;
 
     // ===== Original Audio =====
     originalAudio.pause();
