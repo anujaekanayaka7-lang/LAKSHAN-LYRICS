@@ -620,11 +620,23 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
 }
 
-/* Keyboard open - keep original look as much as possible */
+/* =========================================================
+   KEYBOARD OPEN - MOVE LOCK SCREEN UP
+   ========================================================= */
 
-#splashScreen.keyboard-active .aurora {animation-play-state: paused !important;}
-#splashScreen.keyboard-active .splash-content {animation-play-state: paused !important;}
-#splashScreen.keyboard-active #lockPassword {transition: none !important;}
+#splashScreen.keyboard-active .aurora {
+    animation-play-state: paused !important;
+}
+
+#splashScreen.keyboard-active .splash-content {
+    animation-play-state: paused !important;
+    transform: translateY(-70px) !important;
+    transition: transform 0.25s ease-out !important;
+}
+
+#splashScreen.keyboard-active #lockPassword {
+    transition: none !important;
+}
 
 .mobile-header{display:flex}
 .mobile-bottom-nav{display:flex}
@@ -3903,8 +3915,12 @@ window.renderPlaylistsList = function(playlists){
     playlists.forEach(playlist => {
 
         const count = Array.isArray(playlist.songs)
-            ? playlist.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        playlist.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += createCollectionCard(
             (playlist.name || "Untitled Playlist").toUpperCase(),
@@ -6556,8 +6572,12 @@ window.renderFavouritesList = function (favourites) {
     favourites.forEach(favourite => {
 
         const count = Array.isArray(favourite.songs)
-            ? favourite.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        favourite.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += createCollectionCard(
             (favourite.name || "Untitled Favourite").toUpperCase(),
@@ -8770,8 +8790,12 @@ case "notesPlaylistLinks": {
     allPlaylists.forEach(playlist => {
 
         const count = Array.isArray(playlist.songs)
-            ? playlist.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        playlist.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += createCollectionCard(
             (playlist.name || "Untitled Playlist").toUpperCase(),
@@ -9069,8 +9093,12 @@ case "topHitsOld": {
     filteredPlaylists.forEach(playlist => {
 
         const count = Array.isArray(playlist.songs)
-            ? playlist.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        playlist.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += `
             <div class="notes-menu-card"
@@ -9848,8 +9876,12 @@ case "notesPlaylistLinks": {
     filteredPlaylists.forEach(playlist => {
 
         const count = Array.isArray(playlist.songs)
-            ? playlist.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        playlist.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += createCollectionCard(
             (playlist.name || "Untitled Playlist").toUpperCase(),
@@ -10510,17 +10542,31 @@ function togglePassword(){
 
 }
 
-// Keyboard performance mode
+// =========================================================
+// KEYBOARD OPEN - MOVE LOCK SCREEN UP
+// =========================================================
+
 const lockInput = document.getElementById("lockPassword");
 const splashScreen = document.getElementById("splashScreen");
 
-lockInput.addEventListener("focus", () => {
-    splashScreen.classList.add("keyboard-active");
-});
+if (lockInput && splashScreen) {
 
-lockInput.addEventListener("blur", () => {
-    splashScreen.classList.remove("keyboard-active");
-});
+    lockInput.addEventListener("focus", () => {
+
+        setTimeout(() => {
+
+            splashScreen.classList.add("keyboard-active");
+
+        }, 150);
+
+    });
+
+    lockInput.addEventListener("blur", () => {
+
+        splashScreen.classList.remove("keyboard-active");
+
+    });
+}
 
 // Live Clock
 
@@ -10767,8 +10813,12 @@ window.openNotesPlaylistLinks = function () {
     allPlaylists.forEach(playlist => {
 
         const count = Array.isArray(playlist.songs)
-            ? playlist.songs.length
-            : 0;
+    ? allSongs.filter(song =>
+        playlist.songs.some(
+            id => String(id) === String(song.id)
+        )
+    ).length
+    : 0;
 
         html += createCollectionCard(
             (playlist.name || "Untitled Playlist").toUpperCase(),
