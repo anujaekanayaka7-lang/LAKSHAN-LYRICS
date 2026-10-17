@@ -7769,28 +7769,13 @@ window.toggleKaraokeAudio = async function () {
 
     if (!miniBtn) return;
 
-    if (!miniAnimationPlayed) {
+    miniAnimationPlayed = true;
 
-        miniAnimationPlayed = true;
-
-        miniBtn.innerHTML = "⏸ Playing...";
-
-        setTimeout(() => {
-            miniBtn.innerHTML =
-                '⏸ Playing... <span class="karaoke-bars">' +
-                '<span></span><span></span><span></span><span></span>' +
-                '<span></span><span></span><span></span><span></span>' +
-                '</span>';
-        }, 2000);
-
-    } else {
-
-        miniBtn.innerHTML =
-            '⏸ Playing... <span class="karaoke-bars">' +
-            '<span></span><span></span><span></span><span></span>' +
-            '<span></span><span></span><span></span><span></span>' +
-            '</span>';
-    }
+    miniBtn.innerHTML =
+        '⏸ Playing... <span class="karaoke-bars">' +
+        '<span></span><span></span><span></span><span></span>' +
+        '<span></span><span></span><span></span><span></span>' +
+        '</span>';
 }
 
     // ---------------- Cloudinary Audio ----------------
@@ -7858,7 +7843,7 @@ window.karaokeYT.playVideo();
 
     btn.textContent = "⏸";
 
-    showMiniAnimation();
+    
 
 }
 
@@ -7887,21 +7872,42 @@ window.onYouTubeIframeAPIReady = function () {
 
             },
 
-            onStateChange(e){
+            onStateChange(e) {
 
     const btn = document.getElementById("karaokePlayBtn");
+    const miniBtn = document.getElementById("karaokeMiniBtn");
 
-    switch(e.data){
+    switch (e.data) {
 
         case YT.PlayerState.PLAYING:
-            btn.textContent = "⏸";
+
+            if (btn) {
+                btn.textContent = "⏸";
+            }
+
+            if (miniBtn) {
+                miniBtn.innerHTML =
+                    '⏸ Playing... <span class="karaoke-bars">' +
+                    '<span></span><span></span><span></span><span></span>' +
+                    '<span></span><span></span><span></span><span></span>' +
+                    '</span>';
+            }
+
             break;
 
         case YT.PlayerState.PAUSED:
         case YT.PlayerState.ENDED:
-            btn.textContent = "▶";
-            break;
+        case YT.PlayerState.CUED:
 
+            if (btn) {
+                btn.textContent = "▶";
+            }
+
+            if (miniBtn) {
+                miniBtn.innerHTML = "▶ Play Karaoke";
+            }
+
+            break;
     }
 
 }
