@@ -7749,52 +7749,88 @@ window.originalYT.playVideo();
 // ==========================
 // Karaoke Audio
 // ==========================
+
 window.toggleKaraokeAudio = async function () {
 
     const audio = document.getElementById("karaokeAudio");
     const btn = document.getElementById("karaokePlayBtn");
     const miniBtn = document.getElementById("karaokeMiniBtn");
+    const originalAudio = document.getElementById("originalAudio");
     const originalBtn = document.getElementById("originalPlayBtn");
 
+    if (!audio || !btn || !miniBtn) return;
+
+    // -------------------------
+    // Mini Button Helpers
+    // -------------------------
+
+    function showPlayingText() {
+        miniBtn.innerHTML = "⏸ Playing...";
+    }
+
+    function showPlayingBars() {
+        miniBtn.innerHTML =
+            '⏸ Playing... <span class="karaoke-bars">' +
+            '<span></span><span></span><span></span><span></span>' +
+            '<span></span><span></span><span></span><span></span>' +
+            '</span>';
+    }
+
+    function resetMiniButton() {
+        miniBtn.innerHTML = "▶ Play Karaoke";
+    }
+
+    // -------------------------
     // Stop Original Audio
-    document.getElementById("originalAudio").pause();
+    // -------------------------
+
+    if (originalAudio) {
+        originalAudio.pause();
+    }
 
     if (window.originalYT) {
         window.originalYT.pauseVideo();
     }
 
-    originalBtn.textContent = "▶";
+    if (originalBtn) {
+        originalBtn.textContent = "▶";
+    }
 
-    function showMiniAnimation() {
-
-    if (!miniBtn) return;
-
-    miniAnimationPlayed = true;
-
-    miniBtn.innerHTML =
-        '⏸ Playing... <span class="karaoke-bars">' +
-        '<span></span><span></span><span></span><span></span>' +
-        '<span></span><span></span><span></span><span></span>' +
-        '</span>';
-}
-
-    // ---------------- Cloudinary Audio ----------------
+    // -------------------------
+    // Cloudinary Audio
+    // -------------------------
 
     if (audio.src && audio.src.trim() !== "") {
 
         if (audio.paused) {
 
+            // Play එබූ ගමන් text එක පෙන්වන්න
+            showPlayingText();
+
+            // සින්දුව ඇත්තටම Play වූ විට පමණක් bars පෙන්වන්න
+            audio.onplaying = function () {
+                btn.textContent = "⏸";
+                showPlayingBars();
+            };
+
+            audio.onpause = function () {
+                btn.textContent = "▶";
+                resetMiniButton();
+            };
+
+            audio.onended = function () {
+                btn.textContent = "▶";
+                resetMiniButton();
+            };
+
             try {
 
                 await audio.play();
 
-                btn.textContent = "⏸";
+            } catch (error) {
 
-                showMiniAnimation();
-
-            } catch (err) {
-
-                console.error("Karaoke Audio Play Error:", err);
+                btn.textContent = "▶";
+                resetMiniButton();
 
             }
 
@@ -7803,49 +7839,49 @@ window.toggleKaraokeAudio = async function () {
             audio.pause();
 
             btn.textContent = "▶";
-
-            if (miniBtn) {
-                miniBtn.innerHTML = "▶ Play Karaoke";
-            }
+            resetMiniButton();
 
         }
 
         return;
     }
 
-    // ---------------- YouTube ----------------
+    // -------------------------
+    // YouTube Audio
+    // -------------------------
 
-if (!window.karaokeYT) return;
+    if (!window.karaokeYT) return;
 
-const state = window.karaokeYT.getPlayerState();
+    const state = window.karaokeYT.getPlayerState();
 
-if (state === YT.PlayerState.PLAYING) {
+    if (state === YT.PlayerState.PLAYING) {
 
-    window.karaokeYT.pauseVideo();
+        window.karaokeYT.pauseVideo();
 
-    btn.textContent = "▶";
+        btn.textContent = "▶";
+        resetMiniButton();
 
-    if (miniBtn) {
-        miniBtn.innerHTML = "▶ Play Karaoke";
+    } else {
+
+        // Play ඔබපු ගමන් text පමණක් පෙන්වන්න
+        showPlayingText();
+
+        // සින්දුව දැනටමත් load කරලා නැත්නම් load කරන්න
+        if (currentKaraokeYoutubeId && !karaokeYoutubeLoaded) {
+
+            window.karaokeYT.loadVideoById(
+                currentKaraokeYoutubeId
+            );
+
+            karaokeYoutubeLoaded = true;
+
+        }
+
+        window.karaokeYT.playVideo();
+
+        btn.textContent = "⏸";
+
     }
-
-} else {
-
-    // Song එක තාම YouTube player එකට load කරලා නැත්නම්
-    if (currentKaraokeYoutubeId && !karaokeYoutubeLoaded) {
-
-    window.karaokeYT.loadVideoById(currentKaraokeYoutubeId);
-    karaokeYoutubeLoaded = true;
-
-}
-
-window.karaokeYT.playVideo();
-
-    btn.textContent = "⏸";
-
-    
-
-}
 
 };
 
@@ -7877,35 +7913,45 @@ window.onYouTubeIframeAPIReady = function () {
     const btn = document.getElementById("karaokePlayBtn");
     const miniBtn = document.getElementById("karaokeMiniBtn");
 
+    if (!btn || !miniBtn) return;
+
     switch (e.data) {
+
+        // -------------------------
+        // Song is actually playing
+        // -------------------------
 
         case YT.PlayerState.PLAYING:
 
-            if (btn) {
-                btn.textContent = "⏸";
-            }
+            btn.textContent = "⏸";
 
-            if (miniBtn) {
-                miniBtn.innerHTML =
-                    '⏸ Playing... <span class="karaoke-bars">' +
-                    '<span></span><span></span><span></span><span></span>' +
-                    '<span></span><span></span><span></span><span></span>' +
-                    '</span>';
-            }
+            miniBtn.innerHTML =
+                '⏸ Playing... <span class="karaoke-bars">' +
+                '<span></span><span></span><span></span><span></span>' +
+                '<span></span><span></span><span></span><span></span>' +
+                '</span>';
 
             break;
 
+        // -------------------------
+        // Song paused
+        // -------------------------
+
         case YT.PlayerState.PAUSED:
+
+            btn.textContent = "▶";
+            miniBtn.innerHTML = "▶ Play Karaoke";
+
+            break;
+
+        // -------------------------
+        // Song ended
+        // -------------------------
+
         case YT.PlayerState.ENDED:
-        case YT.PlayerState.CUED:
 
-            if (btn) {
-                btn.textContent = "▶";
-            }
-
-            if (miniBtn) {
-                miniBtn.innerHTML = "▶ Play Karaoke";
-            }
+            btn.textContent = "▶";
+            miniBtn.innerHTML = "▶ Play Karaoke";
 
             break;
     }
