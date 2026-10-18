@@ -494,9 +494,9 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 /* LOGIN BOX */
 .login-box{margin:30px 0}
 .password-box{position:relative}
-#lockPassword{width:100%;height:40px;padding:0 50px 0 16px;border:none;outline:none;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(20px);color:#fff;font-size:16px;transition:.25s}
+#lockPassword{width:100%;height:40px;padding:0 50px 0 16px;border:none;outline:none;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:16px;transition:.25s}
 #lockPassword::placeholder{font-size:13px;color:#cbd5e1}
-#lockPassword:focus{border-color:#38bdf8;box-shadow:0 0 20px rgba(56,189,248,.35)}
+#lockPassword:focus{border-color:#38bdf8;box-shadow:none}
 #unlockBtn{width:100%;height:40px;margin-top:18px;border:none;border-radius:14px;cursor:pointer;color:#fff;font-size:14px;font-weight:600;background:linear-gradient(135deg,#2563eb,#7c3aed);transition:.25s}
 #unlockBtn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(37,99,235,.35)}
 #unlockBtn:active{transform:scale(.98)}
@@ -625,17 +625,24 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
    ========================================================= */
 
 #splashScreen.keyboard-active .aurora {
-    animation-play-state: paused !important;
+    animation: none !important;
+    opacity: .35 !important;
 }
 
 #splashScreen.keyboard-active .splash-content {
-    animation-play-state: paused !important;
-    transform: translateY(-70px) !important;
-    transition: transform 0.25s ease-out !important;
+    animation: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: translate3d(0, -70px, 0) !important;
+    transition: none !important;
 }
 
 #splashScreen.keyboard-active #lockPassword {
+    animation: none !important;
     transition: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 .mobile-header{display:flex}
@@ -9405,8 +9412,10 @@ case "topHitsOld": {
             .toLowerCase()
             .trim();
 
+        const artists = artist.split("/").map(name => name.trim());
+
         return (
-            artist.startsWith(keyword) ||
+            artists.some(name => name.startsWith(keyword)) ||
             title.startsWith(keyword)
         );
 
@@ -9418,9 +9427,9 @@ case "topHitsOld": {
     );
 
     if (filteredSongs.length === 0) {
-    showEmptyState("No Songs Found", "search");
-    break;
-}
+        showEmptyState("No Songs Found", "search");
+        break;
+    }
 
     renderSongsGrid(filteredSongs, "search");
 
@@ -10581,6 +10590,16 @@ document
     .getElementById("unlockBtn")
     .addEventListener("click", unlockApp);
 
+    const lockPasswordInput = document.getElementById("lockPassword");
+
+if (lockPasswordInput) {
+    lockPasswordInput.addEventListener("input", function () {
+        if (this.value === APP_PASSWORD) {
+            unlockApp();
+        }
+    });
+}
+
 // Show / Hide Password
 
 function togglePassword(){
@@ -10602,21 +10621,12 @@ const lockInput = document.getElementById("lockPassword");
 const splashScreen = document.getElementById("splashScreen");
 
 if (lockInput && splashScreen) {
-
     lockInput.addEventListener("focus", () => {
-
-        setTimeout(() => {
-
-            splashScreen.classList.add("keyboard-active");
-
-        }, 150);
-
+        splashScreen.classList.add("keyboard-active");
     });
 
     lockInput.addEventListener("blur", () => {
-
         splashScreen.classList.remove("keyboard-active");
-
     });
 }
 
