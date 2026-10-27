@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <head>
+  
   <meta charset="UTF-8">
   <!-- Mobile Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -170,13 +170,103 @@ body:not(.popup-fonts-ready) #popupMeta {
 .popup-body{flex:1;overflow-y:auto;scrollbar-width:none}
 .popup-body::-webkit-scrollbar{display:none}
 .popup-lyrics{padding:20px 22px;word-spacing:3px;white-space:pre-wrap;word-break:break-word;line-height:1.7}
-.popup-back-btn{position:absolute;top:20px;right:18px;width:55px;height:25px;border:1px solid #d0d8df;border-radius:8px;background:#eef2f7;color:#334155;font-size:12px;font-weight:600;cursor:pointer}
+.popup-back-btn{position:absolute;top:20px;right:24px;width:55px;height:25px;border:1px solid #d0d8df;border-radius:8px;background:#eef2f7;color:#334155;font-size:12px;font-weight:600;cursor:pointer}
 .popup-back-btn:hover{background:#e2e8f0;transform:translateY(-2px)}
 .popup-footer{position:relative;height:var(--popup-footer-height);flex-shrink:0;background:#fff}
 .popup-footer::before{content:"";position:absolute;left:var(--popup-divider-gap);right:var(--popup-divider-gap);top:0;height:1px;background:rgba(148,163,184,var(--popup-divider-opacity))}
 .popup-header h2,.popup-header p,#popupTitle,#popupInfo,#popupMeta,#popupMeta span{font-family:'Poppins',sans-serif!important}
 @keyframes popupScale{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
 #songPopupTitle {font-family:'Plus Jakarta Sans',sans-serif !important;font-weight:700 !important;font-style:normal !important;font-synthesis:none;}
+
+
+/* THREE DOT BUTTON */
+.popup-more-btn{position:absolute;top:17px;right:2px;width:30px;height:30px;border:none;background:transparent;color:#000000;font-size:23px;font-weight:200;line-height:22px;padding:0;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+/* =========================================
+   SONG DETAILS POPUP
+========================================= */
+.song-more-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:99999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.2s ease,visibility 0.2s ease}
+.song-more-overlay.active{opacity:1;visibility:visible;pointer-events:auto}
+
+/* =========================================
+   POPUP BOX
+========================================= */
+.song-more-popup{width:360px;max-width:100%;height:75vh;max-height:80vh;overflow-y:auto;padding:16px;box-sizing:border-box;background:#ffffff;color:#171923;border:1px solid rgba(0,0,0,0.06);border-radius:16px;box-shadow:0 12px 35px rgba(0,0,0,0.22);transform:scale(0.95);transition:transform 0.2s ease;-webkit-overflow-scrolling:touch}
+.song-more-overlay.active .song-more-popup{transform:scale(1)}
+
+/* =========================================
+   HEADER
+========================================= */
+.song-more-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.song-more-heading{font-size:15px;font-weight:700;color:#171923;letter-spacing:0.2px}
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+.song-more-close{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border:1px solid #dcdfe6;border-radius:7px;background:#f5f6fa;color:#222222;font-size:11px;font-weight:500;line-height:1.3;cursor:pointer;white-space:nowrap;transition:background 0.2s ease,border-color 0.2s ease,transform 0.2s ease}
+.song-more-close:hover{background:#e8ebf2;border-color:#c5cad5}
+.song-more-close:active{transform:scale(0.96)}
+
+/* =========================================
+   HEADER DIVIDER
+========================================= */
+.song-more-divider{width:100%;height:1px;margin-top:13px;background:#d8dce0}
+
+/* =========================================
+   SONG DETAILS LIST
+========================================= */
+.song-details-list {display: flex;flex-direction: column;gap: 10px;margin-top: 14px;}
+
+/* =========================================
+   INDIVIDUAL DETAIL CARD
+========================================= */
+.song-detail-item{display:flex;flex-direction:column;gap:5px;padding:11px 12px;background:#f7f8fc;border:1px solid #e8eaf1;border-radius:10px;min-width:0;box-sizing:border-box;transition:background 0.2s ease,border-color 0.2s ease}
+.song-detail-item:hover{background:#f0f3fa;border-color:#dce1ed}
+
+/* =========================================
+   FIELD LABEL
+========================================= */
+.song-detail-label {font-size: 10px;font-weight: 700;color: #7b8191;text-transform: uppercase;letter-spacing: 0.8px;}
+
+/* =========================================
+   FIELD VALUE
+========================================= */
+.song-detail-value {font-size: 13px;font-weight: 500;color: #202331;line-height: 1.5;overflow-wrap: anywhere;word-break: break-word;}
+
+/* SONG TITLE & ARTIST */
+.song-more-info {width: 100%;margin-top: 10px;margin-bottom: 12px;}
+.song-more-title {display: block;font-size: 12px;font-weight: 600;color: #171923;line-height: 1.6;overflow-wrap: anywhere;word-break: break-word;}
+.song-more-artist {display: block;font-size: 12px;font-weight: 500;color: #687086;line-height: 1.6;overflow-wrap: anywhere;word-break: break-word;}
+
+/* =========================================
+   KARAOKE LINK
+========================================= */
+.song-detail-link {display: block;font-size: 12px;font-weight: 500;color: #246bfd;text-decoration: none;line-height: 1.6;overflow-wrap: anywhere;word-break: break-word;}
+.song-detail-link:hover {color: #174fc4;text-decoration: underline;}
+
+/* KARAOKE THUMBNAIL */
+.song-thumbnail-container {width: 100%;margin-bottom: 4px;}
+.song-more-thumbnail {display: block;width: 100%;aspect-ratio: 16 / 9;object-fit: cover;border-radius: 12px;border: 1px solid #e5e7eb;background: #f1f3f7;box-sizing: border-box;}
+
+/* =========================================
+   SONG DETAILS - WORD SPACING
+   EXCEPT KARAOKE LINKS
+========================================= */
+.song-detail-label,
+.song-detail-value,
+.song-more-title,
+.song-more-artist {
+    word-spacing: 3px;
+}
+
+/* KARAOKE LINK - KEEP ORIGINAL SPACING */
+.song-detail-link {word-spacing: normal;}
+
+/* =========================================
+   HIDE POPUP SCROLLBAR
+========================================= */
+.song-more-popup {scrollbar-width: none;-ms-overflow-style: none;}
+.song-more-popup::-webkit-scrollbar {display: none;}
 
 /* Artist Suggestions */
 .artist-suggestions{position:absolute;top:44px;left:0;right:0;background:#fff;border:1px solid #dfe6ec;border-radius:12px;max-height:210px;overflow-y:auto;display:none;z-index:9999;box-shadow:0 8px 18px rgba(0,0,0,.08);scrollbar-width:none;-ms-overflow-style:none}
@@ -576,15 +666,64 @@ button[onclick="changeFontSize(-2)"]:active,button[onclick="resetFontSize()"]:ac
 .notes-song-title{font-size:15px;font-weight:550;color:#1f2937;margin-bottom:6px}
 .notes-karaoke-link{display:block;width:100%;max-width:100%;margin:0;padding:2px 0;font-size:13px;font-weight:400;color:#183afc !important;text-decoration:underline !important;text-decoration-color:#183afc;text-underline-offset:3px;word-break:break-all;text-align:left;cursor:pointer;transition:background .2s ease}
 .notes-karaoke-link:hover{background:#eeeeee;color:#183afc !important;text-decoration:underline !important}
-.notes-title-row{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.notes-song-title{flex:1;min-width:0;font-size:15px;font-weight:400;color:#1f2937;margin-bottom:6px}
-.notes-copy-btn{flex:0 0 22px;width:22px;height:22px;margin:-3px 0 0 0;padding:0;border:none;border-radius:5px;background:transparent;color:#64748b;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.notes-copy-btn:hover{background:#e2e8f0;color:#111827}
-.notes-copy-btn svg{width:13px;height:13px;stroke-width:2}
+.notes-title-row{width:100%;display:flex;align-items:flex-start;gap:8px;}
+.notes-song-title{flex:1;min-width:0;font-size:15px;font-weight:400;color:#1f2937;margin-bottom:6px;}
+
+/* COPY + PHOTO */
+.notes-actions{flex:0 0 auto;display:flex;flex-direction:row;align-items:center;gap:4px;margin-top:-3px;}
+
+/* BOTH BUTTONS */
+.notes-copy-btn,
+.notes-thumb-btn{flex:0 0 22px;width:22px;height:22px;margin:0;padding:0;border:none;border-radius:5px;background:transparent;color:#64748b;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+/* HOVER */
+.notes-copy-btn:hover,
+.notes-thumb-btn:hover{background:#e2e8f0;color:#111827;}
+
+/* ICON SIZE */
+.notes-copy-btn svg,
+.notes-thumb-btn svg{width:13px;height:13px;stroke-width:2;}
+
+/* ==============================
+   THUMBNAIL BUTTON
+============================== */
+.notes-thumb-btn{width:22px;height:22px;margin:0;padding:0;border:0;border-radius:5px;background:transparent;color:#64748b;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s ease,color .15s ease,transform .12s ease}
+
+/* Hover */
+.notes-thumb-btn:hover{background:#e2e8f0;color:#111827}
+
+/* Press */
+.notes-thumb-btn:active{transform:scale(.90)}
+
+/* Icon */
+.notes-thumb-btn svg{width:13px;height:13px;stroke-width:2}
 .notes-link-cards .category-icon{background:#f1f5f9;color:#475569}
 body{background:#fff;position:relative;isolation:isolate}
 .stat-card{position:relative;overflow:hidden}
 
+/* ==========================================
+   KARAOKE LINK THUMBNAIL POPUP
+========================================== */
+.youtube-thumb-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:20px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.youtube-thumb-overlay.show{display:flex}
+.youtube-thumb-popup{position:relative;width:min(520px,92vw);background:#ffffff;border-radius:10px;padding:3px;box-shadow:0 20px 60px rgba(0,0,0,.45);animation:youtubeThumbIn .2s ease-out}
+
+@keyframes youtubeThumbIn{
+    from{
+        opacity:0;
+        transform:scale(.94) translateY(8px);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+.youtube-thumb-image{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain;border-radius:8px;background:transparent;}
+.youtube-thumb-close{position:absolute;top:-10px;right:-10px;width:30px;height:30px;border:0;border-radius:50%;background:#ffffff;color:#111827;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3);z-index:2}
+.youtube-thumb-close svg{width:17px;height:17px;}
+.youtube-thumb-close:hover{background:#f1f5f9;}
 
 /* ===== WAVEFORM ===== */
 .stat-card::after{content:"";position:absolute;right:14px;bottom:13px;width:54px;height:30px;opacity:.20;background:linear-gradient(currentColor,currentColor) 0 13px / 3px 7px no-repeat,linear-gradient(currentColor,currentColor) 6px 9px / 3px 15px no-repeat,linear-gradient(currentColor,currentColor) 12px 5px / 3px 23px no-repeat,linear-gradient(currentColor,currentColor) 18px 9px / 3px 15px no-repeat,linear-gradient(currentColor,currentColor) 24px 2px / 3px 28px no-repeat,linear-gradient(currentColor,currentColor) 30px 8px / 3px 17px no-repeat,linear-gradient(currentColor,currentColor) 36px 13px / 3px 7px no-repeat,linear-gradient(currentColor,currentColor) 42px 7px / 3px 19px no-repeat,linear-gradient(currentColor,currentColor) 48px 11px / 3px 11px no-repeat}
@@ -604,6 +743,11 @@ body{background:#fff;position:relative;isolation:isolate}
 .top-hit-star{border:none;background:transparent;color:#999;font-size:22px;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;margin:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .top-hit-star.active{color:#242323 !important}
 .top-hit-star.active i{color:#242323 !important}
+
+/* DESKTOP SEARCH ICON - LEFT SIDE */
+.search-bar {position: relative;}
+.search-bar .search-icon {position: absolute;left: 15px;right: auto;top: 50%;transform: translateY(-50%);font-size: 15px;color: #94a3b8;pointer-events: none;}
+.search-bar input {padding-left: 22px !important;padding-right: 20px !important;}
 
 @media (max-width:768px){ 
     
@@ -680,10 +824,11 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 
 /* Search */
 .search-container{position:relative;width:100%;margin:-10px 0 12px}
-.search-container input{margin-bottom:5px;width:100%;height:35px;border:1px solid #a7a5a5dc;border-radius:15px;background:#fff;padding:0 50px 0 20px;font-size:13px;color:#334155;outline:none;transition:.25s;box-sizing:border-box}
+.search-container input{margin-bottom:5px;width:100%;height:35px;border:1px solid #a7a5a5dc;border-radius:15px;background:#fff;padding: 0 20px 0 42px;font-size:13px;color:#334155;outline:none;transition:.25s;box-sizing:border-box}
 .search-container input::placeholder{color:#94a3b8;word-spacing:2px;letter-spacing:.3px}
 .search-container input:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.12)}
-.search-icon{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:15px;color:#94a3b8;pointer-events:none}
+.search-icon{position:absolute;left: 15px;right: auto;top:47%;transform:translateY(-50%);font-size:15px;color:#94a3b8;pointer-events:none}
+.search-container input {padding-left: 35px !important;}
 
 /* Stats */
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);margin-bottom:24px;gap:8px}
@@ -845,6 +990,8 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
 /* Don't allow cloned handle to interfere */
 .playlist-mobile-drag-clone
 .song-drag-handle {pointer-events: none !important;}
+
+
 
 }
 
@@ -1155,17 +1302,15 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
         <div class="header-left">
 
             <div class="search-bar">
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search songs, artists or lyrics..."
+        autocomplete="off"
+    >
 
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search songs, artists or lyrics..."
-                    autocomplete="off"
-                >
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-
-            </div>
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+</div>
 
         </div>
 
@@ -1293,6 +1438,12 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
                     onclick="closeSongPopup()">
                 Back
             </button>
+            
+            <button class="popup-more-btn"
+        onclick="openSongMoreMenu()"
+        aria-label="More options">
+    ⋮
+</button>
 
             <h2 id="popupTitle"></h2>
 
@@ -1891,6 +2042,135 @@ body{width:100%;min-height:100dvh;overflow-x:hidden;}
             <button onclick="closeAdminPassword()">Cancel</button>
             <button onclick="checkAdminPassword()">Continue</button>
         </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+     KARAOKE THUMBNAIL POPUP
+========================================== -->
+
+<div
+    id="youtubeThumbOverlay"
+    class="youtube-thumb-overlay"
+    onclick="closeYoutubeThumbnail(event)"
+>
+
+    <div class="youtube-thumb-popup">
+
+        <button
+            class="youtube-thumb-close"
+            onclick="closeYoutubeThumbnail()"
+            title="Close"
+        >
+            <i data-lucide="x"></i>
+        </button>
+
+        <img
+            id="youtubeThumbImage"
+            class="youtube-thumb-image"
+            src=""
+            alt="Karaoke Thumbnail"
+        >
+
+    </div>
+
+</div>
+
+<!-- SONG MORE POPUP -->
+<div id="songMoreOverlay"
+     class="song-more-overlay"
+     onclick="closeSongMoreMenu(event)">
+
+    <div class="song-more-popup"
+         onclick="event.stopPropagation()">
+
+        <!-- HEADER -->
+        <div class="song-more-header">
+
+            <span class="song-more-heading">
+                Song Details
+            </span>
+
+            <button class="song-more-close"
+                    type="button"
+                    onclick="closeSongMoreMenu()">
+                Close
+            </button>
+
+        </div>
+
+        <div class="song-more-divider"></div>
+
+        <!-- SONG DETAILS -->
+<div class="song-details-list">
+
+    <!-- KARAOKE THUMBNAIL -->
+    <div class="song-thumbnail-container">
+
+        <img
+            id="moreSongThumbnail"
+            class="song-more-thumbnail"
+            src=""
+            alt="Karaoke Thumbnail"
+            style="display: none;"
+        >
+
+    </div>
+
+    <!-- SONG TITLE -->
+<div class="song-detail-item">
+    <div class="song-detail-label">Song Title</div>
+
+    <div class="song-detail-value" id="moreSongTitle">
+        —
+    </div>
+</div>
+
+<!-- ARTIST NAME -->
+<div class="song-detail-item">
+    <div class="song-detail-label">Artist Name</div>
+
+    <div class="song-detail-value" id="moreSongArtist">
+        —
+    </div>
+</div>
+
+    <!-- CATEGORY -->
+    <div class="song-detail-item">
+        <div class="song-detail-label">Category</div>
+
+        <div class="song-detail-value" id="moreSongCategory">
+            —
+        </div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="song-detail-item">
+        <div class="song-detail-label">Playlist</div>
+
+        <div class="song-detail-value" id="moreSongPlaylist">
+            —
+        </div>
+    </div>
+
+    <!-- KARAOKE LINK -->
+    <div class="song-detail-item">
+        <div class="song-detail-label">Karaoke Link</div>
+
+        <a
+            id="moreSongKaraokeLink"
+            class="song-detail-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            No Link
+        </a>
+    </div>
+
+</div>
 
     </div>
 
@@ -9241,7 +9521,7 @@ case "topHitsOld": {
         if (song.karaokeYoutube) {
 
             html += `
-                <div class="notes-song">
+                <div class="notes-song normal-karaoke-link-card">
 
                     <div class="notes-title-row">
 
@@ -9249,16 +9529,33 @@ case "topHitsOld": {
                             ${song.title || "Untitled"}
                         </div>
 
-                        <button
-                            class="notes-copy-btn"
-                            onclick="copyNotesLink(
-                                '${song.karaokeYoutube.replace(/'/g, "\\'")}',
-                                this
-                            ); event.stopPropagation();"
-                            title="Copy Link"
-                        >
-                            <i data-lucide="copy"></i>
-                        </button>
+                        <div class="notes-actions">
+
+    <!-- COPY BUTTON -->
+    <button
+        class="notes-copy-btn"
+        onclick="copyNotesLink(
+            '${song.karaokeYoutube.replace(/'/g, "\\'")}',
+            this
+        ); event.stopPropagation();"
+        title="Copy Link"
+    >
+        <i data-lucide="copy"></i>
+    </button>
+
+    <!-- THUMBNAIL BUTTON -->
+    <button
+        class="notes-thumb-btn"
+        onclick="showYoutubeThumbnail(
+            '${song.karaokeYoutube.replace(/'/g, "\\'")}'
+        ); event.stopPropagation();"
+        title="Show Thumbnail"
+    >
+        <i data-lucide="image"></i>
+    </button>
+
+</div>
+
 
                     </div>
 
@@ -9319,26 +9616,42 @@ case "topHitsOld": {
         if (song.weddingKaraokeYoutube) {
 
             html += `
-                <div class="notes-song">
+                <div class="notes-song wedding-karaoke-link-card">
 
                     <div class="notes-title-row">
 
-                        <div class="notes-song-title">
-                            ${song.title || "Untitled"}
-                        </div>
+    <div class="notes-song-title">
+        ${song.title || "Untitled"}
+    </div>
 
-                        <button
-                            class="notes-copy-btn"
-                            onclick="copyNotesLink(
-                                '${song.weddingKaraokeYoutube.replace(/'/g, "\\'")}',
-                                this
-                            ); event.stopPropagation();"
-                            title="Copy Link"
-                        >
-                            <i data-lucide="copy"></i>
-                        </button>
+    <div class="notes-actions">
 
-                    </div>
+        <!-- COPY BUTTON -->
+        <button
+            class="notes-copy-btn"
+            onclick="copyNotesLink(
+                '${song.weddingKaraokeYoutube.replace(/'/g, "\\'")}',
+                this
+            ); event.stopPropagation();"
+            title="Copy Link"
+        >
+            <i data-lucide="copy"></i>
+        </button>
+
+        <!-- THUMBNAIL BUTTON -->
+        <button
+            class="notes-thumb-btn"
+            onclick="showYoutubeThumbnail(
+                '${song.weddingKaraokeYoutube.replace(/'/g, "\\'")}'
+            ); event.stopPropagation();"
+            title="Show Thumbnail"
+        >
+            <i data-lucide="image"></i>
+        </button>
+
+    </div>
+
+</div>
 
                     <div style="
     font-size:12px;
@@ -11014,27 +11327,40 @@ function renderNotesLinks(songs, isWedding = false) {
 
             const links = [];
 
-if (isWedding) {
+            if (isWedding) {
 
-    if (song.weddingKaraokeYoutube) {
-        links.push({
-            url: song.weddingKaraokeYoutube
-        });
-    }
+                if (song.weddingKaraokeYoutube) {
+                    links.push({
+                        url: song.weddingKaraokeYoutube
+                    });
+                }
 
-} else {
+            } else {
 
-    if (song.karaokeYoutube) {
-        links.push({
-            url: song.karaokeYoutube
-        });
-    }
+                if (song.karaokeYoutube) {
+                    links.push({
+                        url: song.karaokeYoutube
+                    });
+                }
 
-}
+            }
 
-if (links.length === 0) return;
+            if (links.length === 0) return;
 
-            html += `
+
+            /* =========================================
+               GET ACTUAL YOUTUBE LINK
+            ========================================= */
+
+            const youtubeLink = links[0].url;
+
+const safeYoutubeLink = youtubeLink
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+html += `
     <div class="notes-song">
 
         <div class="notes-title-row">
@@ -11043,34 +11369,48 @@ if (links.length === 0) return;
                 ${song.title || "Untitled"}
             </div>
 
-            <button
-                class="notes-copy-btn"
-                onclick="copyNotesLink('${links[0]?.url?.replace(/'/g, "\\'") || ""}', this); event.stopPropagation();"
-                title="Copy Link"
-            >
-                <i data-lucide="copy"></i>
-            </button>
+            <div class="notes-actions">
+
+                <button
+                    class="notes-copy-btn"
+                    data-youtube-link="${safeYoutubeLink}"
+                    onclick="copyNotesLink(this.dataset.youtubeLink, this); event.stopPropagation();"
+                    title="Copy Link"
+                >
+                    <i data-lucide="copy"></i>
+                </button>
+
+                <button
+                    class="notes-thumb-btn"
+                    data-youtube-link="${safeYoutubeLink}"
+                    onclick="showYoutubeThumbnail(this.dataset.youtubeLink); event.stopPropagation();"
+                    title="Show Thumbnail"
+                >
+                    <i data-lucide="image"></i>
+                </button>
+
+            </div>
 
         </div>
 
         ${links.map(link => `
-    <div class="notes-link-row">
+            <div class="notes-link-row">
 
-        <a
-            class="notes-karaoke-link"
-            href="${link.url}"
-            target="_blank"
-            rel="noopener noreferrer"
-            onclick="event.stopPropagation();"
-        >
-            ${link.url}
-        </a>
+                <a
+                    class="notes-karaoke-link"
+                    href="${link.url}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onclick="event.stopPropagation();"
+                >
+                    ${link.url}
+                </a>
+
+            </div>
+        `).join("")}
 
     </div>
-`).join("")}
-
-        </div>
-            `;
+`;
 
         });
 
@@ -11085,6 +11425,7 @@ if (links.length === 0) return;
     html += `</div>`;
 
     setContent(html, "list");
+
     lucide.createIcons();
 }
 
@@ -11117,6 +11458,184 @@ window.copyNotesLink = async function (link, btn) {
     }
 
 };
+
+
+
+/* ==========================================
+   SHOW YOUTUBE THUMBNAIL
+   SMART QUALITY FALLBACK
+========================================== */
+
+window.showYoutubeThumbnail = function(link){
+
+    if(!link) return;
+
+    let videoId = null;
+
+    try{
+
+        const url = new URL(link);
+
+        if(
+            url.hostname === "youtu.be"
+        ){
+
+            videoId = url.pathname
+                .split("/")
+                .filter(Boolean)[0];
+
+        }else if(
+            url.hostname.includes("youtube.com") &&
+            url.searchParams.get("v")
+        ){
+
+            videoId = url.searchParams.get("v");
+
+        }else if(
+            url.hostname.includes("youtube.com") &&
+            url.pathname.startsWith("/shorts/")
+        ){
+
+            videoId = url.pathname
+                .split("/shorts/")[1]
+                .split("/")[0];
+
+        }
+
+    }catch(error){
+
+        console.error("Invalid YouTube link:", link);
+
+        return;
+
+    }
+
+    if(!videoId){
+
+        alert("YouTube thumbnail එක හොයාගන්න බැහැ.");
+
+        return;
+
+    }
+
+    const overlay = document.getElementById("youtubeThumbOverlay");
+    const image = document.getElementById("youtubeThumbImage");
+
+    if(!overlay || !image) return;
+
+    /* Highest quality first */
+
+    const thumbnailList = [
+        `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
+        `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
+        `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`
+    ];
+
+    let index = 0;
+
+    image.onload = function(){
+
+        /*
+         * YouTube may return a small placeholder
+         * instead of triggering onerror.
+         */
+
+        if(image.naturalWidth <= 120 && index < thumbnailList.length - 1){
+
+            index++;
+
+            image.src = thumbnailList[index];
+
+            return;
+        }
+
+        console.log(
+            "Thumbnail loaded:",
+            image.naturalWidth,
+            "x",
+            image.naturalHeight
+        );
+
+    };
+
+    image.onerror = function(){
+
+        index++;
+
+        if(index < thumbnailList.length){
+
+            image.src = thumbnailList[index];
+
+        }else{
+
+            image.onerror = null;
+            image.onload = null;
+
+            alert("Thumbnail එක ලබාගන්න බැහැ.");
+
+        }
+
+    };
+
+    overlay.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+
+    image.src = thumbnailList[index];
+
+    if(window.lucide){
+
+        lucide.createIcons();
+
+    }
+
+};
+
+
+/* ==========================================
+   CLOSE YOUTUBE THUMBNAIL
+========================================== */
+
+window.closeYoutubeThumbnail = function(event){
+
+    if(
+        event &&
+        event.target &&
+        event.target.id !== "youtubeThumbOverlay"
+    ){
+
+        return;
+
+    }
+
+    const overlay =
+        document.getElementById("youtubeThumbOverlay");
+
+    const image =
+        document.getElementById("youtubeThumbImage");
+
+    if(!overlay) return;
+
+    overlay.classList.remove("show");
+
+    document.body.style.overflow = "";
+
+    if(image){
+
+        image.onerror = null;
+
+        image.src = "";
+
+    }
+
+};
+
+
+
+
+
+
 
 window.showNotesPlaylistSongs = function (playlistId) {
 
@@ -11421,6 +11940,206 @@ document.fonts.ready.then(async function () {
     document.body.classList.add("popup-fonts-ready");
 
 });
+
+/* =========================================
+   SONG DETAILS POPUP
+========================================= */
+
+window.openSongMoreMenu = function () {
+
+    const popup = document.getElementById("songMoreOverlay");
+
+    if (!popup) return;
+
+    // GET CURRENT SONG
+    const song = allSongs.find(
+        s => s.id === currentSongId
+    );
+
+    if (!song) {
+        console.warn("Current song not found:", currentSongId);
+        return;
+    }
+
+   // SONG TITLE
+const titleElement =
+    document.getElementById("moreSongTitle");
+
+if (titleElement) {
+    titleElement.textContent = song.title || "—";
+}
+
+// ARTIST NAME
+const artistElement =
+    document.getElementById("moreSongArtist");
+
+if (artistElement) {
+    artistElement.textContent = song.artist || "—";
+}
+
+    // CATEGORY
+    const categoryElement =
+        document.getElementById("moreSongCategory");
+
+    if (categoryElement) {
+
+        categoryElement.textContent = Array.isArray(song.category)
+            ? (song.category.join(", ") || "No Category")
+            : (song.category || "No Category");
+
+    }
+
+    // =========================================
+// PLAYLIST NAME - FIND ALL SONGS
+// =========================================
+
+const playlistElement =
+    document.getElementById("moreSongPlaylist");
+
+if (playlistElement) {
+
+    const songPlaylist = song.playlist;
+
+    // 1. Song එකේ ID එකෙන් Playlist එක සොයන්න
+    let matchedPlaylists = [];
+
+    if (Array.isArray(songPlaylist)) {
+
+        matchedPlaylists = allPlaylists.filter(playlist =>
+            songPlaylist.some(id =>
+                String(id) === String(playlist.id)
+            )
+        );
+
+    } else if (songPlaylist) {
+
+        const foundPlaylist = allPlaylists.find(playlist =>
+            String(playlist.id) === String(songPlaylist)
+        );
+
+        if (foundPlaylist) {
+            matchedPlaylists.push(foundPlaylist);
+        }
+    }
+
+    // 2. Playlist ID එකෙන් හමු නොවුණොත්,
+    // Playlist එකේ songs array එකෙන් සොයන්න
+    if (matchedPlaylists.length === 0) {
+
+        matchedPlaylists = allPlaylists.filter(playlist => {
+
+            const playlistSongs = Array.isArray(playlist.songs)
+                ? playlist.songs
+                : [];
+
+            return playlistSongs.some(songId =>
+                String(songId) === String(song.id) ||
+                String(songId) === String(currentSongId)
+            );
+
+        });
+    }
+
+    // 3. Playlist නම පෙන්වන්න
+    const playlistNames = matchedPlaylists
+        .map(playlist => playlist.name)
+        .filter(Boolean);
+
+    playlistElement.textContent =
+        playlistNames.length > 0
+            ? playlistNames.join(", ")
+            : "No Playlist";
+}
+
+    // KARAOKE LINK
+    const linkElement =
+        document.getElementById("moreSongKaraokeLink");
+
+    const karaokeLink = song.karaokeYoutube || "";
+
+    if (linkElement) {
+
+        if (karaokeLink) {
+
+            linkElement.textContent = karaokeLink;
+            linkElement.href = karaokeLink;
+            linkElement.style.pointerEvents = "auto";
+
+        } else {
+
+            linkElement.textContent = "No Link";
+            linkElement.removeAttribute("href");
+            linkElement.style.pointerEvents = "none";
+
+        }
+
+    }
+
+    // YOUTUBE THUMBNAIL
+    const thumbnailElement =
+        document.getElementById("moreSongThumbnail");
+
+    if (thumbnailElement) {
+
+        const videoId = window.getYouTubeVideoId(karaokeLink);
+
+        if (videoId) {
+
+            thumbnailElement.onerror = function () {
+                this.style.display = "none";
+            };
+
+            thumbnailElement.src =
+                `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+            thumbnailElement.style.display = "block";
+
+        } else {
+
+            thumbnailElement.removeAttribute("src");
+            thumbnailElement.style.display = "none";
+
+        }
+
+    }
+
+    // OPEN POPUP
+    popup.classList.add("active");
+
+};
+
+
+/* =========================================
+   GET YOUTUBE VIDEO ID
+========================================= */
+
+window.getYouTubeVideoId = function (url) {
+
+    if (!url) return null;
+
+    const match = url.match(
+        /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+
+    return match ? match[1] : null;
+
+};
+
+
+/* =========================================
+   CLOSE SONG DETAILS POPUP
+========================================= */
+
+window.closeSongMoreMenu = function (event) {
+
+    const popup = document.getElementById("songMoreOverlay");
+
+    if (popup) {
+        popup.classList.remove("active");
+    }
+
+};
+
 
 
 
