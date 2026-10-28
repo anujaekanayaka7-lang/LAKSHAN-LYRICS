@@ -185,14 +185,13 @@ body:not(.popup-fonts-ready) #popupMeta {
 /* =========================================
    SONG DETAILS POPUP
 ========================================= */
-.song-more-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:99999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.2s ease,visibility 0.2s ease}
-.song-more-overlay.active{opacity:1;visibility:visible;pointer-events:auto}
+.song-more-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:99999;opacity:0;visibility:hidden;pointer-events:none;}
+.song-more-overlay.active{opacity:1;visibility:visible;pointer-events:auto;}
 
 /* =========================================
    POPUP BOX
 ========================================= */
-.song-more-popup{width:360px;max-width:100%;height:75vh;max-height:80vh;overflow-y:auto;padding:16px;box-sizing:border-box;background:#ffffff;color:#171923;border:1px solid rgba(0,0,0,0.06);border-radius:16px;box-shadow:0 12px 35px rgba(0,0,0,0.22);transform:scale(0.95);transition:transform 0.2s ease;-webkit-overflow-scrolling:touch}
-.song-more-overlay.active .song-more-popup{transform:scale(1)}
+.song-more-popup{width:360px;max-width:100%;height:75vh;max-height:80vh;overflow-y:auto;padding:16px;box-sizing:border-box;background:#ffffff;color:#171923;border:1px solid rgba(0,0,0,0.06);border-radius:16px;box-shadow:0 12px 35px rgba(0,0,0,0.22);-webkit-overflow-scrolling:touch;}
 
 /* =========================================
    HEADER
@@ -12140,7 +12139,177 @@ window.closeSongMoreMenu = function (event) {
 
 };
 
+// ==========================================
+// ANDROID BACK BUTTON - APP NAVIGATION
+// ==========================================
 
+(function () {
+
+    if (window.__androidBackHandlerReady) {
+        return;
+    }
+
+    window.__androidBackHandlerReady = true;
+
+    const pageHistory = [];
+
+    let currentPage = {
+        name: "showSongsPage",
+        args: []
+    };
+
+    let restoringPage = false;
+
+    const pageNames = [
+        "showSongsPage",
+        "showArtistsPage",
+        "showArtistSongs",
+        "showCategoriesPage",
+        "showCategorySongs",
+        "showPlaylistsPage",
+        "showPlaylistSongs",
+        "showMostViewedPage",
+        "showRecentlyAddedPage",
+        "showRecentlyPlayedPage",
+        "showFavouritesPage",
+        "showFavouriteSongs",
+        "showNotesPage",
+        "showNotesCategorySongs",
+        "showNotesPlaylistSongs",
+        "showTopHitsNewPage",
+        "showTopHitsOldPage",
+        "showAddSongPage",
+        "showManageArtistsPage",
+        "showManageCategoriesPage",
+        "showManageFavouritePage",
+        "showManagePlaylistsPage"
+    ];
+
+    const originalPages = {};
+
+    pageNames.forEach(function (name) {
+
+        if (typeof window[name] !== "function") {
+            return;
+        }
+
+        const originalFunction = window[name];
+
+        originalPages[name] = originalFunction;
+
+        window[name] = function (...args) {
+
+            if (!restoringPage) {
+
+                pageHistory.push({
+                    name: currentPage.name,
+                    args: currentPage.args
+                });
+
+            }
+
+            currentPage = {
+                name: name,
+                args: args
+            };
+
+            return originalFunction.apply(this, args);
+        };
+
+    });
+
+    window.handleAndroidBackButton = function () {
+
+        // 1. Song Popup එක විවෘත නම් එය වසන්න
+        const songPopup = document.getElementById("songPopup");
+
+        if (
+            songPopup &&
+            songPopup.classList.contains("active")
+        ) {
+
+            if (typeof window.closeSongPopup === "function") {
+                window.closeSongPopup();
+            } else {
+                songPopup.classList.remove("active");
+            }
+
+            return true;
+        }
+
+        // 2. වෙනත් සාමාන්‍ය Dialog / Popup එකක් තිබේද බලන්න
+        const activePopup = document.querySelector(
+            ".modal.active, .popup.active, .dialog.active"
+        );
+
+        if (activePopup) {
+
+            activePopup.classList.remove("active");
+
+            return true;
+        }
+
+        // 3. Sidebar එක විවෘත නම් වසන්න
+        const sidebar = document.querySelector(
+            ".sidebar.active, .sidebar.open, #sidebar.active"
+        );
+
+        if (sidebar) {
+
+            sidebar.classList.remove("active");
+            sidebar.classList.remove("open");
+
+            return true;
+        }
+
+        // 4. කලින් පිටුවට යන්න
+        while (pageHistory.length > 0) {
+
+            const previousPage = pageHistory.pop();
+
+            const pageFunction =
+                originalPages[previousPage.name];
+
+            if (typeof pageFunction !== "function") {
+                continue;
+            }
+
+            restoringPage = true;
+
+            try {
+
+                currentPage = {
+                    name: previousPage.name,
+                    args: previousPage.args || []
+                };
+
+                pageFunction.apply(
+                    window,
+                    previousPage.args || []
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Back navigation error:",
+                    error
+                );
+
+            } finally {
+
+                restoringPage = false;
+
+            }
+
+            return true;
+        }
+
+        // 5. තවත් පිටුවක් නැත්නම් Android එකට පාලනය දෙන්න
+        return false;
+
+    };
+
+})();
 
 
 </script>
